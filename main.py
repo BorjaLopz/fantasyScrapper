@@ -230,6 +230,87 @@ def get_player_id(player_name: str):
     # Si no se encuentra, retornamos un error
     return {"error": "Jugador no encontrado en el índice"}
 
+def get_player_team(player_id: str):
+    # Realizamos la solicitud HTTP para buscar el equipo del jugador
+    full_url = f"https://fbref.com/es/jugadores/{player_id}/"
+
+    response = requests.get(full_url)
+
+    if response.status_code != 200:
+        print(f"Error al obtener la página del jugador: {response.status_code}")
+        return {"error": "No se pudo acceder a la página del jugador"}
+    
+    # Parseamos el contenido con BeautifulSoup
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    with open("page_content.html", "w", encoding="utf-8") as file:
+        file.write(soup.prettify())
+
+    # Buscamos el div que contiene la tabla de estadísticas del jugador
+
+    stats_div = soup.find("div", id="div_stats_standard_dom_lg")
+
+    if not stats_div:
+        print("No se encontró la tabla de estadísticas del jugador.")
+        return {"error": "No se pudo encontrar la tabla de estadísticas"}
+    
+    # Buscamos todas las filas de la tabla (tr)
+    rows = stats_div.find_all("tr", {"style": "line-height: 1.3em"})
+    
+    if not rows:
+        print("No se encontraron filas en la tabla de estadísticas.")
+        return {"error": "No se encontraron filas en la tabla de estadísticas"}
+    
+    # Ordenamos las filas por fecha (año) en orden descendente para obtener la más reciente
+    rows = sorted(rows, key=lambda row: row.find("th", {"data-stat": "year_id"}).text, reverse=True)
+    
+    # Obtenemos el equipo de la fila más reciente (la que tiene el año más alto)
+    last_row = rows[0]
+    team_column = last_row.find("td", {"data-stat": "team"})
+    
+    if team_column:
+        team_name = team_column.text.strip()
+        return team_name
+    else:
+        return {"error": "No se encontró el equipo del jugador"}
+
+def get_player_report(report_url: str, player_id: str):
+    print(f"Accediendo a la URL: {report_url}")
+    response = requests.get(report_url)
+
+    if response.status_code == 200:
+        # Parsear el HTML de la página
+        soup = BeautifulSoup(response.content, "html.parser")
+        
+        # Buscar el <tr> que contiene el atributo 'data-append-csv' con el player_id
+        player_row = soup.find('tr', attrs={"data-append-csv": player_id})
+
+        # Depurar si no se encuentra el jugador
+        if player_row is None:
+            print(f"No se encontró el jugador con el ID: {player_id}")
+            return "No se encontró el jugador con el ID proporcionado."
+
+        print("Jugador encontrado, extrayendo estadísticas...")
+
+        # Crear un diccionario para almacenar las características y sus valores
+        player_stats = {}
+
+        # Encontrar todas las celdas <td> dentro de la fila del jugador
+        td_elements = player_row.find_all('td')
+
+        # Iterar sobre cada <td> para extraer la información
+        for td in td_elements:
+            stat_name = td.get('data-stat')  # Nombre de la estadística
+            stat_value = td.get_text(strip=True)  # Valor de la estadística
+
+            if stat_name:  # Solo agregar si el nombre de la estadística existe
+                player_stats[stat_name] = stat_value
+
+        return player_stats  # Devuelve el diccionario con todas las características y valores
+    else:
+        print(f"Error al acceder a la URL, código de estado: {response.status_code}")
+        return f"Error al acceder a la URL: {response.status_code}"
+
 @app.get("/api/players/{player_name}")
 def get_player_information(player_name: str):
     player_id = get_player_id(player_name)
@@ -253,3 +334,41 @@ def get_matches_by_round(round: str):
     
     return {"error": f"Couldn't retrieve match information for round {round}"}
 
+@app.get("/api/players/{player_name}/{round}")
+def get_player_performance(player_name: str, round: str):
+    player_id = get_player_id(player_name)
+    if "error" in player_id:
+        return player_id
+    
+    all_matches = get_matches()
+    matches_in_round = all_matches.get(round, [])
+
+    team_to_search = get_player_team(player_id)
+
+    # Filtrar los partidos en los que el jugador podría estar involucrado
+    relevant_matches = [
+        match for match in matches_in_round
+        if team_to_search in [match["home_team"], match["away_team"]]
+    ]
+
+    # Crear una lista con los reportes correspondientes
+    reports = [
+        {
+            "date": match["date"],
+            "time": match["time"],
+            "home_team": match["home_team"],
+            "away_team": match["away_team"],
+            "score": match["score"],
+            "report": match["report"]
+        }
+        for match in relevant_matches
+    ]
+
+    player_info = get_player_report(reports[0].get("report"), player_id)
+    print(player_info)
+
+    # Retornar los reportes
+    if reports:
+        return {"matches": reports}
+    else:
+        return {"message": f"No se encontraron partidos para el equipo {team_to_search} en esta ronda."}
