@@ -9,3 +9,19 @@ export type TTeamData = {
   badgeGray: string,
   badgeWhite: string,
 }
+
+export type TTeamQueryFilters = {
+  range?: {
+    start: number;
+    end: number;
+  };
+  sortBy?: {
+    column: string;
+    order: string;
+  };
+  filter?: TTeamFilter;
+};
+
+export type TTeamFilter = {
+  name?: string;
+};

@@ -78,5 +78,4 @@ export type TPlayerQueryFilters = {
 
 export type TPlayerFilter = {
   name?: string;
-  nickname?: string;
 };
