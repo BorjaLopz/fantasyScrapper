@@ -1,11 +1,10 @@
-import { getListPlayers } from '@/controllers/playerController';
-import { validateRequest } from '@/middlewares/requestValidatorMiddleware';
-import { getListPlayersSchema } from '@/requests/playerRequest';
+import { getListPlayers, getPlayerController } from '@/controllers/player.controller';
 import { Router } from 'express';
 
 const playerRouter = Router();
 
 // playerRouter.get('/', validateRequest(getListPlayersSchema), getListPlayers);
 playerRouter.get('/', getListPlayers);
+playerRouter.get('/:playerId', getPlayerController);
 
 export default playerRouter;

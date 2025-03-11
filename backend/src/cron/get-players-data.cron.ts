@@ -52,11 +52,6 @@ const fetchPlayers = () => {
                 slug: player.slug,
                 weekPoints: player.weekPoints || 0,
                 image: player.images.transparent['256x256'],
-                // playerStats: {
-                //   createMany: {
-                //     data: [player.playerStats]
-                //   }
-                // },
                 team: {
                   connectOrCreate: {
                     create: {
@@ -89,11 +84,6 @@ const fetchPlayers = () => {
                 slug: player.slug,
                 weekPoints: player.weekPoints || 0,
                 image: player.images.transparent['256x256'],
-                // playerStats: {
-                //   createMany: {
-                //     data: [player.playerStats]
-                //   }
-                // },
                 team: {
                   connectOrCreate: {
                     create: {
@@ -136,13 +126,6 @@ const fetchPlayers = () => {
 
               stats.push(statCreated)
             }
-
-            // prisma.player.update({
-            //   data: {
-            //     playerStats: stats
-            //   },
-            //   where: { playerId: player.id }
-            // })
           }
         });
 

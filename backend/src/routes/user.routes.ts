@@ -3,9 +3,9 @@ import {
   deleteUser,
   getListUsers,
   updateUser,
-} from '@/controllers/userController';
-import { validateRequest } from '@/middlewares/requestValidatorMiddleware';
-import { getListUsersSchema } from '@/requests/userRequest';
+} from '@/controllers/user.controller';
+import { validateRequest } from '@/middlewares/request-validator.middleware';
+import { getListUsersSchema } from '@/requests/user-request';
 import { Router } from 'express';
 
 const userRouter = Router();

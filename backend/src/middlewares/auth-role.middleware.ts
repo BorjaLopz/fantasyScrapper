@@ -1,4 +1,4 @@
-import { ValidationError } from '@/errors/ValidationError';
+import { ValidationError } from '@/errors/validation.error';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 

@@ -4,7 +4,7 @@ import {
   deleteUserById,
   getUsers,
   updateUserById,
-} from '@/services/userService';
+} from '@/services/user.service';
 import { StatusCodes } from 'http-status-codes';
 import { TUserData, TUserQueryFilters } from '@/types/user.type';
 

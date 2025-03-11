@@ -8,7 +8,7 @@ import { ENV } from '@/config/environment';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { z, ZodIssue } from 'zod';
-import { ValidationError } from '@/errors/ValidationError';
+import { ValidationError } from '@/errors/validation.error';
 
 type TAppError = Error & {
   status: string;

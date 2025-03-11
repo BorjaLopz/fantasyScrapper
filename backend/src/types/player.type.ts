@@ -63,3 +63,20 @@ export type TPlayerData = {
   images: TPlayerImageData,
   playerStats: TStatData[]
 }
+
+export type TPlayerQueryFilters = {
+  range?: {
+    start: number;
+    end: number;
+  };
+  sortBy?: {
+    column: string;
+    order: string;
+  };
+  filter?: TPlayerFilter;
+};
+
+export type TPlayerFilter = {
+  name?: string;
+  nickname?: string;
+};

@@ -1,4 +1,4 @@
-import { findUserByEmail } from '@/repositories/userRepository';
+import { findUserByEmail } from '@/repositories/use.repository';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '@/config/lucia';
 

@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express';
 
-import { authorizeRole } from '@/middlewares/authRoleMiddleware';
-import { authRouter } from './authRoutes';
-import playerRouter from './playerRoutes';
-import userRouter from './userRoutes';
+import { authorizeRole } from '@/middlewares/auth-role.middleware';
+import { authRouter } from './auth.routes';
+import playerRouter from './player.routes';
+import userRouter from './user.routes';
 
 const router = Router();
 

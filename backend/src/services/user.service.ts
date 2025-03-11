@@ -5,7 +5,7 @@ import {
   deleteUser,
   updateUser,
   countUsers,
-} from '@/repositories/userRepository';
+} from '@/repositories/use.repository';
 import { TUserData, TUserQueryFilters } from '@/types/user.type';
 
 export const getUsers = async (filters: TUserQueryFilters) => {

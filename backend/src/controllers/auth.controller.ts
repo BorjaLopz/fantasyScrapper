@@ -5,8 +5,8 @@ import {
   validateUserCredentials,
   createUserSession,
   getUserSession,
-} from '@/services/authService';
-import { ValidationError } from '@/errors/ValidationError';
+} from '@/services/auth.service';
+import { ValidationError } from '@/errors/validation.error';
 
 export const login = async (
   req: Request,
