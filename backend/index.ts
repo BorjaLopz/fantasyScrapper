@@ -17,6 +17,7 @@ import app from '@/app';
 import http from 'http';
 import debug from 'debug';
 import { ENV } from '@/config/environment';
+import { getPlayersData } from '@/cron/get-players-data.cron';
 
 /**
  * Normalize a port into a number, string, or false.
@@ -47,11 +48,9 @@ const onError = (err: NodeJS.ErrnoException) => {
     case 'EACCES':
       logger.fatal(bind + ' requires elevated privileges');
       process.exit(1);
-      break;
     case 'EADDRINUSE':
       logger.fatal(bind + ' is already in use');
       process.exit(1);
-      break;
     default:
       throw err;
   }
@@ -87,6 +86,10 @@ const server = http.createServer(app);
  */
 
 server.listen(port, () => {
+  // Initialize cron jobs
+  getPlayersData();
+
+  // Print server port
   console.log(`listening on port ${port}`);
 });
 server.on('error', onError);

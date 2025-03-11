@@ -6,7 +6,7 @@ import {
   updateUserById,
 } from '@/services/userService';
 import { StatusCodes } from 'http-status-codes';
-import { TUserData, TUserQueryFilters } from '@/types/userType';
+import { TUserData, TUserQueryFilters } from '@/types/user.type';
 
 export const getListUsers = async (
   req: Request,

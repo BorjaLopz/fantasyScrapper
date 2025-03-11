@@ -1,5 +1,5 @@
 {
-  "name": "fastasy-bacend",
+  "name": "fastasy-backend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -28,6 +28,7 @@
     "hpp": "^0.2.3",
     "http-status-codes": "^2.3.0",
     "lucia": "^3.1.1",
+    "node-cron": "^3.0.3",
     "oslo": "^1.2.0",
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
@@ -45,6 +46,7 @@
     "@types/hpp": "^0.2.6",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.5",
+    "@types/node-cron": "^3.0.11",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
