@@ -1,6 +1,6 @@
 ## Project Description
 
-Fastify REST API service built using Express.js and Prisma ORM.
+Fantasy REST API service built using Express.js and Prisma ORM.
 
 ---
 

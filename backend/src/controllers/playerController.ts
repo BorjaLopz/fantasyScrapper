@@ -1,6 +1,6 @@
+import { TPlayerListData } from '@/types/player.type';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import https from 'node:https';
 
 export const getListPlayers = async (
   req: Request,
@@ -8,40 +8,29 @@ export const getListPlayers = async (
   next: NextFunction,
 ) => {
   try {
-    let data: any = [];
-    const request = https
-      .get(
-        'https://api-fantasy.llt-services.com/api/v4/players?x-lang=es',
-        (res) => {
-          const headerDate =
-            res.headers && res.headers.date
-              ? res.headers.date
-              : 'no response date';
-          console.log('Status Code:', res.statusCode);
-          console.log('Date in Response header:', headerDate);
+    const playersResponse = await fetch('https://api-fantasy.llt-services.com/api/v4/players?x-lang=es');
+    const headerDate = playersResponse.headers && playersResponse.headers.get('date') ? playersResponse.headers.get('date') : 'no response date';
+    console.log('Status Code:', playersResponse.status);
+    console.log('Date in Response header:', headerDate);
 
-          res.on('data', (chunk) => {
-            data.push(chunk);
-          });
+    const result: any[] = []
+    const players = await playersResponse.json() as TPlayerListData[]
+    for await (const pl of players) {
+      const playerResponse = await fetch(`https://api-fantasy.llt-services.com/api/v3/player/${pl.id}?x-lang=es`);
+      const headerDate = playerResponse.headers && playerResponse.headers.get('date') ? playerResponse.headers.get('date') : 'no response date';
+      console.log('Status Code:', playerResponse.status);
+      console.log('Date in Response header:', headerDate);
 
-          res.on('end', () => {
-            console.log(
-              'Response ended: ',
-              JSON.parse(Buffer.concat(data).toString()),
-            );
-          });
-        },
-      )
-      .on('error', (err) => {
-        console.log('Error: ', err.message);
-      });
+      result.push(await playerResponse.json())
+    }
 
     res.status(StatusCodes.OK).json({
       status: 'success',
       message: 'Player list retrieved successfully.',
-      data: data,
+      data: result
     });
   } catch (err) {
+    console.log(err); //can be console.error
     return next(err);
   }
 };
