@@ -16,6 +16,6 @@ export class ValidationError extends Error {
 
 // usage:
 // throw new ValidationError(
-//   "Incorrect email or password",
+//   "Incorrect username or password",
 //   401
 // );

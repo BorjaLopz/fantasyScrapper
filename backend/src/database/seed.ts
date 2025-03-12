@@ -1,5 +1,4 @@
 import { parseArgs } from 'node:util';
-import { userSeeder } from './seeders/user.seeder';
 import { PrismaClient } from '@prisma/client';
 import { roleSeeder } from './seeders/role.seeder';
 
@@ -28,10 +27,10 @@ const main = async () => {
       name: 'role',
       func: async () => await roleSeeder(prisma),
     },
-    {
-      name: 'user',
-      func: async () => await userSeeder(prisma),
-    },
+    // {
+    //   name: 'user',
+    //   func: async () => await userSeeder(prisma),
+    // },
   ];
 
   if (!table) {

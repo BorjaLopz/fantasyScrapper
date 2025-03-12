@@ -25,7 +25,7 @@ model Role {
 
 model User {
   id        String    @id
-  email     String    @unique
+  username  String    @unique
   password  String
   profile   Profile?
   role      Role      @relation(fields: [roleId], references: [id])

@@ -52,7 +52,7 @@ const filterUsers = (filter: TUserFilter) => {
       ...filters,
       OR: [
         {
-          email: {
+          username: {
             contains: keywords,
             mode: 'insensitive',
           },
@@ -101,7 +101,7 @@ export const findUsers = async ({
   return await prisma.user.findMany({
     select: {
       id: true,
-      email: true,
+      username: true,
       createdAt: true,
       updatedAt: true,
       profile: {
@@ -142,7 +142,7 @@ export const findUserById = async (id: string) => {
     },
     select: {
       id: true,
-      email: true,
+      username: true,
       password: true,
       profile: {
         select: {
@@ -165,12 +165,12 @@ export const findUserById = async (id: string) => {
   });
 };
 
-export const findUserByEmail = async (email: string) => {
+export const findUserByUsername = async (username: string) => {
   return await prisma.user.findUnique({
-    where: { email },
+    where: { username: username },
     select: {
       id: true,
-      email: true,
+      username: true,
       password: true,
       profile: {
         select: {
@@ -189,7 +189,7 @@ export const insertUser = async (userData: TUserData) => {
   const user = await prisma.user.create({
     data: {
       id: generateId(50),
-      email: userData.email,
+      username: userData.username,
       password: await new Argon2id().hash(userData.password),
       roleId: userData.roleId,
     },
@@ -212,7 +212,7 @@ export const updateUser = async (id: string, userData: TUserData) => {
       id,
     },
     data: {
-      email: userData.email,
+      username: userData.username,
       password: await new Argon2id().hash(userData.password),
       roleId: userData.roleId,
     },

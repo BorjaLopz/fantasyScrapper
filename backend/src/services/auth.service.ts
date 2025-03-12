@@ -1,12 +1,12 @@
-import { findUserByEmail } from '@/repositories/use.repository';
-import { Argon2id } from 'oslo/password';
 import { lucia } from '@/config/lucia';
+import { findUserByUsername } from '@/repositories/use.repository';
+import { Argon2id } from 'oslo/password';
 
 export const validateUserCredentials = async (
-  email: string,
+  username: string,
   password: string,
 ) => {
-  const existingUser = await findUserByEmail(email);
+  const existingUser = await findUserByUsername(username);
 
   if (!existingUser) return null;
 
@@ -31,8 +31,8 @@ export const createUserSession = async (userId: string) => {
   return { token: session.id, cookie };
 };
 
-export const getUserSession = async (email: string) => {
-  const existingUser = await findUserByEmail(email);
+export const getUserSession = async (username: string) => {
+  const existingUser = await findUserByUsername(username);
 
   if (!existingUser) return null;
 

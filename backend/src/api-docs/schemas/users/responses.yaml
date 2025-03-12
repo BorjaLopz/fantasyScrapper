@@ -9,7 +9,7 @@ components:
               type: integer
             name:
               type: string
-            email:
+            username:
               type: string
             role:
               type: integer
@@ -21,4 +21,4 @@ components:
           required:
             - id
             - name
-            - email
+            - username

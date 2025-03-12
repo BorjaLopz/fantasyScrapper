@@ -14,13 +14,13 @@ export const login = async (
   next: NextFunction,
 ) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const user = await validateUserCredentials(email, password);
+    const user = await validateUserCredentials(username, password);
 
     if (!user) {
       throw new ValidationError(
-        'Incorrect email or password.',
+        'Incorrect username or password.',
         'INVALID_CREDENTIALS',
         StatusCodes.UNAUTHORIZED,
       );
@@ -85,7 +85,7 @@ export const getSession = async (
       );
     }
 
-    const userData = await getUserSession(user.email);
+    const userData = await getUserSession(user.username);
 
     if (!userData) {
       throw new ValidationError(

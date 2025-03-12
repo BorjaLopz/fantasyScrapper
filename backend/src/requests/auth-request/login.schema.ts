@@ -2,13 +2,12 @@ import { z } from 'zod';
 
 const getBodySchema = () => {
   const bodySchema = z.object({
-    email: z
-      .string({ required_error: 'Email is required.' })
+    username: z
+      .string({ required_error: 'Username is required.' })
       .trim()
       .toLowerCase()
-      .email({ message: 'Invalid email address.' })
-      .min(1, { message: 'Email is required.' })
-      .max(255, { message: 'Email is too long.' }),
+      .min(1, { message: 'Username is required.' })
+      .max(255, { message: 'Username is too long.' }),
     password: z
       .string({ required_error: 'Password is required.' })
       .trim()
