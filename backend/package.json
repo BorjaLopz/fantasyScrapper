@@ -17,6 +17,8 @@
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@prisma/client": "^5.12.1",
+    "axios": "^1.8.3",
+    "cheerio": "^1.0.0",
     "compression": "^1.7.4",
     "cookie-parser": "~1.4.6",
     "cors": "^2.8.5",
@@ -32,6 +34,7 @@
     "oslo": "^1.2.0",
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
+    "scrape-it": "^6.1.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "yaml": "^2.5.0",

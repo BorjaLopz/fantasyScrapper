@@ -104,3 +104,14 @@ model Stat {
   Player   Player? @relation(fields: [playerId], references: [id])
   playerId Int?
 }
+
+model Match {
+  id        Int      @id @default(autoincrement())
+  gameWeek  Int
+  date      DateTime
+  startTime String
+  homeTeam  String
+  score     String
+  awayTeam  String
+  notes     String
+}

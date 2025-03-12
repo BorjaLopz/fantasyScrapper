@@ -1,6 +1,7 @@
 import { parseArgs } from 'node:util';
 import { PrismaClient } from '@prisma/client';
 import { roleSeeder } from './seeders/role.seeder';
+import { userSeeder } from './seeders/user.seeder';
 
 interface ParseArgsOptionConfig {
   type: 'string' | 'boolean';
@@ -27,10 +28,10 @@ const main = async () => {
       name: 'role',
       func: async () => await roleSeeder(prisma),
     },
-    // {
-    //   name: 'user',
-    //   func: async () => await userSeeder(prisma),
-    // },
+    {
+      name: 'user',
+      func: async () => await userSeeder(prisma),
+    },
   ];
 
   if (!table) {

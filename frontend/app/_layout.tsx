@@ -1,6 +1,10 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { Slot, Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -16,6 +20,7 @@ import AuthProvider from '@/providers/AuthProvider';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const queryClient = new QueryClient()
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -33,18 +38,10 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* isAuthenticated ? {
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      } : {
-        <Stack>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        </Stack>
-      } */}
       <AuthProvider>
-        <Slot />
+        <QueryClientProvider client={queryClient}>
+          <Slot />
+        </QueryClientProvider>
       </AuthProvider>
       <StatusBar style="auto" />
     </ThemeProvider>

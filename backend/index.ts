@@ -18,6 +18,7 @@ import http from 'http';
 import debug from 'debug';
 import { ENV } from '@/config/environment';
 import { getPlayersData } from '@/cron/get-players-data.cron';
+import { getMatchesData } from '@/cron/get-matches-data.cron';
 
 /**
  * Normalize a port into a number, string, or false.
@@ -87,7 +88,8 @@ const server = http.createServer(app);
 
 server.listen(port, () => {
   // Initialize cron jobs
-  getPlayersData();
+  // getPlayersData();
+  getMatchesData();
 
   // Print server port
   console.log(`listening on port ${port}`);
