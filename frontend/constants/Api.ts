@@ -1,1 +1,1 @@
-export const API_URL = "http://localhost:5000/api/v1"
+export const API_URL = "https://3000-victorgomez-fantasyscra-22kf9u9zyln.ws-eu118.gitpod.io/api/v1"

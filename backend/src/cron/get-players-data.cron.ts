@@ -7,9 +7,9 @@ import { schedule } from 'node-cron';
 import https from 'node:https';
 
 export const getPlayersData = () => {
-  logger.info("Getting players data")
+  logger.info('Getting players data');
   // Fetch players data
-  fetchPlayers()
+  fetchPlayers();
   // Register scheduler
   // schedule('*/30 * * * FRI,SUN,SAT', () => fetchPlayers());
 };
@@ -32,11 +32,15 @@ const fetchPlayers = () => {
         });
 
         res.on('end', async () => {
-          const players = JSON.parse(Buffer.concat(data).toString()) as TPlayerListData[]
+          const players = JSON.parse(
+            Buffer.concat(data).toString(),
+          ) as TPlayerListData[];
           for await (const pl of players) {
-            const playerResponse = await fetch(`https://api-fantasy.llt-services.com/api/v3/player/${pl.id}?x-lang=es`);
+            const playerResponse = await fetch(
+              `https://api-fantasy.llt-services.com/api/v3/player/${pl.id}?x-lang=es`,
+            );
 
-            const player = await playerResponse.json() as TPlayerData;
+            const player = (await playerResponse.json()) as TPlayerData;
             const playerCreated = await prisma.player.upsert({
               create: {
                 averagePoints: player.averagePoints,
@@ -62,13 +66,13 @@ const fetchPlayers = () => {
                       dspId: player.team.dspId,
                       badgeColor: player.team.badgeColor,
                       badgeGray: player.team.badgeGray,
-                      badgeWhite: player.team.badgeWhite
+                      badgeWhite: player.team.badgeWhite,
                     },
                     where: {
-                      fantasyTeamId: player.team.id
-                    }
-                  }
-                }
+                      fantasyTeamId: player.team.id,
+                    },
+                  },
+                },
               },
               update: {
                 averagePoints: player.averagePoints,
@@ -94,16 +98,16 @@ const fetchPlayers = () => {
                       dspId: player.team.dspId,
                       badgeColor: player.team.badgeColor,
                       badgeGray: player.team.badgeGray,
-                      badgeWhite: player.team.badgeWhite
+                      badgeWhite: player.team.badgeWhite,
                     },
                     where: {
-                      fantasyTeamId: player.team.id
-                    }
-                  }
-                }
+                      fantasyTeamId: player.team.id,
+                    },
+                  },
+                },
               },
-              where: { name: player.name }
-            })
+              where: { name: player.name },
+            });
 
             const stats: {
               id: number;
@@ -112,7 +116,7 @@ const fetchPlayers = () => {
               weekNumber: number;
               totalPoints: number;
               isInIdealFormation: boolean;
-            }[] = []
+            }[] = [];
             for await (const stat of player.playerStats) {
               const statCreated = await prisma.stat.create({
                 data: {
@@ -120,16 +124,16 @@ const fetchPlayers = () => {
                   weekNumber: stat.weekNumber,
                   isInIdealFormation: stat.isInIdealFormation,
                   stats: stat.stats,
-                  playerId: playerCreated.id
-                }
-              })
+                  playerId: playerCreated.id,
+                },
+              });
 
-              stats.push(statCreated)
+              stats.push(statCreated);
             }
           }
         });
 
-        logger.info("PLAYERS DATA INSERTED")
+        logger.info('Players data loaded');
       },
     )
     .on('error', (err) => {

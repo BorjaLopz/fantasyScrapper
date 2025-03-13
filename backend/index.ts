@@ -89,7 +89,7 @@ const server = http.createServer(app);
 server.listen(port, () => {
   // Initialize cron jobs
   // getPlayersData();
-  getMatchesData();
+  // getMatchesData();
 
   // Print server port
   console.log(`listening on port ${port}`);

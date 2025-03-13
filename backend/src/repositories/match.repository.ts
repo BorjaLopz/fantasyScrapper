@@ -41,8 +41,8 @@ const filterMatches = (filter: TMatchFilter) => {
     filters = {
       ...filters,
       date: {
-        in: dates
-      }
+        in: dates,
+      },
     };
   }
 
@@ -76,7 +76,7 @@ export const findMatchesRepository = async ({
       homeTeam: true,
       awayTeam: true,
       score: true,
-      notes: true
+      notes: true,
     },
     where: filter ? filterMatches(filter) : undefined,
     orderBy,
@@ -85,8 +85,58 @@ export const findMatchesRepository = async ({
   });
 };
 
-export const countMatchesRepository = async ({ filter }: TMatchQueryFilters) => {
+export const countMatchesRepository = async ({
+  filter,
+}: TMatchQueryFilters) => {
   return await prisma.match.count({
     where: filter ? filterMatches(filter) : undefined,
+  });
+};
+
+export const getCurrentMatchdayRepository = async () => {
+  return (
+    await prisma.match.findFirst({
+      where: {
+        AND: [
+          {
+            score: {
+              equals: '',
+            },
+          },
+          {
+            date: {
+              gte: new Date(),
+            },
+          },
+          {
+            notes: {
+              equals: '',
+            },
+          },
+        ],
+      },
+      orderBy: [{ date: 'asc' }],
+    })
+  )?.gameWeek;
+};
+
+export const getAllMatchdaysRepository = async () => {
+  return await prisma.match.findMany({
+    select: { gameWeek: true },
+    distinct: 'gameWeek',
+    orderBy: [{ gameWeek: 'asc' }],
+  });
+};
+
+export const getCurrentMatchesForMatchDayRepository = async (
+  matchDay: number | null,
+) => {
+  return await prisma.match.findMany({
+    where: {
+      gameWeek: matchDay ? matchDay : await getCurrentMatchdayRepository(),
+    },
+    orderBy: {
+      date: 'asc',
+    },
   });
 };
