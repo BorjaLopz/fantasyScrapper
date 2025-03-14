@@ -1,10 +1,7 @@
 import prisma from '@/config/prisma';
 import { TTeamQueryFilters } from '@/types/team.type';
 
-export const findTeams = async ({
-  range,
-  filter,
-}: TTeamQueryFilters) => {
+export const findTeams = async ({ range, filter }: TTeamQueryFilters) => {
   const { start = 0, end = 10 } = range || {};
 
   const skip = Number(start) || 0;
@@ -36,5 +33,22 @@ export const findTeamById = async (id: string) => {
     where: {
       fantasyTeamId: id,
     },
+  });
+};
+
+export const findTeamByUserId = async (userId: string) => {
+  return await prisma.userTeam.findFirst({
+    include: {
+      headline: true,
+      players: {
+        include: {
+          stats: true,
+        },
+        orderBy: {
+          positionId: 'asc',
+        },
+      },
+    },
+    where: { userId: userId },
   });
 };

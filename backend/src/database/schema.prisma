@@ -24,15 +24,16 @@ model Role {
 }
 
 model User {
-  id        String    @id
-  username  String    @unique
+  id        String     @id
+  username  String     @unique
   password  String
   profile   Profile?
-  role      Role      @relation(fields: [roleId], references: [id])
+  role      Role       @relation(fields: [roleId], references: [id])
   roleId    Int
   sessions  Session[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userTeam  UserTeam[]
 }
 
 model Session {
@@ -89,9 +90,13 @@ model Player {
   marketValue      Decimal
   playerStatus     String
 
-  teamId      Int
-  team        Team   @relation(fields: [teamId], references: [id])
-  playerStats Stat[]
+  stats      Stat[]    @relation(name: "stats")
+  teamId     Int
+  team       Team      @relation(fields: [teamId], references: [id])
+  userTeamId Int?
+  userTeam   UserTeam? @relation(fields: [userTeamId], references: [id])
+  headlineId Int?
+  headline   Headline?
 }
 
 model Stat {
@@ -101,8 +106,8 @@ model Stat {
   totalPoints        Int
   isInIdealFormation Boolean @default(false)
 
-  Player   Player? @relation(fields: [playerId], references: [id])
   playerId Int?
+  player   Player? @relation(name: "stats", fields: [playerId], references: [id])
 }
 
 model Match {
@@ -114,4 +119,26 @@ model Match {
   score     String
   awayTeam  String
   notes     String
+}
+
+model UserTeam {
+  id        Int    @id @default(autoincrement())
+  formation String @default("4-4-2")
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  players  Player[]
+  headline Headline[]
+}
+
+model Headline {
+  id    Int @id @default(autoincrement())
+  order Int
+
+  playerId Int    @unique
+  player   Player @relation(fields: [playerId], references: [id])
+
+  userTeamId Int
+  userTeam   UserTeam @relation(fields: [userTeamId], references: [id])
 }

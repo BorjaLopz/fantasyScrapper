@@ -31,6 +31,7 @@ export const authenticate = async (
   }
 
   const authorizationHeader = req.get('authorization');
+  console.log("authorizationHeader", authorizationHeader)
 
   const cookieToken = lucia.readSessionCookie(req.headers.cookie ?? '');
   const bearerToken = lucia.readBearerToken(authorizationHeader ?? '');

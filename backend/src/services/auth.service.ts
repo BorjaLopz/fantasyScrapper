@@ -1,5 +1,5 @@
 import { lucia } from '@/config/lucia';
-import { findUserByUsername } from '@/repositories/use.repository';
+import { findUserByUsername } from '@/repositories/user.repository';
 import { Argon2id } from 'oslo/password';
 
 export const validateUserCredentials = async (

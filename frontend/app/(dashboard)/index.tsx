@@ -12,7 +12,6 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 export default function HomeScreen() {
   const matchdaysRef = useRef<HTMLDivElement | null>(null);
   const [matchday, setMatchday] = useState<number | null>(null);
-  const { token, isLoading } = useAuthSession();
   const {
     data: matches,
     isLoading: matchesLoading,
@@ -45,16 +44,11 @@ export default function HomeScreen() {
   });
 
   if (
-    isLoading ||
     matchesLoading ||
     currentMatchdayLoading ||
     allMatchdaysLoading
   ) {
     return <span className="loading loading-spinner loading-md"></span>;
-  }
-
-  if (token?.current === "") {
-    return <Redirect href="/login" />;
   }
 
   return (
