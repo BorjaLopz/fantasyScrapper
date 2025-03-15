@@ -13,9 +13,9 @@ import { logger } from '@/config/pino';
 import { swaggerSpec } from '@/config/swagger';
 
 import router from './routes';
-import { authenticate } from './middlewares/authMiddleware';
-import { handleError } from './middlewares/errorHandlerMiddleware';
-import { logError } from './middlewares/errorLoggerMiddleware';
+import { authenticate } from './middlewares/auth.middleware';
+import { handleError } from './middlewares/error-handler.middleware';
+import { logError } from './middlewares/error-logger.middleware';
 import { REQUEST_STATUSES } from './constants';
 
 const app: Express = express();

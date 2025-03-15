@@ -5,7 +5,7 @@ import { ENV } from '@/config/environment';
 
 interface DatabaseUser {
   id: string;
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -19,7 +19,7 @@ export const lucia = new Lucia(adapter, {
   },
   getUserAttributes: (attributes) => {
     return {
-      email: attributes.email,
+      username: attributes.username,
     };
   },
 });

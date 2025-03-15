@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
-const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
+// const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
+const envFile = `.env`;
 
 dotenv.config({ path: envFile });
 

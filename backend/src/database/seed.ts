@@ -1,7 +1,7 @@
 import { parseArgs } from 'node:util';
-import { userSeeder } from './seeders/userSeeder';
 import { PrismaClient } from '@prisma/client';
-import { roleSeeder } from './seeders/roleSeeder';
+import { roleSeeder } from './seeders/role.seeder';
+import { userSeeder } from './seeders/user.seeder';
 
 interface ParseArgsOptionConfig {
   type: 'string' | 'boolean';
