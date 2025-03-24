@@ -19,4 +19,5 @@ export type Player = {
   team: Team;
   userTeamId: number;
   headlineId: number;
+  positionName: string
 };

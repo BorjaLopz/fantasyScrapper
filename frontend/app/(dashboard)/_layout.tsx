@@ -2,8 +2,9 @@ import { Redirect, Tabs } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
 
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useAuthSession } from "@/providers/AuthProvider";
+import { Icon } from "@/components/ui/icon";
+import { Home } from "lucide-react-native";
 
 export default function TabLayout() {
   const { token, isLoading } = useAuthSession();
@@ -32,26 +33,25 @@ export default function TabLayout() {
         }),
       }}
     >
-      <div className="bg-gray-700">
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Inicio",
-            tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="my-team"
-          options={{
-            title: "Mi equipo",
-            tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="people.fill" color={color} />
-            ),
-          }}
-        />
-      </div>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Inicio",
+          tabBarActiveTintColor: "bg-primary-500",
+          tabBarIcon: () => (
+            <Icon as={Home} className="size-12" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="my-team"
+        options={{
+          title: "Mi equipo",
+          tabBarIcon: () => (
+            <Icon as={Home} className="size-12" />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

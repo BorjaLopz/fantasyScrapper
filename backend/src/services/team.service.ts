@@ -22,25 +22,108 @@ export const getTeamByIdService = async (id: string) => {
 };
 
 export const getTeamByUserIdService = async (userId: string) => {
-  return await findTeamByUserId(userId);
+  const data = await findTeamByUserId(userId)
+  if (data.players === undefined || data.players === null || data.players.length === 0) {
+    await createUserTeamByUserIdService(userId)
+  }
+
+  return data;
 };
 
 export const createUserTeamByUserIdService = async (userId: string) => {
   let user = await findUserById(userId);
-  if (!(await findTeamByUserId(userId))?.id)
+  if (!(await findTeamByUserId(userId))?.id) {
+    const players = await generateUserTeam()
     await prisma.userTeam.create({
       data: {
         user: {
           connect: { username: user?.username },
         },
         players: {
-          connect: await generateUserTeam(),
+          connect: players,
         },
       },
     });
 
+    const gk = players.find(player => player.positionId === 1)!
+    await prisma.player.update({
+      data: {
+        positionName: "GK",
+      },
+      where: { id: gk.id }
+    })
+
+    const df = players.filter(player => player.positionId === 2)
+    await prisma.player.update({
+      data: {
+        positionName: "CB"
+      },
+      where: { id: df[0].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "CB"
+      },
+      where: { id: df[1].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "RB"
+      },
+      where: { id: df[2].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "LB"
+      },
+      where: { id: df[3].id }
+    })
+
+    const md = players.filter(player => player.positionId === 3)
+    await prisma.player.update({
+      data: {
+        positionName: "CM"
+      },
+      where: { id: md[0].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "CM"
+      },
+      where: { id: md[1].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "CM"
+      },
+      where: { id: md[2].id }
+    })
+
+    const st = players.filter(player => player.positionId === 4)
+    await prisma.player.update({
+      data: {
+        positionName: "RW"
+      },
+      where: { id: st[0].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "LW"
+      },
+      where: { id: st[1].id }
+    })
+    await prisma.player.update({
+      data: {
+        positionName: "ST"
+      },
+      where: { id: st[2].id }
+    })
+
+  }
+
   return await findTeamByUserId(userId);
 };
+
 
 const generateUserTeam = async () => {
   const result: Player[] = [];
@@ -56,9 +139,10 @@ const generateUserTeam = async () => {
     }
   });
 
-  // TODO: add market here
+  // TODO: add market to exclude here
   const allPlayers = await prisma.player.findMany({
     where: {
+      playerStatus: { not: 'out_of_league' },
       fantasyPlayerId: {
         notIn: unselectablePlayers,
       },

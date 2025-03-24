@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 720 1150"
+   width="496.06"
+   height="779.53"
+   version="1.1"
+   id="svg18"
+   sodipodi:docname="football_pitch_mobile.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs18" />
+  <sodipodi:namedview
+     id="namedview18"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.25"
+     inkscape:cx="-488"
+     inkscape:cy="-334"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g18" />
+  <g
+     transform="matrix(0 1 -1 0 720 -0)"
+     id="g18">
+    <path
+       d="M 0,-5.9070044 H 1150 V 725.89904 H 0 Z"
+       fill="#008000"
+       id="path1"
+       style="stroke-width:1.00817" />
+    <path
+       d="m575 20h-525v680h1050v-680h-525v680z"
+       fill="#008000"
+       stroke="#fff"
+       stroke-width="2"
+       id="path2"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m666.5 360a91.5 91.5 0 1 0 -183 0 91.5 91.5 0 1 0 183 0"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path3"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m577 360a2 2 0 1 0 -4 0 2 2 0 1 0 4 0"
+       fill="#fff"
+       stroke="#fff"
+       id="path4"
+       style="stroke-width:7.37623925;stroke-dasharray:none" />
+    <path
+       d="m162 360a2 2 0 1 0 -4 0 2 2 0 1 0 4 0"
+       fill="#fff"
+       stroke="#fff"
+       id="path5"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m992 360a2 2 0 1 0 -4 0 2 2 0 1 0 4 0"
+       fill="#fff"
+       stroke="#fff"
+       id="path6"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m50 324.4h-10v72.2h10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path7"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m1100 324.4h10v72.2h-10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path8"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m50 269.4h55v182.2h-55z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path9"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m1100 269.4h-55v182.2h55z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path10"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m50 159.4h165v402.2h-165z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path11"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m1100 159.4h-165v402.2h165z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path12"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m215 286.88a91.5 91.5 0 0 1 0 146.25z"
+       fill="#008000"
+       stroke="#fff"
+       stroke-width="2"
+       id="path13"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m935 286.88a91.5 91.5 0 0 0 0 146.25z"
+       fill="#008000"
+       stroke="#fff"
+       stroke-width="2"
+       id="path14"
+       style="stroke-width:5.9009914;stroke-dasharray:none" />
+    <path
+       d="m50,30a10,10 0 0,0 10-10h-10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path15"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m60,700a10,10 0 0,0 -10-10v10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path16"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m1100 690a10 10 0 0 0 -10 10h10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path17"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+    <path
+       d="m1090 20a10 10 0 0 0 10 10v-10z"
+       fill="none"
+       stroke="#fff"
+       stroke-width="2"
+       id="path18"
+       style="stroke-width:4.42574355;stroke-dasharray:none" />
+  </g>
+</svg>

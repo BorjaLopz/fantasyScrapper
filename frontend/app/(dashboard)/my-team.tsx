@@ -1,3 +1,4 @@
+import SquadBuilder from "@/components/field/field.template";
 import { PlayerCard } from "@/components/players/player-card";
 import { Grid, GridItem } from "@/components/ui/grid";
 import { Heading } from "@/components/ui/heading";
@@ -7,7 +8,7 @@ import {
 } from "@/services/my-team.service";
 import { useUserStore } from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function MyTeam() {
   const [activeTab, setActiveTab] = useState<"line-up" | "players" | "points">("line-up")
@@ -23,30 +24,31 @@ export default function MyTeam() {
     queryFn: async () => await getTeamByUserId(user.id),
     enabled: !!user.id,
   });
-  const {
-    mutate,
-    isError: creatingError,
-    isPending: creatingPending,
-    isSuccess,
-  } = useMutation({
-    mutationFn: async () => createTeamByUserId(user.id),
-  });
+  // const {
+  //   mutate,
+  //   isError: creatingError,
+  //   isPending: creatingPending,
+  //   isSuccess,
+  // } = useMutation({
+  //   mutationFn: async () => createTeamByUserId(user.id),
+  // });
 
-  if (userTeamLoading || creatingPending) {
+  if (userTeamLoading) {
     return <span className="loading loading-spinner loading-md"></span>;
   }
 
-  if (isFetched && userTeam && userTeam.data === null) {
-    mutate();
+  // if (isFetched && userTeam && userTeam.data?.players === undefined) {
+  //   mutate();
+  //   console.log("test")
 
-    if (!creatingPending && isSuccess) {
-      queryClient.invalidateQueries({ queryKey: ["user-team"] });
-    }
-  }
+  //   if (!creatingPending && isSuccess) {
+  //     queryClient.invalidateQueries({ queryKey: ["user-team"] });
+  //   }
+  // }
 
   return (
     <div className="flex flex-col text-typography-0 bg-background-900 w-full h-full">
-      {userTeamError && creatingError && (
+      {userTeamError && (
         <div role="alert" className="alert alert-error alert-outline">
           <span>Oops! Algo ha ido mal.</span>
         </div>
@@ -105,7 +107,7 @@ export default function MyTeam() {
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start">
             <span className="uppercase font-bold">Fichas</span>
-            <span>{userTeam?.data.players.length}/24</span>
+            <span>{userTeam?.data?.players?.length}/24</span>
           </div>
 
           <div className="flex flex-col items-end">
@@ -114,9 +116,17 @@ export default function MyTeam() {
           </div>
         </div>
 
+        {/* LINE UP */}
+        {activeTab === "line-up" && (
+          <div className="flex flex-col gap-2 w-full h-full overflow-auto">
+            <SquadBuilder players={userTeam?.data.players || []} />
+          </div>
+        )}
+
+        {/* MY TEAM PLAYERS */}
         {activeTab === "players" && (
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
-            {userTeam?.data.players.map((player, index) => {
+            {userTeam?.data?.players?.map((player, index) => {
               return <PlayerCard key={index} player={player} />;
             })}
           </div>

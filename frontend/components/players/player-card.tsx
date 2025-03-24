@@ -1,13 +1,13 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
+import { Icon } from "@/components/ui/icon";
+import { Image } from "@/components/ui/image";
 import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
 import { Text } from "@/components/ui/text";
 import { Player } from "@/types/player.type";
-import { CircleAlert, CircleCheck, CircleHelp, GlobeIcon, PlayIcon, SettingsIcon } from 'lucide-react-native';
-import React, { useEffect } from "react";
-import { AddIcon, Icon } from "@/components/ui/icon";
-import { Image } from "@/components/ui/image";
+import { CircleAlert, CircleCheck, CircleHelp } from 'lucide-react-native';
+import React from "react";
 import PlayerPositionBadge from "./position-badge";
 
 interface Props {
@@ -15,11 +15,6 @@ interface Props {
 }
 
 export function PlayerCard({ player }: Props) {
-
-  useEffect(() => {
-    console.log("player", player)
-  })
-
   if (player === undefined) return (
     <div>Loading...</div>
   )

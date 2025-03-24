@@ -1,0 +1,99 @@
+.squad-builder-tailwind #squad-builder,
+.player-card {
+  text-align: center;
+  font-family: "Bebas Neue";
+}
+
+.squad-builder-tailwind #pitch-content * {
+  border: none;
+}
+
+
+.squad-builder-tailwind .player-block h5 {
+  letter-spacing: 0.055em;
+}
+
+.squad-builder-tailwind .modal-title {
+  font-size: 1.5em;
+  font-weight: 900;
+  text-shadow: 5px 7px 14px rgba(0, 0, 0, 0.5);
+}
+
+.squad-builder-tailwind .player-shirt {
+  background: linear-gradient(to top, red 0%, rgba(255, 0, 0, 0) 100%);
+  box-shadow: 12px 22px 15px rgba(238, 1, 1, 0.3);
+  border-radius: 25px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.squad-builder-tailwind .player-shirt:hover {
+  box-shadow: 10px 20px 25px 4px rgb(255, 0, 0);
+}
+
+.squad-builder-tailwind .player-number {
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.squad-builder-tailwind .player-name {
+  padding: 5px;
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: bold;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: black;
+  box-shadow: 0px 5px 20px 5px rgb(0, 0, 0);
+  border-radius: 5px;
+}
+
+.squad-builder-tailwind .pickable-player-card {
+  color: #f70000;
+}
+
+.squad-builder-tailwind .hide-on-capture {
+  display: none;
+}
+
+.squad-builder-tailwind #bench-content {
+  background-color: rgb(255, 254, 254);
+}
+
+[data-testid="modal-overlay"] {
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  /* Horizontally center */
+  align-items: center;
+  /* Vertically center */
+  height: 100vh;
+  /* Full viewport height */
+}
+
+.custom-radio:checked {
+  background-color: rgb(16, 104, 255) !important;
+}
+
+.custom-radio {
+  background-color: white !important;
+}
+
+.custom-radio {
+  border-color: rgb(197, 197, 197) !important;
+}
+
+.squad-builder-custom-select-body {
+  box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.3);
+}
+
+.squad-builder-custom-select-item,
+.squad-builder-select-trigger {
+  cursor: pointer;
+}
+
+.squad-builder-custom-select-item:hover {
+  box-shadow: 4px 5px 20px rgb(132, 0, 255);
+  background-color: rgb(96, 1, 185);
+}
