@@ -1,3 +1,5 @@
+import { Team } from "./team.type";
+
 export type Player = {
   id: number;
   fantasyPlayerId: string;
@@ -14,6 +16,7 @@ export type Player = {
   marketValue: string;
   playerStatus: string;
   teamId: number;
+  team: Team;
   userTeamId: number;
   headlineId: number;
 };

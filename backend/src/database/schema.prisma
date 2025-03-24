@@ -89,6 +89,7 @@ model Player {
   position         String
   marketValue      Decimal
   playerStatus     String
+  clause           String  @default("")
 
   stats      Stat[]    @relation(name: "stats")
   teamId     Int

@@ -1,4 +1,9 @@
+import { API_URL } from "@/constants/api";
+import { useUserStore } from "@/stores/user.store";
+import { ApiResponse } from "@/types/api-response.type";
+import { User } from "@/types/user.type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { router } from "expo-router";
 import {
   createContext,
@@ -10,11 +15,6 @@ import {
   useRef,
   useState,
 } from "react";
-import axios from "axios";
-import { API_URL } from "@/constants/Api";
-import { ApiResponse } from "@/types/api-response.type";
-import { User } from "@/types/user.type";
-import { useUserStore } from "@/stores/user.store";
 
 const AuthContext = createContext<{
   signIn: (username: string, password: string) => void;
@@ -48,35 +48,39 @@ export default function AuthProvider({
       tokenRef.current = token || "";
 
       if ((!user || Object.keys(user).length === 0) && token) {
-        const result = await axios.get<
-          ApiResponse<{
-            user: {
-              id: string;
-              username: string;
-              profile: {
-                id: number;
-                firstName: string;
-                lastName: string;
-                avatarUrl: string;
+        try {
+          const result = await axios.get<
+            ApiResponse<{
+              user: {
+                id: string;
+                username: string;
+                profile: {
+                  id: number;
+                  firstName: string;
+                  lastName: string;
+                  avatarUrl: string;
+                };
+                role: {
+                  id: number;
+                  name: string;
+                };
               };
-              role: {
-                id: number;
-                name: string;
-              };
-            };
-          }>
-        >(`${API_URL}/auth/session`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("result", result.data.data.user);
-        setUser({
-          id: result.data.data.user.id,
-          username: result.data.data.user.username,
-          role: result.data.data.user.role,
-          profile: result.data.data.user.profile,
-        });
+            }>
+          >(`${API_URL}/auth/session`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("result", result.data.data.user);
+          setUser({
+            id: result.data.data.user.id,
+            username: result.data.data.user.username,
+            role: result.data.data.user.role,
+            profile: result.data.data.user.profile,
+          });
+        } catch (error) {
+          console.log("ERROR", error);
+        }
       }
 
       setIsLoading(false);

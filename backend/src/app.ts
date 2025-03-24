@@ -31,7 +31,8 @@ app.use(compression());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  // limit: 100,
+  limit: 10000,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   handler: (_req, res) =>

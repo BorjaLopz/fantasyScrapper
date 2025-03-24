@@ -37,12 +37,14 @@ export const findTeamById = async (id: string) => {
 };
 
 export const findTeamByUserId = async (userId: string) => {
-  return await prisma.userTeam.findFirst({
+  let teamValue = 0;
+  const players = await prisma.userTeam.findFirst({
     include: {
       headline: true,
       players: {
         include: {
           stats: true,
+          team: true
         },
         orderBy: {
           positionId: 'asc',
@@ -51,4 +53,8 @@ export const findTeamByUserId = async (userId: string) => {
     },
     where: { userId: userId },
   });
+
+  players?.players.forEach(player => teamValue += player.marketValue.toNumber())
+
+  return { ...players, teamValue: teamValue }
 };
