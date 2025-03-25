@@ -20,10 +20,8 @@ export default function PlayerSelectModal({ playerSelectModalOpen, setPlayerSele
   // let suitablePlayers = availablePlayers.filter((player: any) => (player.positionType === currentPositionType ||
   //   player["alternativePositions"].split(/[,;\/\s]+/).includes(currentPositionType)) &&
   //   isSelected(selectedPlayers, player) === false);
-  // let suitablePlayers = availablePlayers.filter((player: Player) => (player.position.toLowerCase() === currentPositionType &&
-  //   isSelected(selectedPlayers, player) === false));
-  let suitablePlayers = availablePlayers.filter((player: Player) => (player.position.toLowerCase() === currentPositionType))
-  console.log("suitablePlayers", suitablePlayers)
+  let suitablePlayers = availablePlayers.filter((player: Player) => (player.position.toLowerCase() === currentPositionType &&
+    isSelected(selectedPlayers, player) === false));
 
   return (
     <>

@@ -8,7 +8,7 @@ type Props = {
 
 export default function SquadBuilder({ players }: Props) {
   return (
-    <div className="squad-builder-tailwind">
+    <div className="flex w-full h-full">
       <App players={players} />
     </div>
   )

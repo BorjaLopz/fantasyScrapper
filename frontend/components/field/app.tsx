@@ -26,7 +26,7 @@ function App({ players }: Props) {
   const [availablePlayers, setAvailablePlayers] = useState([...players]) // All of the available players that user can add
 
   const [selectedPosition, setSelectedPosition] = useState<number | null>(null) // The current position the user is picking (from the modal) which player to add
-  const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([...players]) // Keeping track of the selected player by the user (a.k.a. members of the starting XI)
+  const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([...players].filter(player => player.positionName !== "")) // Keeping track of the selected player by the user (a.k.a. members of the starting XI)
   const [selectedPlayerFromBench, setSelectedPlayerFromBench] = useState<any>(null) // The player the user selected from the bench to add to the squad
   const [isToastOpen, setIsToastOpen] = useState(false) // Toast that showing the player that we want add from the bench to the startign XI (selected player)
 
@@ -53,7 +53,7 @@ function App({ players }: Props) {
 
   const handlePositionClick = (positionType: any, index: number) => { // Handle clicking on a player position on the pitch
     setCurrentPositionType(positionType); // Setting the type of the position
-    // setSelectedPosition(index); // Setting the id(the exact position) to know where to add
+    setSelectedPosition(index); // Setting the id(the exact position) to know where to add
     setPlayerSelectModalOpen(true); // Opening the modal
     // if (selectedPlayerFromBench === null) // If user want to add player from the the modal (not from the bench)
     // {
@@ -104,7 +104,7 @@ function App({ players }: Props) {
   }, [])
 
   return (
-    <div id="">
+    <div className='w-full h-full'>
       <Pitch
         renderPositions={() => renderPositions(playerPositions, selectedPlayers, selectedPlayerFromBench, removePlayerFromPitch, screenWidth, handlePositionClick)}
         renderFormationSelector={() => renderFormationSelector(handleFormationChange, Object.keys(formationsData))}

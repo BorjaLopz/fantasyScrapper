@@ -63,18 +63,75 @@ export default function PositionOnPitch({ selectedPlayerFromBench, removePlayerF
           />
       } */}
 
-      <div>
-        <Card className="rounded-lg bg-primary-600 w-[6.25rem]">
+      <div className="relative w-20 h-24 rounded-lg shadow overflow-hidden">
+        {/* Imagen del jugador */}
+        {playerOnPosition.image && <Image
+          source={playerOnPosition.image}
+          className="absolute h-[4em] w-full !p-0 z-10"
+          alt="image"
+        />}
+
+        {/* Número del jugador */}
+        {playerOnPosition.weekPoints && (
+          <div className="absolute -top-9 -left-1 rotate-45 bg-green-500 text-white font-bold text-lg rounded-lg w-8 h-full flex items-center justify-center">
+            <span className="-rotate-[45deg]">{playerOnPosition.weekPoints}</span>
+          </div>
+        )}
+
+        {/* Logo del patrocinador (opcional) */}
+        {playerOnPosition.team.badgeColor && (
+          <img
+            src={playerOnPosition.team.badgeColor}
+            alt="Sponsor"
+            className="absolute bottom-18 -right-2 w-8 h-8 rounded-full"
+          />
+        )}
+
+        {/* Nombre del jugador */}
+        <div className="absolute bottom-0 left-0 w-full bg-white p-1 z-20">
+          <p className="text-sm font-semibold text-center truncate text-typography-950 w-full">{playerOnPosition.nickname}</p>
+        </div>
+
+        {/* Checkmark (opcional) */}
+        {/* <div className="absolute bottom-2 left-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div> */}
+      </div>
+
+      {/* <div className="flex flex-col rounded-lg cursor-pointer p-1 w-20">
+        <Image
+          source={playerOnPosition.image}
+          className="h-[4em] w-full !p-0"
+          alt="image"
+        />
+        <div className="flex bg-background-0 text-typography-950 w-full">
+          <span className="truncate w-full">{playerOnPosition.name}</span>
+        </div>
+      </div> */}
+
+      {/* <Card className="rounded-lg p-0 bg-primary-600 w-[5.25rem]">
           <Image
             source={playerOnPosition.image}
-            className="h-[4em] w-full rounded-md aspect-[263/240]"
+            className="h-[4em] w-full !p-0"
             alt="image"
           />
           <Text className="text-typography-0 !truncate w-full">
             {playerOnPosition.nickname}
           </Text>
-        </Card>
-      </div>
+        </Card> */}
 
       {/* {
         playerOnPosition["name"].length <= 20 ?

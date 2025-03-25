@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image } from 'react-native';
+// import { Image } from 'react-native';
+import { Image } from "@/components/ui/image"
 
 export default function Pitch({ renderPositions, renderFormationSelector, availablePlayers, selectedPlayers, selectedPlayerFromBench,
   setSelectedPlayerFromBench, isToastOpen, setIsToastOpen }: any) {
@@ -27,12 +28,13 @@ export default function Pitch({ renderPositions, renderFormationSelector, availa
         </div>
       </div >
 
-      <div className="w-full xl:p-4 p-0">
-        <div className="flex gap-0 no-gap items-start justify-center w-full">
-          <div className="flex items-center justify-center mt-1">
-            <div className="flex justify-center w-full">
-              <div className="flex justify-center relative w-full">
-                <Image source={require("@/assets/images/football_pitch_mobile.svg")} alt="Soccer Pitch" className="block xl:hidden" />
+      <div className="w-full h-full xl:p-4 p-0">
+        <div className="flex gap-0 no-gap items-start justify-center w-full h-full">
+          <div className="flex items-center justify-center mt-1 w-full h-full">
+            <div className="flex justify-center w-full h-full">
+              <div className="flex justify-center relative w-full h-full">
+                <Image source={require("@/assets/images/football_pitch.jpg")} alt="Soccer Pitch" className="block xl:hidden !w-full !h-full" size="lg" />
+                {/* <Image source={require("@/assets/images/football_pitch_mobile.svg")} alt="Soccer Pitch" className="block xl:hidden !w-full !h-full" size="lg" /> */}
                 <Image source={require("@/assets/images/football_pitch_cropped.png")} alt="Soccer Pitch" className="hidden xl:block rounded-md h-screen object-cover p-2" />
                 {renderPositions()}
               </div>
