@@ -1,4 +1,8 @@
-import { getPlayerByIdService, getPlayersService } from '@/services/player.service';
+import {
+  getPlayerByIdService,
+  getPlayersService,
+  updatePlayersPositionService,
+} from '@/services/player.service';
 import { TPlayerQueryFilters } from '@/types/player.type';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -35,7 +39,27 @@ export const getPlayerController = async (
       data: await getPlayerByIdService(playerId),
     });
   } catch (err) {
-    console.log("err", err)
+    console.log('err', err);
+    return next(err);
+  }
+};
+
+export const updatePlayerPositionNameController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const players = req.body;
+    console.log('players', req.body);
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Players updated successfully.',
+      data: await updatePlayersPositionService(players),
+    });
+  } catch (err) {
+    console.log('err', err);
     return next(err);
   }
 };

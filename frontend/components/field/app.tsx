@@ -6,6 +6,8 @@ import InformationModal from "./information.modal";
 import { availableFormations } from "./formations";
 import { DISPLAY_NUMBER } from "./utils";
 import { Player } from "@/types/player.type";
+import { useMutation } from "@tanstack/react-query";
+import { updatePlayersPosisitionName } from "@/services/my-team.service";
 
 type Props = {
   players: Player[];
@@ -29,11 +31,19 @@ function App({ players }: Props) {
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>(
     [...players].filter((player) => player.positionName !== "")
   ); // Keeping track of the selected player by the user (a.k.a. members of the starting XI)
-  const [selectedPlayerFromBench, setSelectedPlayerFromBench] =
-    useState<any>(null); // The player the user selected from the bench to add to the squad
+  const [playersToUpdate, setPlayersToUpdate] = useState<Player[]>([]);
 
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
+
+  const {
+    mutateAsync,
+    isError: creatingError,
+    isPending: creatingPending,
+    isSuccess,
+  } = useMutation({
+    mutationFn: async () => updatePlayersPosisitionName(playersToUpdate),
+  });
 
   const updateDimensions = () => {
     setScreenWidth(window.innerWidth);
@@ -56,16 +66,29 @@ function App({ players }: Props) {
     const index = oldSelectedPlayers.findIndex(
       (pl) => pl.name.toUpperCase() === selectedPlayer.name.toUpperCase()
     );
+    const oldPlayer = oldSelectedPlayers[index];
     if (index !== -1) {
       oldSelectedPlayers[index] = {
         ...player,
         positionName: selectedPosition!,
+        positionNameIndex: oldPlayer.positionNameIndex,
       };
     }
-    console.log("oldSelectedPlayers", oldSelectedPlayers);
-    console.log("player payload", player);
+    setPlayersToUpdate((old) => [
+      ...old,
+      { ...oldPlayer, positionName: "", positionNameIndex: 0 },
+    ]);
+    setPlayersToUpdate((old) => [
+      ...old,
+      {
+        ...player,
+        positionName: selectedPosition!,
+        positionNameIndex: oldPlayer.positionNameIndex,
+      },
+    ]);
     setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
-    console.log("selectedPlayers", selectedPlayers);
+    console.log("playersToUpdate", playersToUpdate);
+    mutateAsync();
     // setSelectedPosition(null) // Resetting the current selected position to null (Player added successfully to pitch)
   };
 
@@ -139,7 +162,6 @@ function App({ players }: Props) {
           renderPositions(
             playerPositions,
             selectedPlayers,
-            selectedPlayerFromBench,
             removePlayerFromPitch,
             screenWidth,
             handlePositionClick

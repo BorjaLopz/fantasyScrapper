@@ -1,4 +1,9 @@
-import { countPlayers, findPlayerById, findPlayers } from '@/repositories/player.repository';
+import {
+  countPlayers,
+  findPlayerById,
+  findPlayers,
+  updatePlayerPositionNameByIdRepository,
+} from '@/repositories/player.repository';
 import { TPlayerQueryFilters } from '@/types/player.type';
 
 export const getPlayersService = async (filters: TPlayerQueryFilters) => {
@@ -9,6 +14,21 @@ export const getPlayersService = async (filters: TPlayerQueryFilters) => {
 };
 
 export const getPlayerByIdService = async (id: string) => {
-  console.log("llego service")
   return await findPlayerById(id);
+};
+
+export const updatePlayersPositionService = async (
+  players: {
+    id: number;
+    positionName: string;
+    positionNameIndex: number;
+  }[],
+) => {
+  for await (const player of players) {
+    await updatePlayerPositionNameByIdRepository(
+      player.id,
+      player.positionName,
+      player.positionNameIndex,
+    );
+  }
 };

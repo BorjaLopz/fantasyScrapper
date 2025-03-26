@@ -3,4 +3,4 @@ select *
 from "Player"
 where "positionName" != '';
 update "Player"
-set "positionName" = '';
+set "positionName" = '', "positionNameIndex" = 0;

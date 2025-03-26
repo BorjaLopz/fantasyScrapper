@@ -117,7 +117,7 @@ const fetchPlayers = () => {
               totalPoints: number;
               isInIdealFormation: boolean;
             }[] = [];
-            for await (const stat of player.playerStats) {
+            for await (const stat of player.stats) {
               const statCreated = await prisma.stat.create({
                 data: {
                   totalPoints: stat.totalPoints,

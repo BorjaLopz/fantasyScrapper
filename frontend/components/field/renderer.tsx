@@ -6,7 +6,6 @@ import { Player } from "@/types/player.type";
 export function renderPositions(
   playerPositions: any,
   selectedPlayers: Player[],
-  selectedPlayerFromBench: Player,
   removePlayerFromPitch: any,
   screenWidth: any,
   handlePositionClick: any
@@ -52,7 +51,6 @@ export function renderPositions(
           }}
         >
           <PositionOnPitch
-            selectedPlayerFromBench={selectedPlayerFromBench}
             playerOnPosition={playerOnPosition}
             removePlayerFromPitch={removePlayerFromPitch}
             index={index}

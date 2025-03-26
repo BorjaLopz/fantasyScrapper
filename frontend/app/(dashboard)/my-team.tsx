@@ -12,7 +12,6 @@ import { useState } from "react";
 
 export default function MyTeam() {
   const [activeTab, setActiveTab] = useState<"line-up" | "players" | "points">("line-up")
-  const queryClient = useQueryClient();
   const { user } = useUserStore();
   const {
     data: userTeam,
