@@ -25,6 +25,7 @@ function App({ players }: Props) {
   const [availablePlayers, setAvailablePlayers] = useState([...players]); // All of the available players that user can add
 
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null); // The current position the user is picking (from the modal) which player to add
+  const [selectedPlayer, setSelectedPlayer] = useState<Player>({} as Player); // The current position the user is picking (from the modal) which player to add
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>(
     [...players].filter((player) => player.positionName !== "")
   ); // Keeping track of the selected player by the user (a.k.a. members of the starting XI)
@@ -47,20 +48,36 @@ function App({ players }: Props) {
   const addPlayerToPitch = (player: Player) => {
     //Adding a player to the pitch
     let oldSelectedPlayers = selectedPlayers;
-    oldSelectedPlayers = oldSelectedPlayers.filter(
-      (selectedPlayer) =>
-        selectedPlayer.position.toLowerCase() !== selectedPosition
-    ); // Checking if player has been alreay added to this position, if yes filter it out
-    console.log("oldSelectedPlayers", oldSelectedPlayers);
+    console.log("selectedPosition", selectedPosition);
+    // oldSelectedPlayers = oldSelectedPlayers.filter(
+    //   (spl) => spl.name.toUpperCase() !== selectedPlayer.name?.toUpperCase()
+    // ); // Checking if player has been alreay added to this position, if yes filter it out
     // playerposition = selectedPosition // Adding to the correct position
-    setSelectedPlayers([...oldSelectedPlayers, player]); // Adding to the starting XI
+    const index = oldSelectedPlayers.findIndex(
+      (pl) => pl.name.toUpperCase() === selectedPlayer.name.toUpperCase()
+    );
+    if (index !== -1) {
+      oldSelectedPlayers[index] = {
+        ...player,
+        positionName: selectedPosition!,
+      };
+    }
+    console.log("oldSelectedPlayers", oldSelectedPlayers);
+    console.log("player payload", player);
+    setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
+    console.log("selectedPlayers", selectedPlayers);
     // setSelectedPosition(null) // Resetting the current selected position to null (Player added successfully to pitch)
   };
 
-  const handlePositionClick = (positionType: any, index: number) => {
+  const handlePositionClick = (
+    positionType: any,
+    position: string,
+    player: Player
+  ) => {
     // Handle clicking on a player position on the pitch
     setCurrentPositionType(positionType); // Setting the type of the position
-    setSelectedPosition(positionType); // Setting the id(the exact position) to know where to add
+    setSelectedPosition(position); // Setting the id(the exact position) to know where to add
+    setSelectedPlayer(player); // Setting the id(the exact position) to know where to add
     setPlayerSelectModalOpen(true); // Opening the modal
     // if (selectedPlayerFromBench === null) // If user want to add player from the the modal (not from the bench)
     // {

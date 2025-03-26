@@ -44,7 +44,11 @@ export function renderPositions(
             }%`,
           }}
           onClick={() => {
-            handlePositionClick(positionType, index);
+            handlePositionClick(
+              positionType,
+              playerOnPosition?.positionName,
+              playerOnPosition
+            );
           }}
         >
           <PositionOnPitch
