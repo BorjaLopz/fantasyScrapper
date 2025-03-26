@@ -56,13 +56,7 @@ function App({ players }: Props) {
   };
 
   const addPlayerToPitch = (player: Player) => {
-    //Adding a player to the pitch
     let oldSelectedPlayers = selectedPlayers;
-    console.log("selectedPosition", selectedPosition);
-    // oldSelectedPlayers = oldSelectedPlayers.filter(
-    //   (spl) => spl.name.toUpperCase() !== selectedPlayer.name?.toUpperCase()
-    // ); // Checking if player has been alreay added to this position, if yes filter it out
-    // playerposition = selectedPosition // Adding to the correct position
     const index = oldSelectedPlayers.findIndex(
       (pl) => pl.name.toUpperCase() === selectedPlayer.name.toUpperCase()
     );
@@ -87,9 +81,7 @@ function App({ players }: Props) {
       },
     ]);
     setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
-    console.log("playersToUpdate", playersToUpdate);
     mutateAsync();
-    // setSelectedPosition(null) // Resetting the current selected position to null (Player added successfully to pitch)
   };
 
   const handlePositionClick = (
