@@ -1,99 +1,74 @@
-.squad-builder-tailwind #squad-builder,
-.player-card {
-  text-align: center;
-  font-family: "Bebas Neue";
+.main {
+  /* height: 100%; */
+  width: 100%;
 }
 
-.squad-builder-tailwind #pitch-content * {
-  border: none;
+.top {
+  margin: auto;
+  margin-top: 10px;
+  height: 20rem;
+  border: 2px solid white;
+  border-bottom: none;
+
 }
 
-
-.squad-builder-tailwind .player-block h5 {
-  letter-spacing: 0.055em;
+.outer-top {
+  border: 2px solid white;
+  width: 60%;
+  height: 100px;
+  margin: auto;
+  border-top: none;
 }
 
-.squad-builder-tailwind .modal-title {
-  font-size: 1.5em;
-  font-weight: 900;
-  text-shadow: 5px 7px 14px rgba(0, 0, 0, 0.5);
+.inner-top {
+  border: 2px solid white;
+  width: 40%;
+  height: 50px;
+  margin: auto;
+  border-top: none;
 }
 
-.squad-builder-tailwind .player-shirt {
-  background: linear-gradient(to top, red 0%, rgba(255, 0, 0, 0) 100%);
-  box-shadow: 12px 22px 15px rgba(238, 1, 1, 0.3);
-  border-radius: 25px;
-  transition: box-shadow 0.3s ease-in-out;
+.middle {
+  width: 30%;
+  height: 8rem;
+  margin: auto;
+  border: 2px solid white;
+  border-radius: 50%;
+  margin-top: -24.4rem;
 }
 
-.squad-builder-tailwind .player-shirt:hover {
-  box-shadow: 10px 20px 25px 4px rgb(255, 0, 0);
+.inner-middle {
+  width: 15px;
+  height: 15px;
+  margin: auto;
+  border-radius: 50%;
+  background-color: white;
+  margin-top: 52px;
 }
 
-.squad-builder-tailwind .player-number {
-  font-family: 'Impact', 'Arial Black', sans-serif;
-  font-weight: bold;
-  color: #FFFFFF;
-  text-align: center;
+.bottom {
+  width: 100%;
+  margin: auto;
+  margin-bottom: 10px;
+  height: 20rem;
+  border: 2px solid white;
+
 }
 
-.squad-builder-tailwind .player-name {
-  padding: 5px;
-  font-family: 'Archivo Black', sans-serif;
-  font-weight: bold;
-  letter-spacing: -0.05em;
-  text-transform: uppercase;
-  color: black;
-  box-shadow: 0px 5px 20px 5px rgb(0, 0, 0);
-  border-radius: 5px;
+.outer-bottom {
+  border: 2px solid white;
+  width: 60%;
+  height: 100px;
+  margin: auto;
+  border-bottom: none;
+  margin-top: 13.5rem;
 }
 
-.squad-builder-tailwind .pickable-player-card {
-  color: #f70000;
-}
-
-.squad-builder-tailwind .hide-on-capture {
-  display: none;
-}
-
-.squad-builder-tailwind #bench-content {
-  background-color: rgb(255, 254, 254);
-}
-
-[data-testid="modal-overlay"] {
-  z-index: 9999;
-
-  display: flex;
-  justify-content: center;
-  /* Horizontally center */
-  align-items: center;
-  /* Vertically center */
-  height: 100vh;
-  /* Full viewport height */
-}
-
-.custom-radio:checked {
-  background-color: rgb(16, 104, 255) !important;
-}
-
-.custom-radio {
-  background-color: white !important;
-}
-
-.custom-radio {
-  border-color: rgb(197, 197, 197) !important;
-}
-
-.squad-builder-custom-select-body {
-  box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.3);
-}
-
-.squad-builder-custom-select-item,
-.squad-builder-select-trigger {
-  cursor: pointer;
-}
-
-.squad-builder-custom-select-item:hover {
-  box-shadow: 4px 5px 20px rgb(132, 0, 255);
-  background-color: rgb(96, 1, 185);
+.inner-bottom {
+  border: 2px solid white;
+  width: 40%;
+  height: 50px;
+  margin: auto;
+  border-bottom: none;
+  margin-top: 3rem;
 }
