@@ -32,7 +32,12 @@ export const updatePlayersPosisition = async (players: Player[]) => {
 export const updateTeamFormation = async (teamId: number, formation: string) => {
   const response = await axios.put<ApiResponse<void>>(
     `${API_URL}/teams/formation/${teamId}`,
-    formation
+    { formation: formation },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
   );
 
   return response.data;

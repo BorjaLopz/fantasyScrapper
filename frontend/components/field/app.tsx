@@ -63,6 +63,7 @@ function App({ players, formation, teamId }: Props) {
   };
 
   const handleFormationChange = (newFormation: string) => {
+    console.log("newFormation", newFormation)
     setSelectedFormation(newFormation); // Chaning to formation
     const formation: { "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[] = formationsData[newFormation]["positions"]
     setPlayerPositions(formation); // Loading the position data
@@ -163,8 +164,6 @@ function App({ players, formation, teamId }: Props) {
       ][] = Object.entries(availableFormations);
       setFormationsData(availableFormations);
       const fmt = jsonData.find(jd => jd[0] === formation)
-      console.log("jsonData", jsonData)
-      console.log("fmt", fmt)
       setPlayerPositions(fmt?.[1].positions!);
       setSelectedFormation(formation);
     } catch (error) {
@@ -177,6 +176,7 @@ function App({ players, formation, teamId }: Props) {
 
   return (
     <div className="w-full h-full">
+      {selectedFormation}
       <Pitch
         renderPositions={() =>
           renderPositions(
@@ -188,6 +188,7 @@ function App({ players, formation, teamId }: Props) {
         }
         renderFormationSelector={() =>
           renderFormationSelector(
+            selectedFormation,
             handleFormationChange,
             Object.keys(formationsData)
           )

@@ -57,12 +57,14 @@ export function renderPositions(
 }
 
 export function renderFormationSelector(
+  currentFormation: string,
   handleFormationChange: any,
   formationsData: any
 ) {
   // rendering the formation selector when user can change the current formation
   return (
     <CustomSelect
+      currentFormation={currentFormation}
       formationsData={formationsData}
       handleFormationChange={handleFormationChange}
     />

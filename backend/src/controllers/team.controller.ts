@@ -88,7 +88,7 @@ export const updateTeamFormationController = async (
 ) => {
   try {
     const teamId = req.params.teamId;
-    const formation = req.body;
+    const formation = req.body.formation;
 
     res.status(StatusCodes.OK).json({
       status: 'success',

@@ -1,17 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Icon } from "../ui/icon";
-import { ChevronDown } from "lucide-react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, ButtonText } from "../ui/button";
+import { Menu, MenuItem } from "../ui/menu";
 
-export default function CustomSelect({ formationsData, handleFormationChange }: any) {
+export default function CustomSelect({ currentFormation, formationsData, handleFormationChange }: any) {
   const [isOpen, setIsOpen] = useState(false);
   const selectBodyRef = useRef<any>(null); // the ref "pointing" to the select's body, in order to determine if we click inside or outside of it
   const selectButtonRef = useRef<any>(null); // the ref "pointing" to the select's triggering button
-
   const [selectedFormation, setSelectedFormation] = useState(null);
-
-  const openSelectMenu = () => {
-    setIsOpen(!isOpen);
-  }
 
   const handleClickOutside = (e: any) => { // Closing the select's body if we click outside
     if (selectBodyRef.current && !selectBodyRef.current?.contains(e.target) && !selectButtonRef.current.contains(e.target)) {
@@ -52,39 +47,37 @@ export default function CustomSelect({ formationsData, handleFormationChange }: 
 
   useEffect(() => {
     if (null == selectedFormation) {
-      setSelectedFormation(formationsData[0]) // When formationData arrives we set the current formation to that
+      setSelectedFormation(currentFormation) // When formationData arrives we set the current formation to that
     }
   }, [formationsData]) // When formationData changes
 
   return (
-    <div className="custom-select-wrapper">
-      <div className="custom-select">
-        <div ref={selectButtonRef} className="bg-white squad-builder-select-trigger p-2 border border-gray-300 rounded-md shadow-lg flex items-center justify-center" onClick={openSelectMenu}>
-          <span className="text-black">{selectedFormation}</span>
-          <div className="ml-1">
-            <Icon as={ChevronDown} className="text-xl md:text-2xl text-black" />
-          </div>
-        </div>
-
-        {
-          isOpen &&
-          <div ref={selectBodyRef} className="squad-builder-custom-select-body bg-black text-white rounded-md absolute z-50">
-            <div className="p-2">
-              {Object.keys(formationsGrouped).map((key, ind) => (
-                <div key={ind}>
-                  <h4 className="text-left text-lg mb-1">{key} ABT</h4>
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-4 mx-2">
-                    {formationsGrouped[key].map((formation: any, index: number) => (
-                      <div className="squad-builder-custom-select-item bg-blue-600 rounded-sm px-2 py-1" style={{ backgroundColor: selectedFormation == formation ? "red" : "" }}
-                        onClick={handleElementClick} key={index}>{formation}</div>
-                    ))}
-                  </div>
+    <Menu
+      placement="bottom"
+      offset={5}
+      trigger={({ ...triggerProps }) => {
+        return (
+          <Button {...triggerProps}>
+            <ButtonText>{selectedFormation}</ButtonText>
+          </Button>
+        )
+      }}
+    >
+      {currentFormation}
+      {Object.keys(formationsGrouped).map((key, index) => (
+        <MenuItem key={index}>
+          <div>
+            <h4 className="text-left text-lg mb-1">{key} ABT</h4>
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-2 mx-2">
+              {formationsGrouped[key].map((formation: any, index: number) => (
+                <div onClick={handleElementClick} key={index} className="flex w-full">
+                  <span className={`${selectedFormation == formation ? 'bg-primary-500 text-typography-0' : 'bg-primary-100'} rounded-sm px-2 py-1 w-full`}>{formation}</span>
                 </div>
               ))}
             </div>
           </div>
-        }
-      </div>
-    </div>
+        </MenuItem>
+      ))}
+    </Menu>
   )
 }
