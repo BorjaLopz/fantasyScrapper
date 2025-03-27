@@ -20,10 +20,19 @@ export const createTeamByUserId = async (userId: string) => {
   return response.data;
 };
 
-export const updatePlayersPosisitionName = async (players: Player[]) => {
+export const updatePlayersPosisition = async (players: Player[]) => {
   const response = await axios.put<ApiResponse<void>>(
-    `${API_URL}/players/positionName`,
+    `${API_URL}/players/position`,
     players
+  );
+
+  return response.data;
+};
+
+export const updateTeamFormation = async (teamId: number, formation: string) => {
+  const response = await axios.put<ApiResponse<void>>(
+    `${API_URL}/teams/formation/${teamId}`,
+    formation
   );
 
   return response.data;

@@ -4,6 +4,7 @@ import {
   findTeamById,
   findTeamByUserId,
   findTeams,
+  updateTeamFormation,
 } from '@/repositories/team.repository';
 import { findUserById } from '@/repositories/user.repository';
 import { TTeamQueryFilters } from '@/types/team.type';
@@ -32,6 +33,10 @@ export const getTeamByUserIdService = async (userId: string) => {
   }
 
   return data;
+};
+
+export const updateTeamFormationService = async (teamId: number, formation: string) => {
+  return await updateTeamFormation(teamId, formation);
 };
 
 export const createUserTeamByUserIdService = async (userId: string) => {

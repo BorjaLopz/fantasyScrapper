@@ -10,6 +10,6 @@ const playerRouter = Router();
 // playerRouter.get('/', validateRequest(getListPlayersSchema), getListPlayers);
 playerRouter.get('/', getListPlayersController);
 playerRouter.get('/:playerId', getPlayerController);
-playerRouter.put('/positionName', updatePlayerPositionNameController);
+playerRouter.put('/position', updatePlayerPositionNameController);
 
 export default playerRouter;

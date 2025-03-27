@@ -3,6 +3,7 @@ import {
   getTeamByIdService,
   getTeamByUserIdService,
   getTeamsService,
+  updateTeamFormationService,
 } from '@/services/team.service';
 import { TTeamQueryFilters } from '@/types/team.type';
 import { NextFunction, Request, Response } from 'express';
@@ -74,6 +75,25 @@ export const createTeamByUserIdController = async (
       status: 'success',
       message: 'Team created successfully.',
       data: await createUserTeamByUserIdService(userId),
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const updateTeamFormationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const teamId = req.params.teamId;
+    const formation = req.body;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Team updated successfully.',
+      data: await updateTeamFormationService(Number(teamId), formation),
     });
   } catch (err) {
     return next(err);

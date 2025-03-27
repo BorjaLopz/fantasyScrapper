@@ -4,9 +4,8 @@ import CustomSelect from "./custom-select";
 import { Player } from "@/types/player.type";
 
 export function renderPositions(
-  playerPositions: any,
+  playerPositions: any[],
   selectedPlayers: Player[],
-  removePlayerFromPitch: any,
   screenWidth: any,
   handlePositionClick: any
 ) {
@@ -32,12 +31,12 @@ export function renderPositions(
           className="absolute cursor-pointer"
           style={{
             top: `${screenWidth <= 1280
-                ? position.top["mobile"] - 10
-                : position.top["desktop"]
+              ? position.top["mobile"] - 10
+              : position.top["desktop"]
               }%`,
             right: `${screenWidth <= 1280
-                ? position.right["mobile"] - 10
-                : position.right["desktop"]
+              ? position.right["mobile"] - 10
+              : position.right["desktop"]
               }%`,
           }}
           onClick={() => {
@@ -50,9 +49,6 @@ export function renderPositions(
         >
           <PositionOnPitch
             playerOnPosition={playerOnPosition}
-            removePlayerFromPitch={removePlayerFromPitch}
-            index={index}
-            position={position}
           />
         </div>
       </Fragment>

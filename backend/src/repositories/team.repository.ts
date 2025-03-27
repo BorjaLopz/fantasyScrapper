@@ -62,3 +62,12 @@ export const findTeamByUserId = async (userId: string) => {
 
   return { ...players, teamValue: teamValue };
 };
+
+export const updateTeamFormation = async (teamId: number, formation: string) => {
+  return prisma.userTeam.update({
+    data: {
+      formation: formation
+    },
+    where: { id: teamId }
+  })
+};

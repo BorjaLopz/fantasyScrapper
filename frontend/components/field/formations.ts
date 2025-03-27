@@ -4,10 +4,10 @@ export const availableFormations = {
     "positions":
       [
         { "positionType": "portero", "positionName": "GK", "top": { "mobile": 10, "desktop": 25 }, "right": { "mobile": 50, "desktop": 50 } },
-        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 36, "desktop": 37 } },
-        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 61, "desktop": 63 } },
-        { "positionType": "defensa", "positionName": "RB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 11, "desktop": 22 } },
-        { "positionType": "defensa", "positionName": "LB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 86, "desktop": 78 } },
+        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 38, "desktop": 37 } },
+        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 62, "desktop": 63 } },
+        { "positionType": "defensa", "positionName": "RB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 15, "desktop": 22 } },
+        { "positionType": "defensa", "positionName": "LB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 85, "desktop": 78 } },
         { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 50, "desktop": 63 }, "right": { "mobile": 23, "desktop": 35 } },
         { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 50, "desktop": 63 }, "right": { "mobile": 50, "desktop": 50 } },
         { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 50, "desktop": 63 }, "right": { "mobile": 77, "desktop": 65 } },
@@ -173,17 +173,17 @@ export const availableFormations = {
   {
     "positions":
       [
-        { "positionType": "portero", "positionName": "GK", "top": { "mobile": 12, "desktop": 25 }, "right": { "mobile": 50, "desktop": 50 } },
-        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 32, "desktop": 42 }, "right": { "mobile": 37, "desktop": 37 } },
-        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 32, "desktop": 42 }, "right": { "mobile": 63, "desktop": 63 } },
-        { "positionType": "defensa", "positionName": "RB", "top": { "mobile": 37, "desktop": 50 }, "right": { "mobile": 15, "desktop": 22 } },
-        { "positionType": "defensa", "positionName": "LB", "top": { "mobile": 37, "desktop": 50 }, "right": { "mobile": 85, "desktop": 78 } },
-        { "positionType": "mediocentro", "positionName": "RM", "top": { "mobile": 65, "desktop": 70 }, "right": { "mobile": 15, "desktop": 20 } },
-        { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 53, "desktop": 63 }, "right": { "mobile": 38, "desktop": 40 } },
-        { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 53, "desktop": 63 }, "right": { "mobile": 62, "desktop": 60 } },
-        { "positionType": "mediocentro", "positionName": "LM", "top": { "mobile": 65, "desktop": 70 }, "right": { "mobile": 85, "desktop": 80 } },
-        { "positionType": "delantero", "positionName": "ST", "top": { "mobile": 86, "desktop": 87 }, "right": { "mobile": 32, "desktop": 42 } },
-        { "positionType": "delantero", "positionName": "ST", "top": { "mobile": 86, "desktop": 87 }, "right": { "mobile": 68, "desktop": 58 } }
+        { "positionType": "portero", "positionName": "GK", "top": { "mobile": 10, "desktop": 25 }, "right": { "mobile": 50, "desktop": 50 } },
+        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 15, "desktop": 37 } },
+        { "positionType": "defensa", "positionName": "CB", "top": { "mobile": 30, "desktop": 42 }, "right": { "mobile": 38, "desktop": 63 } },
+        { "positionType": "defensa", "positionName": "RB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 62, "desktop": 22 } },
+        { "positionType": "defensa", "positionName": "LB", "top": { "mobile": 30, "desktop": 50 }, "right": { "mobile": 85, "desktop": 78 } },
+        { "positionType": "mediocentro", "positionName": "RM", "top": { "mobile": 50, "desktop": 70 }, "right": { "mobile": 15, "desktop": 20 } },
+        { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 50, "desktop": 63 }, "right": { "mobile": 38, "desktop": 40 } },
+        { "positionType": "mediocentro", "positionName": "CM", "top": { "mobile": 50, "desktop": 63 }, "right": { "mobile": 62, "desktop": 60 } },
+        { "positionType": "mediocentro", "positionName": "LM", "top": { "mobile": 50, "desktop": 70 }, "right": { "mobile": 85, "desktop": 80 } },
+        { "positionType": "delantero", "positionName": "ST", "top": { "mobile": 70, "desktop": 87 }, "right": { "mobile": 32, "desktop": 42 } },
+        { "positionType": "delantero", "positionName": "ST", "top": { "mobile": 70, "desktop": 87 }, "right": { "mobile": 68, "desktop": 58 } }
       ]
   },
   "4-4-2(2)":

@@ -7,16 +7,19 @@ import { availableFormations } from "./formations";
 import { DISPLAY_NUMBER } from "./utils";
 import { Player } from "@/types/player.type";
 import { useMutation } from "@tanstack/react-query";
-import { updatePlayersPosisitionName } from "@/services/my-team.service";
+import { updatePlayersPosisition, updateTeamFormation } from "@/services/my-team.service";
+import { push } from "expo-router/build/global-state/routing";
 
 type Props = {
+  teamId: number
   players: Player[];
+  formation: string
 };
 
-function App({ players }: Props) {
+function App({ players, formation, teamId }: Props) {
   const [selectedFormation, setSelectedFormation] = useState(""); // The current selected formation
   const [formationsData, setFormationsData] = useState<any>([]); // The available formations and their data
-  const [playerPositions, setPlayerPositions] = useState([]); // The positions of the palyers on the pitch (For example which position to render the GK to)
+  const [playerPositions, setPlayerPositions] = useState<{ "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[]>([]); // The positions of the palyers on the pitch (For example which position to render the GK to)
   const [playerSelectModalOpen, setPlayerSelectModalOpen] = useState(false); // Is modal open to pick player (Activate by clicking a position on the starting XI)
 
   // const [informationModalOpen, setInformationModalOpen] = useState(false); // Storing wheter the modal showing information open or closed (For example it pops up when user tries to add a GK to any other position)
@@ -37,12 +40,21 @@ function App({ players }: Props) {
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
 
   const {
-    mutateAsync,
-    isError: creatingError,
-    isPending: creatingPending,
-    isSuccess,
+    mutateAsync: mutatePlayers,
+    isError: playersError,
+    isPending: playersPending,
+    isSuccess: playersSuccess,
   } = useMutation({
-    mutationFn: async () => updatePlayersPosisitionName(playersToUpdate),
+    mutationFn: async () => updatePlayersPosisition(playersToUpdate),
+  });
+
+  const {
+    mutateAsync: mutateFormation,
+    isError: formationError,
+    isPending: formationPending,
+    isSuccess: formationSuccess,
+  } = useMutation({
+    mutationFn: async () => updateTeamFormation(teamId, selectedFormation),
   });
 
   const updateDimensions = () => {
@@ -50,9 +62,53 @@ function App({ players }: Props) {
     setScreenHeight(window.innerHeight);
   };
 
-  const handleFormationChange = (newFormation: any) => {
+  const handleFormationChange = (newFormation: string) => {
     setSelectedFormation(newFormation); // Chaning to formation
-    setPlayerPositions(formationsData[newFormation]["positions"]); // Loading the position data
+    const formation: { "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[] = formationsData[newFormation]["positions"]
+    setPlayerPositions(formation); // Loading the position data
+
+    const defenders = formation.filter(f => f.positionType === "defensa")
+    const midfielders = formation.filter(f => f.positionType === "mediocentro")
+    const attackers = formation.filter(f => f.positionType === "delantero")
+
+    const result = [selectedPlayers.find(pl => pl.positionId === 1)!]
+    const selectedDefenders = availablePlayers.filter(pl => pl.positionId === 2)
+    selectedDefenders.forEach(pl => {
+      pl.positionName = ""
+      pl.positionNameIndex = 0
+    });
+    selectedDefenders.slice(0, defenders.length).map((pl, index) => {
+      pl.positionName = defenders[index].positionName
+      pl.positionNameIndex = result.length + index
+    })
+    result.push(...selectedDefenders)
+
+    const selectedMidfielders = availablePlayers.filter(pl => pl.positionId === 3)
+    selectedMidfielders.forEach(pl => {
+      pl.positionName = ""
+      pl.positionNameIndex = 0
+    });
+    selectedMidfielders.slice(0, midfielders.length).map((pl, index) => {
+      pl.positionName = midfielders[index].positionName
+      pl.positionNameIndex = result.length + index
+    })
+    result.push(...selectedMidfielders)
+
+    const selectedAttackers = availablePlayers.filter(pl => pl.positionId === 4)
+    selectedAttackers.forEach(pl => {
+      pl.positionName = ""
+      pl.positionNameIndex = 0
+    });
+    selectedAttackers.slice(0, attackers.length).map((pl, index) => {
+      pl.positionName = attackers[index].positionName
+      pl.positionNameIndex = result.length + index
+    })
+    result.push(...selectedAttackers)
+
+    setSelectedPlayers(result)
+    setPlayersToUpdate(result)
+    mutatePlayers()
+    mutateFormation()
   };
 
   const addPlayerToPitch = (player: Player) => {
@@ -81,7 +137,7 @@ function App({ players }: Props) {
       },
     ]);
     setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
-    mutateAsync();
+    mutatePlayers();
   };
 
   const handlePositionClick = (
@@ -94,51 +150,23 @@ function App({ players }: Props) {
     setSelectedPosition(position); // Setting the id(the exact position) to know where to add
     setSelectedPlayer(player); // Setting the id(the exact position) to know where to add
     setPlayerSelectModalOpen(true); // Opening the modal
-    // if (selectedPlayerFromBench === null) // If user want to add player from the the modal (not from the bench)
-    // {
-    //   setCurrentPositionType(positionType); // Setting the type of the position
-    //   setSelectedPosition(index); // Setting the id(the exact position) to know where to add
-    //   setPlayerSelectModalOpen(true); // Opening the modal
-    // }
-    // else // If user  want to add/swap player from the bench into the squad
-    // {
-    //   addPlayerFromBenchToSquad(index, positionType)
-    // }
-  };
-
-  // const addPlayerFromBenchToSquad = (index: number, positionType: any) => { // swap Player from bench and starting XI or adding from the bench to the starting XI
-  //   setIsToastOpen(false) // Closing the toast indicating whic player we slected from the bench
-  //   if (selectedPlayerFromBench["positionType"] !== positionType &&
-  //     !selectedPlayerFromBench["alternativePositions"].split(/[,;\/\s]+/).includes(positionType)) { // If the selected player's position is not compatible with the position we want to put him in
-  //     setSelectedPlayerFromBench(null) // Setting the player selected from the bench back to null
-  //     setInformationModalOpen(true) // Open the information modal
-  //     setInformationModalType("wrong_position")
-  //     setInformationModalMessage(`${selectedPlayerFromBench["name"]},${selectedPlayerFromBench["positionType"]},${positionType}`)
-  //     return
-  //   }
-  //   let oldSelectedPlayers = selectedPlayers;
-  //   // oldSelectedPlayers = oldSelectedPlayers.filter(selectedPlayer => selectedPlayer.position.toLowerCase() !== index); // Filter out the player on the selected position
-
-  //   const currentSelectedPlayerFromBench = selectedPlayerFromBench
-  //   currentSelectedPlayerFromBench["positionOnPitch"] = index // Setting the player's position
-  //   setSelectedPlayers([...oldSelectedPlayers, currentSelectedPlayerFromBench]) // Adding player to the starting XI
-  //   setSelectedPlayerFromBench(null) // Setting the player selected from the bench back to null
-  // }
-
-  const removePlayerFromPitch = (e: any, index: number) => {
-    // Removing player from the starting XI
-    // e.stopPropagation(); // Stopping the PlayerSelectModal from opening
-    // let oldSelectedPlayers = selectedPlayers
-    // setSelectedPlayers(oldSelectedPlayers.filter(player => player.positionOnPitch !== index)) // Filter out the player from the selected players(starting XI) that on the position we want to clear
   };
 
   useEffect(() => {
     // loading the formations and setting some default values
     try {
-      let jsonData: any = Object.entries(availableFormations);
+      let jsonData: [
+        key: string,
+        {
+          positions: { "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[]
+        }
+      ][] = Object.entries(availableFormations);
       setFormationsData(availableFormations);
-      setPlayerPositions(jsonData[0][1]["positions"]);
-      setSelectedFormation(jsonData[0][0]);
+      const fmt = jsonData.find(jd => jd[0] === formation)
+      console.log("jsonData", jsonData)
+      console.log("fmt", fmt)
+      setPlayerPositions(fmt?.[1].positions!);
+      setSelectedFormation(formation);
     } catch (error) {
       console.error("Error loading formations:", error);
     }
@@ -154,7 +182,6 @@ function App({ players }: Props) {
           renderPositions(
             playerPositions,
             selectedPlayers,
-            removePlayerFromPitch,
             screenWidth,
             handlePositionClick
           )
@@ -172,8 +199,8 @@ function App({ players }: Props) {
         setPlayerSelectModalOpen={setPlayerSelectModalOpen}
         currentPositionType={currentPositionType}
         availablePlayers={availablePlayers}
-        addPlayerToPitch={addPlayerToPitch}
         selectedPlayers={selectedPlayers}
+        addPlayerToPitch={addPlayerToPitch}
       />
       {/* 
       <InformationModal

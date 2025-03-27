@@ -118,7 +118,7 @@ export default function MyTeam() {
         {/* LINE UP */}
         {activeTab === "line-up" && (
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
-            <SquadBuilder players={userTeam?.data.players || []} />
+            <SquadBuilder players={userTeam?.data.players || []} formation={userTeam?.data.formation || ""} teamId={userTeam?.data.id!} />
           </div>
         )}
 
