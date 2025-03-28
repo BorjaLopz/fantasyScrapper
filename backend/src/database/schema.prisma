@@ -99,9 +99,9 @@ model Player {
   team               Team                 @relation(fields: [teamId], references: [id])
   userTeamId         Int?
   userTeam           UserTeam?            @relation(fields: [userTeamId], references: [id])
-  MarketTransactions MarketTransactions[]
-  marketPlayers      MarketPlayers?       @relation(fields: [marketPlayersId], references: [id])
-  marketPlayersId    Int?
+  marketTransactions MarketTransactions[]
+  market             Market?              @relation(fields: [marketId], references: [id])
+  marketId           Int?
 }
 
 model Stat {
@@ -147,7 +147,7 @@ model MarketTransactions {
   userId   String
 }
 
-model MarketPlayers {
+model Market {
   id Int @id @default(autoincrement())
 
   players Player[]
