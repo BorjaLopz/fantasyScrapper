@@ -14,45 +14,40 @@ export const generateMarketData = () => {
 
 const generateMarket = async () => {
   const result: Player[] = [];
-  const allPlayers = await prisma.player.findMany({
-    where: {
-      userTeam: null,
-      playerStatus: { not: 'out_of_league' },
-    },
-    include: {
-      team: true,
-    },
-  });
-
-  const gks = allPlayers.filter((pl) => pl.positionId === 1);
-  result.push(...randomSelection<Player>(2, gks));
-
-  const dfs = allPlayers.filter((pl) => pl.positionId === 2);
-  result.push(...randomSelection<Player>(3, dfs));
-
-  const mds = allPlayers.filter((pl) => pl.positionId === 3);
-  result.push(...randomSelection<Player>(3, mds));
-
-  const sts = allPlayers.filter((pl) => pl.positionId === 4);
-  result.push(...randomSelection<Player>(3, sts));
-
-  await prisma.market.deleteMany();
-  await prisma.market.create({
-    data: {
-      players: {
-        connect: [...result],
+  try {
+    const allPlayers = await prisma.player.findMany({
+      where: {
+        userTeam: null,
+        playerStatus: { not: 'out_of_league' },
       },
-    },
-  });
-  // for await (const player of result) {
-  // await prisma.market.create({
-  //   data: {
-  //     players: {
-  //       connect: { id: player.id },
-  //     },
-  //   },
-  // });
-  // await prisma.player.
-  // }
+      include: {
+        team: true,
+      },
+    });
+
+    const gks = allPlayers.filter((pl) => pl.positionId === 1);
+    result.push(...randomSelection<Player>(2, gks));
+
+    const dfs = allPlayers.filter((pl) => pl.positionId === 2);
+    result.push(...randomSelection<Player>(3, dfs));
+
+    const mds = allPlayers.filter((pl) => pl.positionId === 3);
+    result.push(...randomSelection<Player>(3, mds));
+
+    const sts = allPlayers.filter((pl) => pl.positionId === 4);
+    result.push(...randomSelection<Player>(3, sts));
+
+    await prisma.market.deleteMany();
+    await prisma.market.create({
+      data: {
+        players: {
+          connect: [...result],
+        },
+      },
+    });
+  } catch (error) {
+    await generateMarket()
+  }
+
   logger.info('Market generated');
 };

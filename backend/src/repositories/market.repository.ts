@@ -6,8 +6,16 @@ export const getMarketPlayersRepository = async () => {
       players: {
         include: {
           team: true,
+          userTeam: {
+            select: {
+              user: true
+            }
+          }
         },
       },
     },
   });
+};
+
+export const addMarketBidRepository = async (userId: string, playerId: string) => {
 };

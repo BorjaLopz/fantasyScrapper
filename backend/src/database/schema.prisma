@@ -35,6 +35,16 @@ model User {
   updatedAt          DateTime             @updatedAt
   userTeam           UserTeam[]
   marketTransactions MarketTransactions[]
+  marketBids         MarketBids[]
+  bank               UserBank?
+}
+
+model UserBank {
+  id       String  @id @default(uuid())
+  quantity Decimal @default(35000000.00)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Session {
@@ -61,7 +71,7 @@ model Profile {
 }
 
 model Team {
-  id            Int     @id @default(autoincrement())
+  id            String  @id @default(uuid())
   fantasyTeamId String  @unique
   name          String
   shortName     String?
@@ -76,7 +86,7 @@ model Team {
 }
 
 model Player {
-  id                Int     @id @default(autoincrement())
+  id                String  @id @default(uuid())
   fantasyPlayerId   String  @unique
   name              String  @unique
   nickname          String
@@ -95,28 +105,29 @@ model Player {
   positionNameIndex Int     @default(0)
 
   stats              Stat[]               @relation(name: "stats")
-  teamId             Int
+  teamId             String
   team               Team                 @relation(fields: [teamId], references: [id])
-  userTeamId         Int?
+  userTeamId         String?
   userTeam           UserTeam?            @relation(fields: [userTeamId], references: [id])
   marketTransactions MarketTransactions[]
   market             Market?              @relation(fields: [marketId], references: [id])
-  marketId           Int?
+  marketId           String?
+  marketBids         MarketBids[]
 }
 
 model Stat {
-  id                 Int     @id @default(autoincrement())
+  id                 String  @id @default(uuid())
   stats              Json
   weekNumber         Int
   totalPoints        Int
   isInIdealFormation Boolean @default(false)
 
-  playerId Int?
+  playerId String?
   player   Player? @relation(name: "stats", fields: [playerId], references: [id])
 }
 
 model Match {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   gameWeek  Int
   date      DateTime
   startTime String
@@ -127,7 +138,7 @@ model Match {
 }
 
 model UserTeam {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   formation String @default("4-4-2")
 
   userId String
@@ -137,18 +148,29 @@ model UserTeam {
 }
 
 model MarketTransactions {
-  id     Int      @id @default(autoincrement())
+  id     String   @id @default(uuid())
   action String
   date   DateTime @default(now())
 
   player   Player @relation(fields: [playerId], references: [id])
-  playerId Int
+  playerId String
   user     User   @relation(fields: [userId], references: [id])
   userId   String
 }
 
 model Market {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   players Player[]
+}
+
+model MarketBids {
+  id  String  @id @default(uuid())
+  bid Decimal
+
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId String @unique
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }

@@ -6,18 +6,19 @@ import { Image } from "@/components/ui/image";
 import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
 import { Text } from "@/components/ui/text";
 import { Player } from "@/types/player.type";
-import { CircleAlert, CircleCheck, CircleHelp } from "lucide-react-native";
+import { CircleAlert, CircleCheck, CircleHelp, Clock, User } from "lucide-react-native";
 import React from "react";
 import PlayerPositionBadge from "./position-badge";
 
 interface Props {
   player: Player;
+  fromMarket?: boolean
 }
 
-export function PlayerCard({ player }: Props) {
+export function PlayerCard({ player, fromMarket = false }: Props) {
   if (player === undefined) return <div>Loading...</div>;
 
-  console.log("player", player);
+  console.log("player", player)
 
   return (
     <Card size="md" variant="filled" className="bg-primary-500">
@@ -40,6 +41,15 @@ export function PlayerCard({ player }: Props) {
               <PlayerPositionBadge position={player.position} />
               {player.nickname}
             </Heading>
+
+            {fromMarket && (
+              <div className="flex items-center gap-1">
+                <Icon className="text-typography-0" as={User} />
+                <span className="font-bold text-typography-0">
+                  {player.userTeam ? player.userTeam.user.username : "LA LIGA"}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center">
               {player.playerStatus === "ok" && (
@@ -64,37 +74,60 @@ export function PlayerCard({ player }: Props) {
               )}
             </div>
 
-            <span>
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-              }).format(Number(player.marketValue) || 0)}
-            </span>
+            {fromMarket ? (
+              <div className="flex items-center gap-1">
+                <Icon className="text-typography-0" as={Clock} />
+                <span className="font-bold text-typography-0">Dudoso</span>
+              </div>
+            ) : (
+              <span>
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: "EUR",
+                  maximumFractionDigits: 0,
+                  minimumFractionDigits: 0,
+                }).format(Number(player.marketValue) || 0)}
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col items-end">
           <div className="flex items-baseline justify-start gap-2">
             <Text className="uppercase font-bold text-typography-600">
-              Puntos
+              PFSY
             </Text>
             <Text className="uppercase font-bold text-typography-0" size="2xl">
               {player.points}
             </Text>
           </div>
 
-          <div className="flex items-center justify-end gap-2">
-            <Text className="uppercase font-bold text-typography-600">
-              Media
-            </Text>
-            <Text className="uppercase font-bold text-typography-0">
-              {Number(player.averagePoints || "0")
-                .toFixed(2)
-                .replace(".", ",")}
-            </Text>
-          </div>
+          {fromMarket ? (
+            <div className="flex items-center justify-end gap-2">
+              <Text className="font-bold text-typography-600">
+                Valor
+              </Text>
+              <Text className="font-bold text-typography-0">
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: "EUR",
+                  maximumFractionDigits: 0,
+                  minimumFractionDigits: 0,
+                }).format(Number(player.marketValue) || 0)}
+              </Text>
+            </div>
+          ) : (
+            <div className="flex items-center justify-end gap-2">
+              <Text className="uppercase font-bold text-typography-600">
+                Media
+              </Text>
+              <Text className="uppercase font-bold text-typography-0">
+                {Number(player.averagePoints || "0")
+                  .toFixed(2)
+                  .replace(".", ",")}
+              </Text>
+            </div>
+          )}
 
           <Menu
             placement="bottom"
@@ -114,13 +147,20 @@ export function PlayerCard({ player }: Props) {
               );
             }}
           >
-            <MenuItem key="Add account" textValue="Add account">
-              {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
-              <MenuItemLabel size="sm">Subir cláusula</MenuItemLabel>
-            </MenuItem>
+            {fromMarket ? (
+              <MenuItem key="Pujar" textValue="Pujar">
+                {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
+                <MenuItemLabel size="sm">Pujar</MenuItemLabel>
+              </MenuItem>
+            ) : (
+              <MenuItem key="Add account" textValue="Add account">
+                {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
+                <MenuItemLabel size="sm">Subir cláusula</MenuItemLabel>
+              </MenuItem>
+            )}
           </Menu>
         </div>
       </div>
-    </Card>
+    </Card >
   );
 }

@@ -3,11 +3,10 @@ import { PlayerCard } from "@/components/players/player-card";
 import { Grid, GridItem } from "@/components/ui/grid";
 import { Heading } from "@/components/ui/heading";
 import {
-  createTeamByUserId,
-  getTeamByUserId,
+  getTeamByUserId
 } from "@/services/my-team.service";
 import { useUserStore } from "@/stores/user.store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function MyTeam() {
@@ -19,33 +18,15 @@ export default function MyTeam() {
     data: userTeam,
     isFetching: userTeamLoading,
     isError: userTeamError,
-    isFetched,
   } = useQuery({
     queryKey: ["user-team"],
     queryFn: async () => await getTeamByUserId(user.id),
     enabled: !!user.id,
   });
-  // const {
-  //   mutate,
-  //   isError: creatingError,
-  //   isPending: creatingPending,
-  //   isSuccess,
-  // } = useMutation({
-  //   mutationFn: async () => createTeamByUserId(user.id),
-  // });
 
   if (userTeamLoading) {
     return <span className="loading loading-spinner loading-md"></span>;
   }
-
-  // if (isFetched && userTeam && userTeam.data?.players === undefined) {
-  //   mutate();
-  //   console.log("test")
-
-  //   if (!creatingPending && isSuccess) {
-  //     queryClient.invalidateQueries({ queryKey: ["user-team"] });
-  //   }
-  // }
 
   return (
     <div className="flex flex-col text-typography-0 bg-background-900 w-full h-full">
@@ -64,9 +45,8 @@ export default function MyTeam() {
           }}
         >
           <GridItem
-            className={`p-3 cursor-pointer ${
-              activeTab === "line-up" ? "underline underline-offset-8" : ""
-            }`}
+            className={`p-3 cursor-pointer ${activeTab === "line-up" ? "underline underline-offset-8" : ""
+              }`}
             _extra={{
               className: "col-span-1",
             }}
@@ -83,9 +63,8 @@ export default function MyTeam() {
           </GridItem>
 
           <GridItem
-            className={`p-3 cursor-pointer ${
-              activeTab === "players" ? "underline underline-offset-8" : ""
-            }`}
+            className={`p-3 cursor-pointer ${activeTab === "players" ? "underline underline-offset-8" : ""
+              }`}
             _extra={{
               className: "col-span-1",
             }}
@@ -102,9 +81,8 @@ export default function MyTeam() {
           </GridItem>
 
           <GridItem
-            className={`p-3 cursor-pointer ${
-              activeTab === "stadistics" ? "underline underline-offset-8" : ""
-            }`}
+            className={`p-3 cursor-pointer ${activeTab === "stadistics" ? "underline underline-offset-8" : ""
+              }`}
             _extra={{
               className: "col-span-1",
             }}

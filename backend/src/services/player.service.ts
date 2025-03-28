@@ -19,7 +19,7 @@ export const getPlayerByIdService = async (id: string) => {
 
 export const updatePlayersPositionService = async (
   players: {
-    id: number;
+    id: string;
     positionName: string;
     positionNameIndex: number;
   }[],

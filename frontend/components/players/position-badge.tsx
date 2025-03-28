@@ -11,7 +11,7 @@ export default function PlayerPositionBadge({ position }: Props) {
         return "muted";
       case "DEFENSA":
         return "warning";
-      case "CENTROCAMPISTA":
+      case "MEDIOCENTRO":
         return "info";
       default:
         return "success"

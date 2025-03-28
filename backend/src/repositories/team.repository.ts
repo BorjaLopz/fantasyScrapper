@@ -63,7 +63,7 @@ export const findTeamByUserId = async (userId: string) => {
 };
 
 export const updateTeamFormation = async (
-  teamId: number,
+  teamId: string,
   formation: string,
 ) => {
   return prisma.userTeam.update({

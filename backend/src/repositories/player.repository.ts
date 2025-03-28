@@ -40,7 +40,7 @@ export const findPlayerById = async (id: string) => {
 };
 
 export const updatePlayerPositionNameByIdRepository = async (
-  id: number,
+  id: string,
   positionName: string,
   positionNameIndex: number,
 ) => {

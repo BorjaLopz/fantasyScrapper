@@ -35,7 +35,7 @@ export const getTeamByUserIdService = async (userId: string) => {
   return data;
 };
 
-export const updateTeamFormationService = async (teamId: number, formation: string) => {
+export const updateTeamFormationService = async (teamId: string, formation: string) => {
   return await updateTeamFormation(teamId, formation);
 };
 

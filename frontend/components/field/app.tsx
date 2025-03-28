@@ -188,6 +188,7 @@ function App({ players, formation, teamId }: Props) {
       ][] = Object.entries(availableFormations);
       setFormationsData(availableFormations);
       const fmt = jsonData.find((jd) => jd[0] === formation);
+      console.log(fmt?.[1].positions!)
       setPlayerPositions(fmt?.[1].positions!);
       setSelectedFormation(formation);
     } catch (error) {

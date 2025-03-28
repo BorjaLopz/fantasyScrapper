@@ -1,4 +1,5 @@
 import { Team } from "./team.type";
+import { User } from "./user.type";
 
 export type Player = {
   id: number;
@@ -21,4 +22,7 @@ export type Player = {
   headlineId: number;
   positionName: string;
   positionNameIndex: number;
+  userTeam: {
+    user: User
+  }
 };
