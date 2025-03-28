@@ -24,16 +24,17 @@ model Role {
 }
 
 model User {
-  id        String     @id
-  username  String     @unique
-  password  String
-  profile   Profile?
-  role      Role       @relation(fields: [roleId], references: [id])
-  roleId    Int
-  sessions  Session[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  userTeam  UserTeam[]
+  id                 String               @id
+  username           String               @unique
+  password           String
+  profile            Profile?
+  role               Role                 @relation(fields: [roleId], references: [id])
+  roleId             Int
+  sessions           Session[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  userTeam           UserTeam[]
+  marketTransactions MarketTransactions[]
 }
 
 model Session {
@@ -93,11 +94,14 @@ model Player {
   positionName      String  @default("")
   positionNameIndex Int     @default(0)
 
-  stats      Stat[]    @relation(name: "stats")
-  teamId     Int
-  team       Team      @relation(fields: [teamId], references: [id])
-  userTeamId Int?
-  userTeam   UserTeam? @relation(fields: [userTeamId], references: [id])
+  stats              Stat[]               @relation(name: "stats")
+  teamId             Int
+  team               Team                 @relation(fields: [teamId], references: [id])
+  userTeamId         Int?
+  userTeam           UserTeam?            @relation(fields: [userTeamId], references: [id])
+  MarketTransactions MarketTransactions[]
+  marketPlayers      MarketPlayers?       @relation(fields: [marketPlayersId], references: [id])
+  marketPlayersId    Int?
 }
 
 model Stat {
@@ -128,6 +132,23 @@ model UserTeam {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  players Player[]
+}
+
+model MarketTransactions {
+  id     Int      @id @default(autoincrement())
+  action String
+  date   DateTime @default(now())
+
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+}
+
+model MarketPlayers {
+  id Int @id @default(autoincrement())
 
   players Player[]
 }
