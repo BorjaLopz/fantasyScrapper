@@ -1,25 +1,32 @@
-import { useState, useEffect } from "react";
-import Pitch from "./pitch";
-import PlayerSelectModal from "./player-select.modal";
-import { renderPositions, renderFormationSelector } from "./renderer";
-import InformationModal from "./information.modal";
-import { availableFormations } from "./formations";
-import { DISPLAY_NUMBER } from "./utils";
+import {
+  updatePlayersPosisition,
+  updateTeamFormation,
+} from "@/services/my-team.service";
 import { Player } from "@/types/player.type";
 import { useMutation } from "@tanstack/react-query";
-import { updatePlayersPosisition, updateTeamFormation } from "@/services/my-team.service";
-import { push } from "expo-router/build/global-state/routing";
+import { useEffect, useState } from "react";
+import { availableFormations } from "./formations";
+import Pitch from "./pitch";
+import PlayerSelectModal from "./player-select.modal";
+import { renderFormationSelector, renderPositions } from "./renderer";
 
 type Props = {
-  teamId: number
+  teamId: number;
   players: Player[];
-  formation: string
+  formation: string;
 };
 
 function App({ players, formation, teamId }: Props) {
   const [selectedFormation, setSelectedFormation] = useState(""); // The current selected formation
   const [formationsData, setFormationsData] = useState<any>([]); // The available formations and their data
-  const [playerPositions, setPlayerPositions] = useState<{ "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[]>([]); // The positions of the palyers on the pitch (For example which position to render the GK to)
+  const [playerPositions, setPlayerPositions] = useState<
+    {
+      positionType: string;
+      positionName: string;
+      top: { mobile: number; desktop: number };
+      right: { mobile: number; desktop: number };
+    }[]
+  >([]); // The positions of the palyers on the pitch (For example which position to render the GK to)
   const [playerSelectModalOpen, setPlayerSelectModalOpen] = useState(false); // Is modal open to pick player (Activate by clicking a position on the starting XI)
 
   // const [informationModalOpen, setInformationModalOpen] = useState(false); // Storing wheter the modal showing information open or closed (For example it pops up when user tries to add a GK to any other position)
@@ -63,53 +70,65 @@ function App({ players, formation, teamId }: Props) {
   };
 
   const handleFormationChange = (newFormation: string) => {
-    console.log("newFormation", newFormation)
     setSelectedFormation(newFormation); // Chaning to formation
-    const formation: { "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[] = formationsData[newFormation]["positions"]
+    const formation: {
+      positionType: string;
+      positionName: string;
+      top: { mobile: number; desktop: number };
+      right: { mobile: number; desktop: number };
+    }[] = formationsData[newFormation]["positions"];
     setPlayerPositions(formation); // Loading the position data
 
-    const defenders = formation.filter(f => f.positionType === "defensa")
-    const midfielders = formation.filter(f => f.positionType === "mediocentro")
-    const attackers = formation.filter(f => f.positionType === "delantero")
+    const defenders = formation.filter((f) => f.positionType === "defensa");
+    const midfielders = formation.filter(
+      (f) => f.positionType === "mediocentro"
+    );
+    const attackers = formation.filter((f) => f.positionType === "delantero");
 
-    const result = [selectedPlayers.find(pl => pl.positionId === 1)!]
-    const selectedDefenders = availablePlayers.filter(pl => pl.positionId === 2)
-    selectedDefenders.forEach(pl => {
-      pl.positionName = ""
-      pl.positionNameIndex = 0
+    const result = [selectedPlayers.find((pl) => pl.positionId === 1)!];
+    const selectedDefenders = availablePlayers.filter(
+      (pl) => pl.positionId === 2
+    );
+    selectedDefenders.forEach((pl) => {
+      pl.positionName = "";
+      pl.positionNameIndex = 0;
     });
     selectedDefenders.slice(0, defenders.length).map((pl, index) => {
-      pl.positionName = defenders[index].positionName
-      pl.positionNameIndex = result.length + index
-    })
-    result.push(...selectedDefenders)
+      pl.positionName = defenders[index].positionName;
+      pl.positionNameIndex = result.length + index;
+    });
+    result.push(...selectedDefenders);
 
-    const selectedMidfielders = availablePlayers.filter(pl => pl.positionId === 3)
-    selectedMidfielders.forEach(pl => {
-      pl.positionName = ""
-      pl.positionNameIndex = 0
+    const selectedMidfielders = availablePlayers.filter(
+      (pl) => pl.positionId === 3
+    );
+    selectedMidfielders.forEach((pl) => {
+      pl.positionName = "";
+      pl.positionNameIndex = 0;
     });
     selectedMidfielders.slice(0, midfielders.length).map((pl, index) => {
-      pl.positionName = midfielders[index].positionName
-      pl.positionNameIndex = result.length + index
-    })
-    result.push(...selectedMidfielders)
+      pl.positionName = midfielders[index].positionName;
+      pl.positionNameIndex = result.length + index;
+    });
+    result.push(...selectedMidfielders);
 
-    const selectedAttackers = availablePlayers.filter(pl => pl.positionId === 4)
-    selectedAttackers.forEach(pl => {
-      pl.positionName = ""
-      pl.positionNameIndex = 0
+    const selectedAttackers = availablePlayers.filter(
+      (pl) => pl.positionId === 4
+    );
+    selectedAttackers.forEach((pl) => {
+      pl.positionName = "";
+      pl.positionNameIndex = 0;
     });
     selectedAttackers.slice(0, attackers.length).map((pl, index) => {
-      pl.positionName = attackers[index].positionName
-      pl.positionNameIndex = result.length + index
-    })
-    result.push(...selectedAttackers)
+      pl.positionName = attackers[index].positionName;
+      pl.positionNameIndex = result.length + index;
+    });
+    result.push(...selectedAttackers);
 
-    setSelectedPlayers(result)
-    setPlayersToUpdate(result)
-    mutatePlayers()
-    mutateFormation()
+    setSelectedPlayers(result);
+    setPlayersToUpdate(result);
+    mutatePlayers();
+    mutateFormation();
   };
 
   const addPlayerToPitch = (player: Player) => {
@@ -159,11 +178,16 @@ function App({ players, formation, teamId }: Props) {
       let jsonData: [
         key: string,
         {
-          positions: { "positionType": string, "positionName": string, "top": { "mobile": number, "desktop": number }, "right": { "mobile": number, "desktop": number } }[]
+          positions: {
+            positionType: string;
+            positionName: string;
+            top: { mobile: number; desktop: number };
+            right: { mobile: number; desktop: number };
+          }[];
         }
       ][] = Object.entries(availableFormations);
       setFormationsData(availableFormations);
-      const fmt = jsonData.find(jd => jd[0] === formation)
+      const fmt = jsonData.find((jd) => jd[0] === formation);
       setPlayerPositions(fmt?.[1].positions!);
       setSelectedFormation(formation);
     } catch (error) {
@@ -176,7 +200,6 @@ function App({ players, formation, teamId }: Props) {
 
   return (
     <div className="w-full h-full">
-      {selectedFormation}
       <Pitch
         renderPositions={() =>
           renderPositions(
@@ -201,15 +224,9 @@ function App({ players, formation, teamId }: Props) {
         currentPositionType={currentPositionType}
         availablePlayers={availablePlayers}
         selectedPlayers={selectedPlayers}
+        selectedPlayer={selectedPlayer}
         addPlayerToPitch={addPlayerToPitch}
       />
-      {/* 
-      <InformationModal
-        informationModalOpen={informationModalOpen}
-        setInformationModalOpen={setInformationModalOpen}
-        informationModalType={informationModalType}
-        informationModalMessage={informationModalMessage}
-      /> */}
     </div>
   );
 }

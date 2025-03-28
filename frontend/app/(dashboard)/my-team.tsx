@@ -11,7 +11,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function MyTeam() {
-  const [activeTab, setActiveTab] = useState<"line-up" | "players" | "points">("line-up")
+  const [activeTab, setActiveTab] = useState<
+    "line-up" | "players" | "stadistics"
+  >("line-up");
   const { user } = useUserStore();
   const {
     data: userTeam,
@@ -62,47 +64,68 @@ export default function MyTeam() {
           }}
         >
           <GridItem
-            className={`p-3 cursor-pointer ${activeTab === 'line-up' ? 'underline underline-offset-8' : ''}`}
+            className={`p-3 cursor-pointer ${
+              activeTab === "line-up" ? "underline underline-offset-8" : ""
+            }`}
             _extra={{
               className: "col-span-1",
             }}
           >
-            <div onClick={() => {
-              setActiveTab("line-up")
-            }}>
-              <Heading className="text-typography-0 text-center">Alineación</Heading>
+            <div
+              onClick={() => {
+                setActiveTab("line-up");
+              }}
+            >
+              <Heading className="text-typography-0 text-center">
+                Alineación
+              </Heading>
             </div>
           </GridItem>
 
           <GridItem
-            className={`p-3 cursor-pointer ${activeTab === 'players' ? 'underline underline-offset-8' : ''}`}
+            className={`p-3 cursor-pointer ${
+              activeTab === "players" ? "underline underline-offset-8" : ""
+            }`}
             _extra={{
               className: "col-span-1",
             }}
           >
-            <div onClick={() => {
-              setActiveTab("players")
-            }}>
-              <Heading className="text-typography-0 text-center">Plantilla</Heading>
+            <div
+              onClick={() => {
+                setActiveTab("players");
+              }}
+            >
+              <Heading className="text-typography-0 text-center">
+                Plantilla
+              </Heading>
             </div>
           </GridItem>
 
           <GridItem
-            className={`p-3 cursor-pointer ${activeTab === 'points' ? 'underline underline-offset-8' : ''}`}
+            className={`p-3 cursor-pointer ${
+              activeTab === "stadistics" ? "underline underline-offset-8" : ""
+            }`}
             _extra={{
               className: "col-span-1",
             }}
           >
-            <div onClick={() => {
-              setActiveTab("points")
-            }}>
-              <Heading className="text-typography-0 text-center">Puntos</Heading>
+            <div
+            // onClick={() => {
+            //   setActiveTab("stadistics");
+            // }}
+            >
+              <Heading className="text-typography-500 text-center">
+                Estadísticas
+              </Heading>
             </div>
           </GridItem>
         </Grid>
       </div>
 
-      <div className="flex flex-col p-2 w-full h-full" style={{ maxHeight: '94.8%' }}>
+      <div
+        className="flex flex-col p-2 w-full h-full"
+        style={{ maxHeight: "94.8%" }}
+      >
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start">
             <span className="uppercase font-bold">Fichas</span>
@@ -111,23 +134,45 @@ export default function MyTeam() {
 
           <div className="flex flex-col items-end">
             <span className="uppercase font-bold">Valor equipo</span>
-            <span>{new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(userTeam?.data.teamValue || 0)}</span>
+            <span>
+              {new Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "EUR",
+              }).format(userTeam?.data.teamValue || 0)}
+            </span>
           </div>
         </div>
 
         {/* LINE UP */}
         {activeTab === "line-up" && (
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
-            <SquadBuilder players={userTeam?.data.players || []} formation={userTeam?.data.formation || ""} teamId={userTeam?.data.id!} />
+            <SquadBuilder
+              players={userTeam?.data.players || []}
+              formation={userTeam?.data.formation || ""}
+              teamId={userTeam?.data.id!}
+            />
           </div>
         )}
 
         {/* MY TEAM PLAYERS */}
         {activeTab === "players" && (
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
-            {userTeam?.data?.players?.map((player, index) => {
-              return <PlayerCard key={index} player={player} />;
-            })}
+            {userTeam?.data?.players
+              .sort((a, b) => (a.positionId > b.positionId ? 1 : -1))
+              ?.map((player, index) => {
+                return <PlayerCard key={index} player={player} />;
+              })}
+          </div>
+        )}
+
+        {/* MY TEAM PLAYERS */}
+        {activeTab === "stadistics" && (
+          <div className="flex flex-col gap-2 w-full h-full overflow-auto">
+            {userTeam?.data?.players
+              .sort((a, b) => (a.positionId > b.positionId ? 1 : -1))
+              ?.map((player, index) => {
+                return <div key={index}></div>;
+              })}
           </div>
         )}
       </div>

@@ -30,14 +30,16 @@ export function renderPositions(
           key={index}
           className="absolute cursor-pointer"
           style={{
-            top: `${screenWidth <= 1280
-              ? position.top["mobile"] - 10
-              : position.top["desktop"]
-              }%`,
-            right: `${screenWidth <= 1280
-              ? position.right["mobile"] - 10
-              : position.right["desktop"]
-              }%`,
+            top: `${
+              screenWidth <= 1280
+                ? position.top["mobile"] - 10
+                : position.top["desktop"]
+            }%`,
+            right: `${
+              screenWidth <= 1280
+                ? position.right["mobile"] - 10
+                : position.right["desktop"]
+            }%`,
           }}
           onClick={() => {
             handlePositionClick(
@@ -47,9 +49,7 @@ export function renderPositions(
             );
           }}
         >
-          <PositionOnPitch
-            playerOnPosition={playerOnPosition}
-          />
+          <PositionOnPitch playerOnPosition={playerOnPosition} />
         </div>
       </Fragment>
     );

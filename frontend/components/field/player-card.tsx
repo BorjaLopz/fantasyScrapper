@@ -15,7 +15,7 @@ import PlayerPositionBadge from "../players/position-badge";
 type Props = {
   player: Player;
   id: number;
-  onClickFunc: () => void;
+  onClickFunc?: () => void;
 };
 
 export default function PlayerCard({ player, id, onClickFunc }: Props) {

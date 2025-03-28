@@ -14,6 +14,7 @@ import { Player } from "@/types/player.type";
 import { Fragment } from "react";
 import PlayerCard from "./player-card";
 import { isSelected } from "./utils";
+import { ArrowDownUp } from "lucide-react-native";
 
 type Props = {
   playerSelectModalOpen: boolean;
@@ -22,6 +23,7 @@ type Props = {
   availablePlayers: Player[];
   addPlayerToPitch: (player: Player) => void;
   selectedPlayers: Player[];
+  selectedPlayer: Player;
 };
 
 export default function PlayerSelectModal({
@@ -31,6 +33,7 @@ export default function PlayerSelectModal({
   availablePlayers,
   addPlayerToPitch,
   selectedPlayers,
+  selectedPlayer,
 }: Props) {
   // let suitablePlayers = availablePlayers.filter((player: any) => (player.positionType === currentPositionType ||
   //   player["alternativePositions"].split(/[,;\/\s]+/).includes(currentPositionType)) &&
@@ -66,29 +69,36 @@ export default function PlayerSelectModal({
             </ModalCloseButton>
           </ModalHeader>
           <ModalBody>
-            <div className="space-y-6">
-              {suitablePlayers.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  {suitablePlayers.map((player: any, id: number) => {
-                    return (
-                      <Fragment key={id}>
-                        <PlayerCard
-                          player={player}
-                          id={id}
-                          onClickFunc={() => {
-                            setPlayerSelectModalOpen(false);
-                            addPlayerToPitch(player);
-                          }}
-                        />
-                      </Fragment>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center text-2xl">
-                  <p>No hay más</p>
-                </div>
-              )}
+            <div className="flex flex-col gap-2">
+              <PlayerCard player={selectedPlayer} id={selectedPlayer.id} />
+              <div className="flex items-center justify-center w-full">
+                <Icon as={ArrowDownUp} className="text-typography-0" />
+              </div>
+
+              <div className="space-y-6">
+                {suitablePlayers.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {suitablePlayers.map((player: any, id: number) => {
+                      return (
+                        <Fragment key={id}>
+                          <PlayerCard
+                            player={player}
+                            id={id}
+                            onClickFunc={() => {
+                              setPlayerSelectModalOpen(false);
+                              addPlayerToPitch(player);
+                            }}
+                          />
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center text-2xl">
+                    <p>No hay más</p>
+                  </div>
+                )}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>

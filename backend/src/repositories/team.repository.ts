@@ -41,7 +41,6 @@ export const findTeamByUserId = async (userId: string) => {
   let teamValue = 0;
   const players = await prisma.userTeam.findFirst({
     include: {
-      headline: true,
       players: {
         include: {
           stats: false,
@@ -63,11 +62,14 @@ export const findTeamByUserId = async (userId: string) => {
   return { ...players, teamValue: teamValue };
 };
 
-export const updateTeamFormation = async (teamId: number, formation: string) => {
+export const updateTeamFormation = async (
+  teamId: number,
+  formation: string,
+) => {
   return prisma.userTeam.update({
     data: {
-      formation: formation
+      formation: formation,
     },
-    where: { id: teamId }
-  })
+    where: { id: teamId },
+  });
 };
