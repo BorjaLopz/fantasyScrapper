@@ -1,0 +1,23 @@
+export type TUserFilter = {
+  roles?: string;
+  genders?: string;
+  keywords?: string;
+};
+
+export type TUserQueryFilters = {
+  range?: {
+    start: number;
+    end: number;
+  };
+  sortBy?: {
+    column: string;
+    order: string;
+  };
+  filter?: TUserFilter;
+};
+
+export type TUserData = {
+  username: string;
+  password: string;
+  roleId: number;
+};

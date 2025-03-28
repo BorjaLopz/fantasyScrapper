@@ -1,0 +1,4 @@
+- [ ] Check if user have a team
+- [ ] Assignate a team to user
+- [ ] Visualize user team with player points
+- [ ] Change field scheme

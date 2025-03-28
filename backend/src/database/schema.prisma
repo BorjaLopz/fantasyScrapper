@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GenderEnum {
+  MALE
+  FEMALE
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String     @id
+  username  String     @unique
+  password  String
+  profile   Profile?
+  role      Role       @relation(fields: [roleId], references: [id])
+  roleId    Int
+  sessions  Session[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userTeam  UserTeam[]
+}
+
+model Session {
+  id        String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String     @unique
+  firstName String
+  lastName  String?
+  birthDate DateTime?
+  website   String?
+  avatarUrl String?
+  gender    GenderEnum @default(MALE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Team {
+  id            Int     @id @default(autoincrement())
+  fantasyTeamId String  @unique
+  name          String
+  shortName     String?
+  slug          String?
+  dspId         Int?
+  store         String?
+  badgeColor    String
+  badgeGray     String?
+  badgeWhite    String?
+
+  players Player[]
+}
+
+model Player {
+  id                Int     @id @default(autoincrement())
+  fantasyPlayerId   String  @unique
+  name              String  @unique
+  nickname          String
+  image             String?
+  points            Decimal
+  weekPoints        Decimal
+  averagePoints     Decimal
+  lastSeasonPoints  Decimal
+  slug              String
+  positionId        Int
+  position          String
+  marketValue       Decimal
+  playerStatus      String
+  clause            String  @default("")
+  positionName      String  @default("")
+  positionNameIndex Int     @default(0)
+
+  stats      Stat[]    @relation(name: "stats")
+  teamId     Int
+  team       Team      @relation(fields: [teamId], references: [id])
+  userTeamId Int?
+  userTeam   UserTeam? @relation(fields: [userTeamId], references: [id])
+  headlineId Int?
+  headline   Headline?
+}
+
+model Stat {
+  id                 Int     @id @default(autoincrement())
+  stats              Json
+  weekNumber         Int
+  totalPoints        Int
+  isInIdealFormation Boolean @default(false)
+
+  playerId Int?
+  player   Player? @relation(name: "stats", fields: [playerId], references: [id])
+}
+
+model Match {
+  id        Int      @id @default(autoincrement())
+  gameWeek  Int
+  date      DateTime
+  startTime String
+  homeTeam  String
+  score     String
+  awayTeam  String
+  notes     String
+}
+
+model UserTeam {
+  id        Int    @id @default(autoincrement())
+  formation String @default("4-4-2")
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  players  Player[]
+  headline Headline[]
+}
+
+model Headline {
+  id    Int @id @default(autoincrement())
+  order Int
+
+  playerId Int    @unique
+  player   Player @relation(fields: [playerId], references: [id])
+
+  userTeamId Int
+  userTeam   UserTeam @relation(fields: [userTeamId], references: [id])
+}
