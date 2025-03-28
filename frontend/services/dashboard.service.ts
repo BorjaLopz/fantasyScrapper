@@ -1,4 +1,4 @@
-import { API_URL } from "@/constants/Api";
+import { API_URL } from "@/constants/api";
 import { ApiResponse } from "@/types/api-response.type";
 import { Match, Matchday } from "@/types/match.type";
 import axios from "axios";

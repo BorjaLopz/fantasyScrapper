@@ -29,8 +29,6 @@ export const login = async (
     await lucia.invalidateUserSessions(user.id);
     const session = await lucia.createSession(user.id, {});
     const cookie = lucia.createSessionCookie(session.id).serialize();
-    console.log('res', res.locals);
-    console.log('cookie', cookie);
 
     res
       .setHeader('Set-Cookie', cookie)
@@ -80,7 +78,6 @@ export const getSession = async (
 ) => {
   try {
     const { session, user } = res.locals;
-    console.log('res.locals', res.locals);
 
     if (!session || !user) {
       throw new ValidationError(

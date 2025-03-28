@@ -1,17 +1,12 @@
+import { Icon } from "@/components/ui/icon";
+import { useAuthSession } from "@/providers/AuthProvider";
 import { Redirect, Tabs } from "expo-router";
+import { Home, Store, UsersRound } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
 
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { useAuthSession } from "@/providers/AuthProvider";
-
 export default function TabLayout() {
   const { token, isLoading } = useAuthSession();
-  const colorScheme = useColorScheme();
 
   if (isLoading) {
     return <span className="loading loading-spinner loading-md"></span>;
@@ -24,10 +19,10 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: "bg-base-300",
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        // tabBarButton: HapticTab,
+        // tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
@@ -41,18 +36,22 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Inicio",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
+          tabBarActiveTintColor: "bg-primary-500",
+          tabBarIcon: () => <Icon as={Home} className="size-12" />,
         }}
       />
       <Tabs.Screen
         name="my-team"
         options={{
           title: "Mi equipo",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="people.fill" color={color} />
-          ),
+          tabBarIcon: () => <Icon as={UsersRound} className="size-12" />,
+        }}
+      />
+      <Tabs.Screen
+        name="market"
+        options={{
+          title: "Mercado",
+          tabBarIcon: () => <Icon as={Store} className="size-12" />,
         }}
       />
     </Tabs>

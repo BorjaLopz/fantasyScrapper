@@ -6,6 +6,7 @@ import playerRouter from './player.routes';
 import userRouter from './user.routes';
 import matchRouter from './match.routes';
 import teamRouter from './team.routes';
+import marketRouter from './market.routes';
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/users', authorizeRole, userRouter);
 router.use('/players', playerRouter);
 router.use('/teams', teamRouter);
 router.use('/matches', matchRouter);
+router.use('/market', marketRouter);
 router.use('/auth', authRouter);
 
 export default router;

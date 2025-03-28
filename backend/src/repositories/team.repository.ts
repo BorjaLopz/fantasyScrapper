@@ -1,5 +1,6 @@
 import prisma from '@/config/prisma';
 import { TTeamQueryFilters } from '@/types/team.type';
+import { Player } from '@prisma/client';
 
 export const findTeams = async ({ range, filter }: TTeamQueryFilters) => {
   const { start = 0, end = 10 } = range || {};
@@ -37,18 +38,38 @@ export const findTeamById = async (id: string) => {
 };
 
 export const findTeamByUserId = async (userId: string) => {
-  return await prisma.userTeam.findFirst({
+  let teamValue = 0;
+  const players = await prisma.userTeam.findFirst({
     include: {
-      headline: true,
       players: {
         include: {
-          stats: true,
+          stats: false,
+          team: true,
         },
         orderBy: {
-          positionId: 'asc',
+          // positionId: 'asc',
+          positionNameIndex: 'asc',
         },
       },
     },
     where: { userId: userId },
+  });
+
+  players?.players.forEach(
+    (player) => (teamValue += player.marketValue.toNumber()),
+  );
+
+  return { ...players, teamValue: teamValue };
+};
+
+export const updateTeamFormation = async (
+  teamId: number,
+  formation: string,
+) => {
+  return prisma.userTeam.update({
+    data: {
+      formation: formation,
+    },
+    where: { id: teamId },
   });
 };

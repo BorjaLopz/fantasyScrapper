@@ -24,16 +24,17 @@ model Role {
 }
 
 model User {
-  id        String     @id
-  username  String     @unique
-  password  String
-  profile   Profile?
-  role      Role       @relation(fields: [roleId], references: [id])
-  roleId    Int
-  sessions  Session[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  userTeam  UserTeam[]
+  id                 String               @id
+  username           String               @unique
+  password           String
+  profile            Profile?
+  role               Role                 @relation(fields: [roleId], references: [id])
+  roleId             Int
+  sessions           Session[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  userTeam           UserTeam[]
+  marketTransactions MarketTransactions[]
 }
 
 model Session {
@@ -63,40 +64,44 @@ model Team {
   id            Int     @id @default(autoincrement())
   fantasyTeamId String  @unique
   name          String
-  shortName     String
-  slug          String
-  dspId         Int
+  shortName     String?
+  slug          String?
+  dspId         Int?
   store         String?
   badgeColor    String
-  badgeGray     String
-  badgeWhite    String
+  badgeGray     String?
+  badgeWhite    String?
 
   players Player[]
 }
 
 model Player {
-  id               Int     @id @default(autoincrement())
-  fantasyPlayerId  String  @unique
-  name             String  @unique
-  nickname         String
-  image            String?
-  points           Decimal
-  weekPoints       Decimal
-  averagePoints    Decimal
-  lastSeasonPoints Decimal
-  slug             String
-  positionId       Int
-  position         String
-  marketValue      Decimal
-  playerStatus     String
+  id                Int     @id @default(autoincrement())
+  fantasyPlayerId   String  @unique
+  name              String  @unique
+  nickname          String
+  image             String?
+  points            Decimal
+  weekPoints        Decimal
+  averagePoints     Decimal
+  lastSeasonPoints  Decimal
+  slug              String
+  positionId        Int
+  position          String
+  marketValue       Decimal
+  playerStatus      String
+  clause            String  @default("")
+  positionName      String  @default("")
+  positionNameIndex Int     @default(0)
 
-  stats      Stat[]    @relation(name: "stats")
-  teamId     Int
-  team       Team      @relation(fields: [teamId], references: [id])
-  userTeamId Int?
-  userTeam   UserTeam? @relation(fields: [userTeamId], references: [id])
-  headlineId Int?
-  headline   Headline?
+  stats              Stat[]               @relation(name: "stats")
+  teamId             Int
+  team               Team                 @relation(fields: [teamId], references: [id])
+  userTeamId         Int?
+  userTeam           UserTeam?            @relation(fields: [userTeamId], references: [id])
+  marketTransactions MarketTransactions[]
+  market             Market?              @relation(fields: [marketId], references: [id])
+  marketId           Int?
 }
 
 model Stat {
@@ -128,17 +133,22 @@ model UserTeam {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  players  Player[]
-  headline Headline[]
+  players Player[]
 }
 
-model Headline {
-  id    Int @id @default(autoincrement())
-  order Int
+model MarketTransactions {
+  id     Int      @id @default(autoincrement())
+  action String
+  date   DateTime @default(now())
 
-  playerId Int    @unique
   player   Player @relation(fields: [playerId], references: [id])
+  playerId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+}
 
-  userTeamId Int
-  userTeam   UserTeam @relation(fields: [userTeamId], references: [id])
+model Market {
+  id Int @id @default(autoincrement())
+
+  players Player[]
 }
