@@ -45,11 +45,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Logging middleware
-app.use(
-  PinoHttp({
-    logger,
-  }),
-);
+// app.use(
+//   PinoHttp({
+//     logger,
+//   }),
+// );
 
 // Body parsing middlewares
 app.use(express.json({ limit: '50kb' }));

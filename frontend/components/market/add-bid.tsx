@@ -1,11 +1,15 @@
+import { getMarketBid, setMarketBid } from "@/services/market.service"
+import { useUserStore } from "@/stores/user.store"
 import { Player } from "@/types/player.type"
-import React from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { EuroIcon } from "lucide-react-native"
+import React, { useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar"
 import { Button, ButtonText } from "../ui/button"
 import { Heading } from "../ui/heading"
-import { CloseIcon, Icon, SearchIcon } from "../ui/icon"
+import { CloseIcon, Icon } from "../ui/icon"
 import { Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader } from "../ui/modal"
-import { Input, InputSlot, InputIcon, InputField } from "../ui/input"
 
 type Props = {
   player: Player
@@ -13,7 +17,50 @@ type Props = {
   setBidOpen: (state: boolean) => void
 }
 
+type Inputs = {
+  bid: number
+}
+
 export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
+  const { user } = useUserStore()
+  const queryClient = useQueryClient()
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["player-bid"],
+    queryFn: async () => await getMarketBid(user.id, player.id),
+    enabled: !!user.id && player.marketBids.length > 0,
+  })
+
+  const {
+    mutateAsync: mutateBid,
+    isError: bidError,
+    isPending: bidPending,
+    isSuccess: bidSuccess,
+  } = useMutation({
+    mutationFn: async (data: { userId: string, playerId: string, bid: number }) => setMarketBid(data.userId, data.playerId, data.bid),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>({
+    mode: "onTouched"
+  })
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    mutateBid({
+      userId: user.id,
+      playerId: player.id,
+      bid: data.bid
+    })
+
+    if (bidSuccess) {
+      queryClient.invalidateQueries({ queryKey: ['player-bid'] })
+      setBidOpen(false)
+    }
+  }
+
+  if (isLoading || bidPending) return <span className="loading loading-spinner loading-md"></span>
+
 
   return (
     <Modal
@@ -65,7 +112,12 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
               <div className="grid grid-cols-4 justify-between gap-2 w-full">
                 <span className="col-span-3 font-semibold uppercase text-start">Precio solicitado</span>
                 <span className="text-end w-full">
-                  {new Intl.NumberFormat("es-ES", {
+                  {player.marketBids.length > 0 ? new Intl.NumberFormat("es-ES", {
+                    style: "currency",
+                    currency: "EUR",
+                    maximumFractionDigits: 0,
+                    minimumFractionDigits: 0,
+                  }).format(Number(data?.data.bid) || 0) : new Intl.NumberFormat("es-ES", {
                     style: "currency",
                     currency: "EUR",
                     maximumFractionDigits: 0,
@@ -75,13 +127,22 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
               </div>
 
               {/* Bid */}
-              <div className="flex w-full mt-4">
-                <Input className="w-full">
-                  <InputSlot className="pl-3">
-                    <InputIcon as={SearchIcon} />
-                  </InputSlot>
-                  <InputField placeholder="Importe..." />
-                </Input>
+              <div className="flex justify-center w-full mt-4">
+                <form id="hook-form" onSubmit={handleSubmit(onSubmit)}>
+                  <label className={`input input-bordered flex items-center gap-2 ${errors.bid ? 'input-error' : ''}`}>
+                    <EuroIcon />
+                    <input type="text" className="grow" placeholder="Introduce cantidad" {...register("bid", {
+                      required: {
+                        value: true,
+                        message: "La cantidad es necesaria"
+                      },
+                      min: {
+                        value: player.marketValue,
+                        message: "El valor debe ser igual o mayor que el precio de mercado"
+                      }
+                    })} />
+                  </label>
+                </form>
               </div>
             </div>
           </div>
@@ -97,13 +158,14 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
           >
             <ButtonText>Cancel</ButtonText>
           </Button>
-          <Button
-            onPress={() => {
-              setBidOpen(false)
-            }}
+
+          <button
+            type="submit"
+            form="hook-form"
+            className="btn btn-primary"
           >
-            <ButtonText>Explore</ButtonText>
-          </Button>
+            Pujar
+          </button>
         </ModalFooter>
       </ModalContent>
     </Modal>

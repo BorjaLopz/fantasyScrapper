@@ -10,12 +10,10 @@ export const getMarketPlayersRepository = async () => {
             select: {
               user: true
             }
-          }
+          },
+          marketBids: true
         },
       },
     },
   });
-};
-
-export const addMarketBidRepository = async (userId: string, playerId: string) => {
 };

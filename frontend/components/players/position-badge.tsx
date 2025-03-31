@@ -1,4 +1,3 @@
-import { Badge, BadgeText } from "@/components/ui/badge";
 
 type Props = {
   position: string
@@ -8,19 +7,17 @@ export default function PlayerPositionBadge({ position }: Props) {
   const getBadgeAction = () => {
     switch (position.toUpperCase()) {
       case "PORTERO":
-        return "muted";
+        return "badge-primary";
       case "DEFENSA":
-        return "warning";
+        return "badge-secondary";
       case "MEDIOCENTRO":
-        return "info";
+        return "badge-warning";
       default:
-        return "success"
+        return "badge-accent"
     }
   }
 
   return (
-    <Badge size="md" variant="solid" action={getBadgeAction()}>
-      <BadgeText className="uppercase font-bold">{position.substring(0, 3)}</BadgeText>
-    </Badge>
+    <div className={`badge ${getBadgeAction()} uppercase font-semibold`}>{position.substring(0, 3)}</div>
   )
 }

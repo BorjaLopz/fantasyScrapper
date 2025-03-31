@@ -1,4 +1,4 @@
-import { getMarketPlayersService, setMarketBidService } from '@/services/market.service';
+import { getMarketBidService, getMarketPlayersService, setMarketBidService } from '@/services/market.service';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -18,6 +18,24 @@ export const getMarketPlayersController = async (
   }
 };
 
+export const getMarketBidController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId, playerId } = req.params;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Market bid successfully retrieved.',
+      data: await getMarketBidService(userId, playerId),
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export const setMarketBidController = async (
   req: Request,
   res: Response,
@@ -25,6 +43,7 @@ export const setMarketBidController = async (
 ) => {
   try {
     const { userId, playerId, bid } = req.body
+    console.log("bid", bid)
 
     res.status(StatusCodes.OK).json({
       status: 'success',

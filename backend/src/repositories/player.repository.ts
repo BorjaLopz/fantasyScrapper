@@ -27,14 +27,13 @@ export const countPlayers = async ({ filter }: TPlayerQueryFilters) => {
 };
 
 export const findPlayerById = async (id: string) => {
-  console.log('id_repository', id);
   return await prisma.player.findUnique({
     include: {
       stats: true,
       team: true,
     },
     where: {
-      fantasyPlayerId: id,
+      id: id,
     },
   });
 };

@@ -2,7 +2,7 @@ import { Team } from "./team.type";
 import { User } from "./user.type";
 
 export type Player = {
-  id: number;
+  id: string;
   fantasyPlayerId: string;
   name: string;
   nickname: string;
@@ -24,5 +24,11 @@ export type Player = {
   positionNameIndex: number;
   userTeam: {
     user: User
-  }
+  },
+  marketBids: {
+    id: string,
+    bid: number,
+    playerId: string,
+    userId: string
+  }[]
 };

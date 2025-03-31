@@ -1,6 +1,5 @@
 import prisma from '@/config/prisma';
 import { TTeamQueryFilters } from '@/types/team.type';
-import { Player } from '@prisma/client';
 
 export const findTeams = async ({ range, filter }: TTeamQueryFilters) => {
   const { start = 0, end = 10 } = range || {};

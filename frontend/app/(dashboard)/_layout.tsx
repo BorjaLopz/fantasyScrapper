@@ -36,7 +36,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Inicio",
-          tabBarActiveTintColor: "bg-primary-500",
+          tabBarActiveTintColor: "bg-primary",
           tabBarIcon: () => <Icon as={Home} className="size-12" />,
         }}
       />

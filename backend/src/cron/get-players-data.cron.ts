@@ -110,8 +110,8 @@ const fetchPlayers = () => {
             });
 
             const stats: {
-              id: number;
-              playerId: number | null;
+              id: string;
+              playerId: string | null;
               stats: Prisma.JsonValue;
               weekNumber: number;
               totalPoints: number;

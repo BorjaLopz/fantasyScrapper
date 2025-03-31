@@ -42,3 +42,15 @@ export const setMarketBidService = async (userId: string, playerId: string, bid:
 
   return { bid: marketBid, userBank: userBank }
 };
+
+export const getMarketBidService = async (userId: string, playerId: string) => {
+  return await prisma.marketBids.findFirst({
+    where: {
+      userId: userId,
+      playerId: playerId
+    },
+    orderBy: {
+      bid: 'asc'
+    }
+  })
+}

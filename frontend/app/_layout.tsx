@@ -18,15 +18,13 @@ export default function RootLayout() {
   const queryClient = new QueryClient()
 
   return (
-    <>
-      <GluestackUIProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <Slot />
-          </QueryClientProvider>
-        </AuthProvider>
-        <StatusBar style="auto" />
-      </GluestackUIProvider>
-    </>
+    <div data-theme="business" className="flex flex-col bg-base-300 w-full h-full">
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <Slot />
+        </QueryClientProvider>
+      </AuthProvider>
+      <StatusBar style="auto" />
+    </div>
   );
 }

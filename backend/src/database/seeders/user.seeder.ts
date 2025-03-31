@@ -24,22 +24,8 @@ export const userSeeder = async (prisma: PrismaClient) => {
     const gender = i % 2 === 0 ? GenderEnum.FEMALE : GenderEnum.MALE;
 
     const password = await new Argon2id().hash('admin123');
-    const users = await prisma.user.upsert({
-      where: { id },
-      update: {
-        username: user.username,
-        password,
-        roleId: user.roleId,
-        profile: {
-          update: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            birthDate,
-            gender,
-          },
-        },
-      },
-      create: {
+    const users = await prisma.user.create({
+      data: {
         id,
         username: user.username,
         password,
@@ -53,6 +39,11 @@ export const userSeeder = async (prisma: PrismaClient) => {
             gender,
           },
         },
+        bank: {
+          create: {
+            quantity: 100000000000000
+          }
+        }
       },
     });
     console.log({ users });

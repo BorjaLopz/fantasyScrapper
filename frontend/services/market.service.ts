@@ -10,3 +10,30 @@ export const getMarketPlayers = async () => {
 
   return response.data;
 };
+
+export const getMarketBid = async (userId: string, playerId: string) => {
+  const response = await axios.get<
+    ApiResponse<{
+      bid: number,
+      id: string,
+      playerId: string,
+      userId: string
+    }>
+  >(`${API_URL}/market/bid/${userId}/${playerId}`);
+
+  return response.data;
+};
+
+export const setMarketBid = async (userId: string, playerId: string, bid: number) => {
+  const response = await axios.post<
+    ApiResponse<any>
+  >(`${API_URL}/market`, {
+    userId, playerId, bid
+  }, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  return response.data;
+};

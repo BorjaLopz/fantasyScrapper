@@ -29,7 +29,7 @@ export default function MyTeam() {
   }
 
   return (
-    <div className="flex flex-col text-typography-0 bg-background-900 w-full h-full">
+    <div className="flex flex-col bg-base-300 w-full h-full">
       {userTeamError && (
         <div role="alert" className="alert alert-error alert-outline">
           <span>Oops! Algo ha ido mal.</span>
@@ -37,7 +37,7 @@ export default function MyTeam() {
       )}
 
       {/* TABS */}
-      <div className="bg-primary-500">
+      <div className="bg-base-100">
         <Grid
           className="items-center justify-center gap-2"
           _extra={{

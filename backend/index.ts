@@ -91,7 +91,7 @@ server.listen(port, () => {
   // Initialize cron jobs
   // getPlayersData();
   // getMatchesData();
-  generateMarketData();
+  // generateMarketData();
 
   // Print server port
   console.log(`listening on port ${port}`);
