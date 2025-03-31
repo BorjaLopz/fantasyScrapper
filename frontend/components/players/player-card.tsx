@@ -7,8 +7,9 @@ import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
 import { Text } from "@/components/ui/text";
 import { Player } from "@/types/player.type";
 import { CircleAlert, CircleCheck, CircleHelp, Clock, User } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import PlayerPositionBadge from "./position-badge";
+import AddBid from "../market/add-bid";
 
 interface Props {
   player: Player;
@@ -16,14 +17,16 @@ interface Props {
 }
 
 export function PlayerCard({ player, fromMarket = false }: Props) {
+  const [bidOpen, setBidOpen] = useState(false)
+
   if (player === undefined) return <div>Loading...</div>;
 
   console.log("player", player)
 
   return (
-    <Card size="md" variant="filled" className="bg-primary-500">
+    <Card size="md" variant="filled" className="p-2 bg-primary-500">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 w-7/12">
           <div className="flex">
             <Image source={player.image} />
             <Image
@@ -33,13 +36,13 @@ export function PlayerCard({ player, fromMarket = false }: Props) {
             />
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full truncate">
             <Heading
               size="md"
               className="flex items-center gap-2 mb-1 text-typography-0"
             >
               <PlayerPositionBadge position={player.position} />
-              {player.nickname}
+              <span className="w-full truncate">{player.nickname}</span>
             </Heading>
 
             {fromMarket && (
@@ -132,7 +135,7 @@ export function PlayerCard({ player, fromMarket = false }: Props) {
           <Menu
             placement="bottom"
             offset={5}
-            disabledKeys={["Settings"]}
+            closeOnSelect={true}
             trigger={({ ...triggerProps }) => {
               return (
                 <Button
@@ -148,9 +151,11 @@ export function PlayerCard({ player, fromMarket = false }: Props) {
             }}
           >
             {fromMarket ? (
-              <MenuItem key="Pujar" textValue="Pujar">
+              <MenuItem key="Pujar" textValue="Pujar" onPress={() => setBidOpen(true)}>
                 {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
-                <MenuItemLabel size="sm">Pujar</MenuItemLabel>
+                <MenuItemLabel className="w-full" size="sm">
+                  Pujar
+                </MenuItemLabel>
               </MenuItem>
             ) : (
               <MenuItem key="Add account" textValue="Add account">
@@ -161,6 +166,7 @@ export function PlayerCard({ player, fromMarket = false }: Props) {
           </Menu>
         </div>
       </div>
-    </Card >
+      <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
+    </Card>
   );
 }
