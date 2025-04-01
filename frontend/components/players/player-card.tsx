@@ -1,6 +1,6 @@
 import { Player } from "@/types/player.type";
 import { CircleAlert, CircleCheck, CircleHelp, CircleX, Clock, User } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlayerPositionBadge from "./position-badge";
 import AddBid from "../market/add-bid";
 
@@ -12,6 +12,30 @@ interface Props {
 
 export function PlayerCard({ player, cardType = "players", onClickFunc }: Props) {
   const [bidOpen, setBidOpen] = useState(false)
+  const [countdown, setCountdown] = useState<string>("")
+
+  const getRemainingTime = () => {
+    setInterval(function () {
+      var toDate = new Date();
+      var tomorrow = new Date();
+      tomorrow.setHours(24, 0, 0, 0);
+      var diffMS = tomorrow.getTime() / 1000 - toDate.getTime() / 1000;
+      var diffHr = Math.floor(diffMS / 3600);
+      diffMS = diffMS - diffHr * 3600;
+      var diffMi = Math.floor(diffMS / 60);
+      diffMS = diffMS - diffMi * 60;
+      var diffS = Math.floor(diffMS);
+      var result = ((diffHr < 10) ? "0" + diffHr : diffHr);
+      result += ":" + ((diffMi < 10) ? "0" + diffMi : diffMi);
+      result += ":" + ((diffS < 10) ? "0" + diffS : diffS);
+
+      setCountdown(String(result))
+    }, 1000);
+  }
+
+  useEffect(() => {
+    if (cardType === "market") getRemainingTime()
+  }, [cardType])
 
   if (player === undefined) return <div>Loading...</div>;
 
@@ -80,9 +104,9 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                 )}
 
                 {cardType === "market" ? (
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-warning">
                     <Clock className="size-4" />
-                    <span className="">Clock</span>
+                    {countdown}
                   </div>
                 ) : (
                   <span>
@@ -156,7 +180,9 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
           </div>
         </div>
       </div>
-      <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
+      {bidOpen && (
+        <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
+      )}
     </div>
   );
 }
