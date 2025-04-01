@@ -58,8 +58,8 @@ export function WeekMatches() {
       )}
 
       {/* All matchdays */}
-      <div style={{ maxWidth: '100%' }}>
-        <div className="card bg-base-100 w-96 shadow-xl">
+      <div className='w-full' style={{ maxWidth: '100%' }}>
+        <div className="card bg-base-100 w-96 shadow-xl w-full">
           <div className='card-body p-2'>
             <h2 className='card-title justify-center'>Jornadas</h2>
 

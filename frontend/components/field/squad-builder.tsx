@@ -10,13 +10,15 @@ import Pitch from "./pitch";
 import PlayerSelectModal from "./player-select.modal";
 import { renderFormationSelector, renderPositions } from "./renderer";
 
-type Props = {
-  teamId: number;
-  players: Player[];
-  formation: string;
-};
+import "./index.css"
 
-function App({ players, formation, teamId }: Props) {
+type Props = {
+  teamId: number
+  players: Player[]
+  formation: string
+}
+
+export default function App({ players, formation, teamId }: Props) {
   const [selectedFormation, setSelectedFormation] = useState(""); // The current selected formation
   const [formationsData, setFormationsData] = useState<any>([]); // The available formations and their data
   const [playerPositions, setPlayerPositions] = useState<
@@ -28,21 +30,14 @@ function App({ players, formation, teamId }: Props) {
     }[]
   >([]); // The positions of the palyers on the pitch (For example which position to render the GK to)
   const [playerSelectModalOpen, setPlayerSelectModalOpen] = useState(false); // Is modal open to pick player (Activate by clicking a position on the starting XI)
-
-  // const [informationModalOpen, setInformationModalOpen] = useState(false); // Storing wheter the modal showing information open or closed (For example it pops up when user tries to add a GK to any other position)
-  // const [informationModalType, setInformationModalType] = useState("info"); // Information modal can be info or wrong_position
-  // const [informationModalMessage, setInformationModalMessage] = useState(""); // Allowing to set modal's message dynamically (this state stores it)
-
   const [currentPositionType, setCurrentPositionType] = useState("delantero"); // The position type the user is picking to add (attacker/midfielder/defender/goalkeeper)
   const [availablePlayers, setAvailablePlayers] = useState([...players]); // All of the available players that user can add
-
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null); // The current position the user is picking (from the modal) which player to add
   const [selectedPlayer, setSelectedPlayer] = useState<Player>({} as Player); // The current position the user is picking (from the modal) which player to add
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>(
     [...players].filter((player) => player.positionName !== "")
   ); // Keeping track of the selected player by the user (a.k.a. members of the starting XI)
   const [playersToUpdate, setPlayersToUpdate] = useState<Player[]>([]);
-
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
 
@@ -161,7 +156,7 @@ function App({ players, formation, teamId }: Props) {
   };
 
   const handlePositionClick = (
-    positionType: any,
+    positionType: string,
     position: string,
     player: Player
   ) => {
@@ -231,5 +226,3 @@ function App({ players, formation, teamId }: Props) {
     </div>
   );
 }
-
-export default App;

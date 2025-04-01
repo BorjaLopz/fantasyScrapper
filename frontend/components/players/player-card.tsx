@@ -1,190 +1,162 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
-import { Icon } from "@/components/ui/icon";
-import { Image } from "@/components/ui/image";
-import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
-import { Text } from "@/components/ui/text";
 import { Player } from "@/types/player.type";
 import { CircleAlert, CircleCheck, CircleHelp, CircleX, Clock, User } from "lucide-react-native";
 import React, { useState } from "react";
-import AddBid from "../market/add-bid";
 import PlayerPositionBadge from "./position-badge";
+import AddBid from "../market/add-bid";
 
 interface Props {
   player: Player;
-  fromMarket?: boolean
+  cardType: "market" | "players" | "line-up";
+  onClickFunc?: () => void;
 }
 
-export function PlayerCard({ player, fromMarket = false }: Props) {
+export function PlayerCard({ player, cardType = "players", onClickFunc }: Props) {
   const [bidOpen, setBidOpen] = useState(false)
 
   if (player === undefined) return <div>Loading...</div>;
 
   return (
-    <div className="card card-side bg-base-100 shadow-xl">
-      <figure>
-        <div className="flex p-1 bg-base-300">
+    <div className="card card-side bg-base-100 shadow" onClick={onClickFunc}>
+      <figure className="size-[8rem] min-w-18 min-h-18 bg-base-300">
+        <div className="flex p-1 w-full h-full">
           <img
             src={player.image}
-            className="size-32"
-            alt="Movie" />
+            className="w-full h-full"
+            alt="Player image" />
 
           <img
             src={player.team.badgeColor}
             className="absolute size-6"
-            alt="Movie" />
+            alt="Player team image" />
         </div>
       </figure>
-      <div className="card-body p-2">
-        <h2 className="card-title truncate">
-          <PlayerPositionBadge position={player.position} />
-          {player.nickname}
-        </h2>
 
+      <div className="card-body p-2 w-full">
+        <div className="flex items-center w-full">
+          <div className="flex flex-col gap-2 w-full">
+            <h2 className="card-title truncate">
+              <PlayerPositionBadge position={player.position} />
+              {player.nickname}
+            </h2>
 
-        <div className="flex flex-col">
-          {fromMarket && (
-            <div className="flex items-center gap-1">
-              <User className="size-4" />
-              <span>
-                {player.userTeam ? player.userTeam.user.username : "LA LIGA"}
-              </span>
-            </div>
-          )}
+            <div className="flex items-start w-full">
+              <div className="flex flex-col w-full">
+                {cardType === "market" && (
+                  <div className="flex items-center gap-1">
+                    <User className="size-4" />
+                    <span>
+                      {player.userTeam ? player.userTeam.user.username : "LA LIGA"}
+                    </span>
+                  </div>
+                )}
 
-          {player.playerStatus === "ok" && (
-            <div className="flex items-center gap-1">
-              <CircleCheck className="size-4 text-success" />
-              <span className="text-success">Alineable</span>
-            </div>
-          )}
-          {player.playerStatus === "injured" || player.playerStatus === "doubtful" && (
-            <div className="flex items-center gap-1">
-              <CircleHelp className="size-4 text-warning" />
-              <span className="text-warning">Dudoso</span>
-            </div>
-          )}
-          {player.playerStatus === "out_of_league" && (
-            <div className="flex items-center gap-1">
-              <CircleAlert className="size-4 text-error" />
-              <span className="text-error">
-                No disponible
-              </span>
-            </div>
-          )}
-          {player.playerStatus === "suspended" && (
-            <div className="flex items-center gap-1">
-              <CircleX className="size-4 text-error" />
-              <span className="text-error">
-                Suspendido
-              </span>
-            </div>
-          )}
+                {player.playerStatus === "ok" && (
+                  <div className="flex items-center gap-1">
+                    <CircleCheck className="size-4 text-success" />
+                    <span className="text-success">Alineable</span>
+                  </div>
+                )}
+                {player.playerStatus === "injured" || player.playerStatus === "doubtful" && (
+                  <div className="flex items-center gap-1">
+                    <CircleHelp className="size-4 text-warning" />
+                    <span className="text-warning">Dudoso</span>
+                  </div>
+                )}
+                {player.playerStatus === "out_of_league" && (
+                  <div className="flex items-center gap-1">
+                    <CircleAlert className="size-4 text-error" />
+                    <span className="text-error">
+                      No disponible
+                    </span>
+                  </div>
+                )}
+                {player.playerStatus === "suspended" && (
+                  <div className="flex items-center gap-1">
+                    <CircleX className="size-4 text-error" />
+                    <span className="text-error">
+                      Suspendido
+                    </span>
+                  </div>
+                )}
 
-          {fromMarket ? (
-            <div className="flex items-center gap-1">
-              <Clock className="size-4" />
-              <span className="">Clock</span>
+                {cardType === "market" ? (
+                  <div className="flex items-center gap-1">
+                    <Clock className="size-4" />
+                    <span className="">Clock</span>
+                  </div>
+                ) : (
+                  <span>
+                    {new Intl.NumberFormat("es-ES", {
+                      style: "currency",
+                      currency: "EUR",
+                      maximumFractionDigits: 0,
+                      minimumFractionDigits: 0,
+                    }).format(Number(player.marketValue) || 0)}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col items-end justify-end">
+                <div className="flex items-center justify-start gap-2">
+                  <span className="uppercase font-bold">
+                    PFSY
+                  </span>
+                  <span className="uppercase font-bold">
+                    {player.points}
+                  </span>
+                </div>
+
+                {(cardType === "market" && player.marketBids.length > 0) && (
+                  <span>{player.marketBids.length} pujas</span>
+                )}
+
+                {cardType === "market" ? (
+                  <div className="flex items-center justify-end gap-2">
+                    <span className="font-bold">
+                      Valor
+                    </span>
+                    <span className="font-bold text-typography-0">
+                      {new Intl.NumberFormat("es-ES", {
+                        style: "currency",
+                        currency: "EUR",
+                        maximumFractionDigits: 0,
+                        minimumFractionDigits: 0,
+                      }).format(Number(player.marketValue) || 0)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-end gap-2">
+                    <span className="uppercase font-bold">
+                      Media
+                    </span>
+                    <span className="uppercase font-bold">
+                      {Number(player.averagePoints || "0")
+                        .toFixed(2)
+                        .replace(".", ",")}
+                    </span>
+                  </div>
+                )}
+
+                {(cardType === "players" || cardType === "market") && (
+                  <div className="card-actions justify-end">
+                    <div className="dropdown dropdown-end">
+                      <div tabIndex={0} role="button" className="btn btn-sm btn-primary m-1">Acciones</div>
+                      <ul tabIndex={0} className="dropdown-content menu bg-base-300 border-1 border-secondary rounded-box z-[1] w-52 p-2 shadow">
+                        {cardType === "market" ? (
+                          <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
+                        ) : (
+                          <li onClick={() => setBidOpen(true)}><a>Subir cláusula</a></li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          ) : (
-            <span>
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-              }).format(Number(player.marketValue) || 0)}
-            </span>
-          )}
+          </div>
         </div>
-
-
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Watch</button>
-        </div>
-      </div >
-    </div >
-
-
-
-
-    //       <div className="flex flex-col items-end">
-    //         <div className="flex items-baseline justify-start gap-2">
-    //           <Text className="uppercase font-bold text-typography-600">
-    //             PFSY
-    //           </Text>
-    //           <Text className="uppercase font-bold text-typography-0" size="2xl">
-    //             {player.points}
-    //           </Text>
-    //         </div>
-
-    //         {fromMarket ? (
-    //           <div className="flex items-center justify-end gap-2">
-    //             <Text className="font-bold text-typography-600">
-    //               Valor
-    //             </Text>
-    //             <Text className="font-bold text-typography-0">
-    //               {new Intl.NumberFormat("es-ES", {
-    //                 style: "currency",
-    //                 currency: "EUR",
-    //                 maximumFractionDigits: 0,
-    //                 minimumFractionDigits: 0,
-    //               }).format(Number(player.marketValue) || 0)}
-    //             </Text>
-    //           </div>
-    //         ) : (
-    //           <div className="flex items-center justify-end gap-2">
-    //             <Text className="uppercase font-bold text-typography-600">
-    //               Media
-    //             </Text>
-    //             <Text className="uppercase font-bold text-typography-0">
-    //               {Number(player.averagePoints || "0")
-    //                 .toFixed(2)
-    //                 .replace(".", ",")}
-    //             </Text>
-    //           </div>
-    //         )}
-
-    //         {(fromMarket && player.marketBids.length > 0) && (
-    //           <span>{player.marketBids.length} pujas</span>
-    //         )}
-    //         <Menu
-    //           placement="bottom"
-    //           offset={5}
-    //           closeOnSelect={true}
-    //           trigger={({ ...triggerProps }) => {
-    //             return (
-    //               <Button
-    //                 {...triggerProps}
-    //                 size="sm"
-    //                 variant="solid"
-    //                 action="negative"
-    //                 className="mt-2"
-    //               >
-    //                 <ButtonText>Acciones</ButtonText>
-    //               </Button>
-    //             );
-    //           }}
-    //         >
-    //           {fromMarket ? (
-    //             <MenuItem key="Pujar" textValue="Pujar" onPress={() => setBidOpen(true)}>
-    //               {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
-    //               <MenuItemLabel className="w-full" size="sm">
-    //                 Pujar
-    //               </MenuItemLabel>
-    //             </MenuItem>
-    //           ) : (
-    //             <MenuItem key="Add account" textValue="Add account">
-    //               {/* <Icon as={AddIcon} size="sm" className="mr-2" /> */}
-    //               <MenuItemLabel size="sm">Subir cláusula</MenuItemLabel>
-    //             </MenuItem>
-    //           )}
-    //         </Menu>
-    //       </div>
-    //     </div>
-    //     <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
-    //   </div>
-    // </div>
+      </div>
+      <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
+    </div>
   );
 }

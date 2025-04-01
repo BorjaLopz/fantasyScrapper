@@ -1,7 +1,5 @@
-import SquadBuilder from "@/components/field/field.template";
+import SquadBuilder from "@/components/field/squad-builder";
 import { PlayerCard } from "@/components/players/player-card";
-import { Grid, GridItem } from "@/components/ui/grid";
-import { Heading } from "@/components/ui/heading";
 import {
   getTeamByUserId
 } from "@/services/my-team.service";
@@ -38,66 +36,11 @@ export default function MyTeam() {
 
       {/* TABS */}
       <div className="bg-base-100">
-        <Grid
-          className="items-center justify-center gap-2"
-          _extra={{
-            className: "grid-cols-3",
-          }}
-        >
-          <GridItem
-            className={`p-3 cursor-pointer ${activeTab === "line-up" ? "underline underline-offset-8" : ""
-              }`}
-            _extra={{
-              className: "col-span-1",
-            }}
-          >
-            <div
-              onClick={() => {
-                setActiveTab("line-up");
-              }}
-            >
-              <Heading className="text-typography-0 text-center">
-                Alineación
-              </Heading>
-            </div>
-          </GridItem>
-
-          <GridItem
-            className={`p-3 cursor-pointer ${activeTab === "players" ? "underline underline-offset-8" : ""
-              }`}
-            _extra={{
-              className: "col-span-1",
-            }}
-          >
-            <div
-              onClick={() => {
-                setActiveTab("players");
-              }}
-            >
-              <Heading className="text-typography-0 text-center">
-                Plantilla
-              </Heading>
-            </div>
-          </GridItem>
-
-          <GridItem
-            className={`p-3 cursor-pointer ${activeTab === "stadistics" ? "underline underline-offset-8" : ""
-              }`}
-            _extra={{
-              className: "col-span-1",
-            }}
-          >
-            <div
-            // onClick={() => {
-            //   setActiveTab("stadistics");
-            // }}
-            >
-              <Heading className="text-typography-500 text-center">
-                Estadísticas
-              </Heading>
-            </div>
-          </GridItem>
-        </Grid>
+        <div role="tablist" className="tabs tabs-bordered p-2">
+          <a role="tab" className={`tab ${activeTab === 'line-up' && 'tab-active'}`} onClick={() => setActiveTab("line-up")}>Alineación</a>
+          <a role="tab" className={`tab ${activeTab === 'players' && 'tab-active'}`} onClick={() => setActiveTab("players")}>Plantilla</a>
+          <a role="tab" className="tab tab-disabled">Estadisticas</a>
+        </div>
       </div>
 
       <div
@@ -138,7 +81,7 @@ export default function MyTeam() {
             {userTeam?.data?.players
               .sort((a, b) => (a.positionId > b.positionId ? 1 : -1))
               ?.map((player, index) => {
-                return <PlayerCard key={index} player={player} />;
+                return <PlayerCard key={index} player={player} cardType="players" />;
               })}
           </div>
         )}
