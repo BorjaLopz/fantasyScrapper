@@ -182,6 +182,7 @@ export const findUserByUsername = async (username: string) => {
         },
       },
       role: { select: { id: true, name: true } },
+      bank: true
     },
   });
 };

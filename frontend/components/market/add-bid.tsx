@@ -43,10 +43,12 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
     watch,
     setValue
   } = useForm<Inputs>({
-    mode: "onTouched"
+    mode: "onTouched",
+    defaultValues: {
+      bid: Number(player.marketValue)
+    }
   })
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log("data", data)
     mutateBid({
       userId: user.id,
       playerId: player.id,
@@ -55,7 +57,7 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
 
     if (bidSuccess) {
       queryClient.invalidateQueries({ queryKey: ['player-bid'] })
-      // setBidOpen(false)
+      setBidOpen(false)
     }
   }
 
@@ -78,7 +80,7 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
   )
 
   return (
-    <dialog id="my_modal_3" className="modal modal-open">
+    <dialog className="modal modal-open">
       <div className="modal-box bg-base-300 w-full h-full">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
@@ -89,7 +91,7 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
           <div className="flex flex-col items-center justify-center gap-5 mt-10 w-full h-full">
             {/* AVATAR */}
             <div className="avatar">
-              <div className="w-24 rounded-full">
+              <div className="w-[6em] rounded-full border border-secondary">
                 <img src={player.image} />
               </div>
             </div>
@@ -146,17 +148,9 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
                       allowDecimals={false}
                       groupSeparator="."
                       defaultValue={
-                        player.marketBids.length > 0 ? new Intl.NumberFormat("es-ES", {
-                          style: "currency",
-                          currency: "EUR",
-                          maximumFractionDigits: 0,
-                          minimumFractionDigits: 0,
-                        }).format(Number(data?.data.bid) || 0) : new Intl.NumberFormat("es-ES", {
-                          style: "currency",
-                          currency: "EUR",
-                          maximumFractionDigits: 0,
-                          minimumFractionDigits: 0,
-                        }).format(Number(player.marketValue) || 0)
+                        player.marketBids.length > 0 ?
+                          player.marketBids[0].bid :
+                          Number(player.marketValue)
                       }
                       onValueChange={(value) => setValue("bid", Number(value))}
                     />
@@ -175,27 +169,5 @@ export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
         </div>
       </div>
     </dialog>
-
-    //     <ModalFooter>
-    //       <Button
-    //         constiant="outline"
-    //         action="secondary"
-    //         onPress={() => {
-    //           setBidOpen(false)
-    //         }}
-    //       >
-    //         <ButtonText>Cancel</ButtonText>
-    //       </Button>
-
-    //       <button
-    //         type="submit"
-    //         form="hook-form"
-    //         className="btn btn-primary"
-    //       >
-    //         Pujar
-    //       </button>
-    //     </ModalFooter>
-    //   </ModalContent>
-    // </Modal>
   )
 }

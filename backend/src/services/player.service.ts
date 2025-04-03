@@ -1,3 +1,4 @@
+import prisma from '@/config/prisma';
 import {
   countPlayers,
   findPlayerById,
@@ -32,3 +33,27 @@ export const updatePlayersPositionService = async (
     );
   }
 };
+
+export const addPlayerToMarketService = async (playerId: string, userId: string) => {
+  // TODO: Remove player from user team only when player is bought
+  // await prisma.player.update({
+  //   data: {
+  //     positionName: '',
+  //     positionNameIndex: 0,
+  //     userTeamId: null,
+  //   },
+  //   where: {
+  //     id: playerId
+  //   }
+  // });
+
+  const market = await prisma.market.findFirst()
+  await prisma.player.update({
+    data: {
+      marketId: market?.id
+    },
+    where: {
+      id: playerId
+    }
+  })
+}

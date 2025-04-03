@@ -3,6 +3,9 @@ import { CircleAlert, CircleCheck, CircleHelp, CircleX, Clock, User } from "luci
 import React, { useEffect, useState } from "react";
 import PlayerPositionBadge from "./position-badge";
 import AddBid from "../market/add-bid";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addPlayerToMarket } from "@/services/market.service";
+import { useUserStore } from "@/stores/user.store";
 
 interface Props {
   player: Player;
@@ -11,8 +14,19 @@ interface Props {
 }
 
 export function PlayerCard({ player, cardType = "players", onClickFunc }: Props) {
+  const queryClient = useQueryClient()
   const [bidOpen, setBidOpen] = useState(false)
   const [countdown, setCountdown] = useState<string>("")
+  const { user } = useUserStore()
+
+  const {
+    mutateAsync: mutatePlayerToMarket,
+    isError: playerToMarketError,
+    isPending: playerToMarketPending,
+    isSuccess: playerToMarketSuccess,
+  } = useMutation({
+    mutationFn: async (data: { userId: string, playerId: string }) => addPlayerToMarket(data.playerId, data.userId),
+  });
 
   const getRemainingTime = () => {
     setInterval(function () {
@@ -37,7 +51,11 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
     if (cardType === "market") getRemainingTime()
   }, [cardType])
 
-  if (player === undefined) return <div>Loading...</div>;
+  if (playerToMarketSuccess) {
+    queryClient.invalidateQueries({ queryKey: ['market', "user-team"] })
+  }
+
+  if (player === undefined || playerToMarketPending) return <div>Loading...</div>;
 
   return (
     <div className="card card-side bg-base-100 shadow" onClick={onClickFunc}>
@@ -161,6 +179,7 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                   </div>
                 )}
 
+                {bidOpen}
                 {(cardType === "players" || cardType === "market") && (
                   <div className="card-actions justify-end">
                     <div className="dropdown dropdown-end">
@@ -169,7 +188,16 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                         {cardType === "market" ? (
                           <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
                         ) : (
-                          <li onClick={() => setBidOpen(true)}><a>Subir cláusula</a></li>
+                          <>
+                            {/* <li><a>Subir cláusula</a></li> */}
+                            <li
+                              onClick={() => mutatePlayerToMarket({
+                                playerId: player.id,
+                                userId: user.id
+                              })}
+                            ><a>Añadir al mercado</a></li>
+                            <li><a>Venta inmediata</a></li>
+                          </>
                         )}
                       </ul>
                     </div>

@@ -1,4 +1,5 @@
 import {
+  addPlayerToMarketService,
   getPlayerByIdService,
   getPlayersService,
   updatePlayersPositionService,
@@ -44,6 +45,25 @@ export const getPlayerController = async (
   }
 };
 
+export const addPlayerToMarketController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { playerId, userId } = req.params;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Player transfer to market successfully.',
+      data: await addPlayerToMarketService(playerId, userId),
+    });
+  } catch (err) {
+    console.log('err', err);
+    return next(err);
+  }
+};
+
 export const updatePlayerPositionNameController = async (
   req: Request,
   res: Response,
@@ -51,7 +71,6 @@ export const updatePlayerPositionNameController = async (
 ) => {
   try {
     const players = req.body;
-    console.log('players', req.body);
 
     res.status(StatusCodes.OK).json({
       status: 'success',

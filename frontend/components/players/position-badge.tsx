@@ -9,7 +9,7 @@ export default function PlayerPositionBadge({ position }: Props) {
       case "PORTERO":
         return "badge-primary";
       case "DEFENSA":
-        return "badge-secondary";
+        return "badge-success";
       case "MEDIOCENTRO":
         return "badge-warning";
       default:
