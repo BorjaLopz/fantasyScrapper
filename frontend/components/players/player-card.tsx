@@ -55,7 +55,7 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
     queryClient.invalidateQueries({ queryKey: ['market', "user-team"] })
   }
 
-  if (player === undefined || playerToMarketPending) return <div></div>;
+  if (player === undefined || playerToMarketPending) return;
 
   return (
     <div className={`card card-side shadow ${player.market && player.market.id ? 'bg-base-300' : 'bg-base-100'}`} onClick={onClickFunc}>
@@ -63,7 +63,7 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
         <div className="flex p-1 w-full h-full">
           <img
             src={player.image}
-            className="w-full h-full"
+            className="size-28"
             alt="Player image" />
 
           <img
@@ -79,6 +79,11 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
             <h2 className="card-title truncate">
               <PlayerPositionBadge position={player.position} />
               <span className={`${player.market && player.market.id && 'line-through'}`}>{player.nickname}</span>
+              <span className="text-sm font-normal self-end">
+                {(cardType === "market" && player.marketBids.length > 0) && (
+                  <span>({player.marketBids.length} pujas)</span>
+                )}
+              </span>
             </h2>
 
             <div className="flex items-start w-full">
@@ -147,10 +152,6 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                     {player.points}
                   </span>
                 </div>
-
-                {(cardType === "market" && player.marketBids.length > 0) && (
-                  <span>{player.marketBids.length} pujas</span>
-                )}
 
                 {cardType === "market" ? (
                   <div className="flex items-center justify-end gap-2">

@@ -55,7 +55,7 @@ export function WeekMatches() {
 
       {/* All matchdays */}
       <div className='w-full' style={{ maxWidth: '100%' }}>
-        <div className="card bg-base-100 w-96 shadow-xl w-full">
+        <div className="card bg-base-100 shadow-xl w-full">
           <div className='card-body p-2'>
             <h2 className='card-title justify-center'>Jornadas</h2>
 
@@ -65,12 +65,19 @@ export function WeekMatches() {
               {allMatchdays?.data.map((matchday, index) => {
                 if (matchday.gameWeek <= (currentMatchday?.data || 0))
                   return (
-                    <div key={index} className={`cursor-pointer ${matchday.gameWeek == currentMatchday?.data
-                      ? "bg-primary"
-                      : "bg-secondary text-base-content"
-                      }`}>
-                      <span>{matchday.gameWeek}</span>
+                    <div className="avatar placeholder">
+                      <div className={`${matchday.gameWeek == currentMatchday?.data
+                        ? "bg-primary"
+                        : "bg-base-300 text-base-content"} text-neutral-content w-8 rounded-full`}>
+                        <span className="text-xs font-semibold">{matchday.gameWeek}</span>
+                      </div>
                     </div>
+                    // <div key={index} className={`cursor-pointer ${matchday.gameWeek == currentMatchday?.data
+                    //   ? "bg-primary"
+                    //   : "bg-secondary text-base-content"
+                    //   }`}>
+                    //   <span>{matchday.gameWeek}</span>
+                    // </div>
                   );
               })}
             </div>

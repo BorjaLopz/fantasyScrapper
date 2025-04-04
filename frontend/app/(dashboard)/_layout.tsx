@@ -1,6 +1,6 @@
 import { useAuthSession } from "@/providers/AuthProvider";
 import { Redirect, Tabs } from "expo-router";
-import { Home, Store, UsersRound } from "lucide-react-native";
+import { Home, Store, Trophy, UsersRound } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
 
@@ -37,6 +37,14 @@ export default function TabLayout() {
           title: "Inicio",
           tabBarActiveTintColor: "bg-primary",
           tabBarIcon: () => <Home className="size-12" />,
+        }}
+      />
+      <Tabs.Screen
+        name="league"
+        options={{
+          title: "Liga",
+          tabBarActiveTintColor: "bg-primary",
+          tabBarIcon: () => <Trophy className="size-12" />,
         }}
       />
       <Tabs.Screen

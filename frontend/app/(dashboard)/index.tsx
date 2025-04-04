@@ -2,7 +2,6 @@
 import { WeekMatches } from "@/components/dashboard/week-matches";
 
 export default function HomeScreen() {
-
   return (
     <div className="flex flex-col gap-4 items-center p-4 bg-base-300 w-full h-full overflow-y-auto">
       {/* Intro */}
