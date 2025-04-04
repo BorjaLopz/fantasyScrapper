@@ -1,11 +1,7 @@
 
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
 import { getAllMatchdays, getAllMatchesForMatchday, getCurrentMatchday } from '@/services/dashboard.service';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Avatar, AvatarFallbackText } from '../ui/avatar';
 
 export function WeekMatches() {
   const matchdaysRef = useRef<HTMLDivElement | null>(null);
@@ -69,12 +65,12 @@ export function WeekMatches() {
               {allMatchdays?.data.map((matchday, index) => {
                 if (matchday.gameWeek <= (currentMatchday?.data || 0))
                   return (
-                    <Avatar key={index} size="sm" className={`cursor-pointer ${matchday.gameWeek == currentMatchday?.data
+                    <div key={index} className={`cursor-pointer ${matchday.gameWeek == currentMatchday?.data
                       ? "bg-primary"
                       : "bg-secondary text-base-content"
                       }`}>
                       <span>{matchday.gameWeek}</span>
-                    </Avatar>
+                    </div>
                   );
               })}
             </div>
@@ -95,15 +91,15 @@ export function WeekMatches() {
             <div className="flex flex-col items-center justify-center gap-2">
               {matches?.data.map((match, index) => (
                 <div key={index} className="card bg-base-300 w-full">
-                  <Heading size="md" className="flex items-center justify-center gap-2 mb-1">
+                  <h3 className="flex items-center justify-center gap-2 mb-1">
                     <span>{match.homeTeam}</span>
                     <span>{match.score !== "" ? match.score : "-"}</span>
                     <span>{match.awayTeam}</span>
-                  </Heading>
-                  <Text size="sm" className="font-thin text-center">
+                  </h3>
+                  <p className="font-thin text-center">
                     {`${new Date(match.date).getDate()}-${new Date(match.date).getMonth() + 1
                       }-${new Date(match.date).getFullYear()} ${match.startTime}`}
-                  </Text>
+                  </p>
                 </div>
                 //     <div
                 //       key={index}

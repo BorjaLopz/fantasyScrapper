@@ -1,9 +1,8 @@
-import { Icon } from "@/components/ui/icon";
+import { PlayerCard } from "@/components/players/player-card";
 import { Player } from "@/types/player.type";
 import { ArrowDownUp } from "lucide-react-native";
 import { Fragment } from "react";
 import { isSelected } from "./utils";
-import { PlayerCard } from "@/components/players/player-card"
 
 type Props = {
   playerSelectModalOpen: boolean;
@@ -30,6 +29,7 @@ export default function PlayerSelectModal({
   let suitablePlayers = availablePlayers.filter(
     (player: Player) =>
       player.position.toLowerCase() === currentPositionType &&
+      !player.market &&
       isSelected(selectedPlayers, player) === false
   );
 
@@ -43,7 +43,7 @@ export default function PlayerSelectModal({
               <div className="flex flex-col gap-2">
                 <PlayerCard player={selectedPlayer} cardType="line-up" />
                 <div className="flex items-center justify-center w-full">
-                  <Icon as={ArrowDownUp} className="text-typography-0" />
+                  <ArrowDownUp />
                 </div>
 
                 <div className="space-y-6">
@@ -66,7 +66,7 @@ export default function PlayerSelectModal({
                     </div>
                   ) : (
                     <div className="text-center text-2xl">
-                      <p>No hay más</p>
+                      <p>No hay jugadores seleccionables</p>
                     </div>
                   )}
                 </div>

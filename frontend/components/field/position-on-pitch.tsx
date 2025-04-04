@@ -1,6 +1,4 @@
-import { Icon } from "@/components/ui/icon";
 import { Player } from "@/types/player.type";
-import { Plus } from "lucide-react-native";
 import React from "react";
 
 type Props = {
@@ -23,13 +21,22 @@ export default function PositionOnPitch({
   }
 
   if (playerOnPosition === undefined) {
-    // If player hasn't added to the position yet
     return (
-      <Icon
-        size="md"
-        as={Plus}
-        className="text-2xl xl:text-4xl text-white absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 size-12"
-      />
+      <div className="relative w-20 h-24 rounded-lg shadow overflow-hidden bg-base-100">
+        {/* Número del jugador */}
+        <div className={`absolute -top-9 -left-1 rotate-45 text-white font-bold text-lg rounded-lg w-8 h-full flex items-center justify-center bg-primary`}>
+          <span className="-rotate-[45deg]">
+            -
+          </span>
+        </div>
+
+        {/* Nombre del jugador */}
+        <div className="absolute bottom-0 left-0 w-full bg-base-content p-1 z-20">
+          <p className="text-sm font-semibold text-center truncate text-neutral w-full">
+            Añade un jugador
+          </p>
+        </div>
+      </div>
     );
   }
 

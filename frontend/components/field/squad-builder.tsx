@@ -128,31 +128,49 @@ export default function App({ players, formation, teamId }: Props) {
 
   const addPlayerToPitch = (player: Player) => {
     let oldSelectedPlayers = selectedPlayers;
-    const index = oldSelectedPlayers.findIndex(
-      (pl) => pl.name.toUpperCase() === selectedPlayer.name.toUpperCase()
-    );
-    const oldPlayer = oldSelectedPlayers[index];
-    if (index !== -1) {
-      oldSelectedPlayers[index] = {
-        ...player,
-        positionName: selectedPosition!,
-        positionNameIndex: oldPlayer.positionNameIndex,
-      };
+    if (selectedPlayer) {
+      const index = oldSelectedPlayers.findIndex(
+        (pl) => pl.name.toUpperCase() === selectedPlayer.name.toUpperCase()
+      );
+      const oldPlayer = oldSelectedPlayers[index];
+      if (index !== -1) {
+        oldSelectedPlayers[index] = {
+          ...player,
+          positionName: selectedPosition!,
+          positionNameIndex: oldPlayer.positionNameIndex,
+        };
+      }
+      setPlayersToUpdate((old) => [
+        ...old,
+        { ...oldPlayer, positionName: "", positionNameIndex: 0 },
+      ]);
+      setPlayersToUpdate((old) => [
+        ...old,
+        {
+          ...player,
+          positionName: selectedPosition!,
+          positionNameIndex: oldPlayer.positionNameIndex,
+        },
+      ]);
+      setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
+      mutatePlayers();
+    } else {
+      const selected = selectedPlayers.filter(pl => pl.position === player.position)
+      const available = playerPositions.filter(pp => pp.positionType === player.position)
+      if (selected.length < available.length) {
+        const indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        // player.positionName == available[0].positionName
+        // player.po
+
+        const playerToUpdate = {
+          ...player,
+          positionName: available[0].positionName,
+          positionNameIndex: indexes.filter((i) => !selectedPlayers.some(({ positionNameIndex: id2 }) => id2 === i))[0]
+        }
+        setPlayersToUpdate([playerToUpdate])
+        mutatePlayers();
+      }
     }
-    setPlayersToUpdate((old) => [
-      ...old,
-      { ...oldPlayer, positionName: "", positionNameIndex: 0 },
-    ]);
-    setPlayersToUpdate((old) => [
-      ...old,
-      {
-        ...player,
-        positionName: selectedPosition!,
-        positionNameIndex: oldPlayer.positionNameIndex,
-      },
-    ]);
-    setSelectedPlayers(oldSelectedPlayers); // Adding to the starting XI
-    mutatePlayers();
   };
 
   const handlePositionClick = (
@@ -183,7 +201,6 @@ export default function App({ players, formation, teamId }: Props) {
       ][] = Object.entries(availableFormations);
       setFormationsData(availableFormations);
       const fmt = jsonData.find((jd) => jd[0] === formation);
-      console.log(fmt?.[1].positions!)
       setPlayerPositions(fmt?.[1].positions!);
       setSelectedFormation(formation);
     } catch (error) {

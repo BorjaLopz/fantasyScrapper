@@ -31,4 +31,7 @@ export type Player = {
     playerId: string,
     userId: string
   }[]
+  market: {
+    id: string
+  }
 };

@@ -8,7 +8,8 @@ export function renderPositions(
   screenWidth: any,
   handlePositionClick: (positionType: string, position: string, player: Player) => void) {
   const usedPlayers: Player[] = [];
-  return playerPositions.map((position: any, index: number) => {
+
+  return playerPositions?.map((position: any, index: number) => {
     // mapping throught the positions
     const positionType = position.positionType; // Getting the type of the position (attacker/midfielder/defender/goalkeeper)
     const playerOnPosition = selectedPlayers.find((player: Player) => {
@@ -21,6 +22,34 @@ export function renderPositions(
         return player;
       }
     }); // Getting the player that has been added to this position(if not yet it's undefined)
+
+    // if (!playerOnPosition) {
+    //   return (
+    //     <div
+    //       key={index}
+    //       className="absolute cursor-pointer"
+    //       style={{
+    //         top: `${screenWidth <= 1280
+    //           ? position.top["mobile"] - 10
+    //           : position.top["desktop"]
+    //           }%`,
+    //         right: `${screenWidth <= 1280
+    //           ? position.right["mobile"] - 10
+    //           : position.right["desktop"]
+    //           }%`,
+    //       }}
+    //       onClick={() => {
+    //         handlePositionClick(
+    //           positionType,
+    //           "",
+    //           playerOnPosition!
+    //         );
+    //       }}
+    //     >
+    //       <PositionOnPitch playerOnPosition={playerOnPosition} />
+    //     </div>
+    //   );
+    // }
 
     return (
       <div
@@ -37,7 +66,6 @@ export function renderPositions(
             }%`,
         }}
         onClick={() => {
-          console.log("CLICK")
           handlePositionClick(
             positionType,
             playerOnPosition?.positionName!,

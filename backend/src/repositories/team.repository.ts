@@ -44,6 +44,7 @@ export const findTeamByUserId = async (userId: string) => {
         include: {
           stats: false,
           team: true,
+          market: true
         },
         orderBy: {
           // positionId: 'asc',

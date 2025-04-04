@@ -55,11 +55,11 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
     queryClient.invalidateQueries({ queryKey: ['market', "user-team"] })
   }
 
-  if (player === undefined || playerToMarketPending) return <div>Loading...</div>;
+  if (player === undefined || playerToMarketPending) return <div></div>;
 
   return (
-    <div className="card card-side bg-base-100 shadow" onClick={onClickFunc}>
-      <figure className="size-[8rem] min-w-18 min-h-18 bg-base-300">
+    <div className={`card card-side shadow ${player.market && player.market.id ? 'bg-base-300' : 'bg-base-100'}`} onClick={onClickFunc}>
+      <figure className="size-[8rem] min-w-18 min-h-18 h-full bg-base-300">
         <div className="flex p-1 w-full h-full">
           <img
             src={player.image}
@@ -78,7 +78,7 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
           <div className="flex flex-col gap-2 w-full">
             <h2 className="card-title truncate">
               <PlayerPositionBadge position={player.position} />
-              {player.nickname}
+              <span className={`${player.market && player.market.id && 'line-through'}`}>{player.nickname}</span>
             </h2>
 
             <div className="flex items-start w-full">
@@ -179,14 +179,18 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                   </div>
                 )}
 
-                {bidOpen}
                 {(cardType === "players" || cardType === "market") && (
                   <div className="card-actions justify-end">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-sm btn-primary m-1">Acciones</div>
                       <ul tabIndex={0} className="dropdown-content menu bg-base-300 border-1 border-secondary rounded-box z-[1] w-52 p-2 shadow">
                         {cardType === "market" ? (
-                          <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
+                          <>
+                            <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
+                            {player.userTeam?.user.id === user.id && (
+                              <li onClick={() => setBidOpen(true)}><a>Quitar del mercado</a></li>
+                            )}
+                          </>
                         ) : (
                           <>
                             {/* <li><a>Subir cláusula</a></li> */}

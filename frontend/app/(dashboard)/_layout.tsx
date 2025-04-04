@@ -1,4 +1,3 @@
-import { Icon } from "@/components/ui/icon";
 import { useAuthSession } from "@/providers/AuthProvider";
 import { Redirect, Tabs } from "expo-router";
 import { Home, Store, UsersRound } from "lucide-react-native";
@@ -37,21 +36,21 @@ export default function TabLayout() {
         options={{
           title: "Inicio",
           tabBarActiveTintColor: "bg-primary",
-          tabBarIcon: () => <Icon as={Home} className="size-12" />,
+          tabBarIcon: () => <Home className="size-12" />,
         }}
       />
       <Tabs.Screen
         name="my-team"
         options={{
           title: "Mi equipo",
-          tabBarIcon: () => <Icon as={UsersRound} className="size-12" />,
+          tabBarIcon: () => <UsersRound className="size-12" />,
         }}
       />
       <Tabs.Screen
         name="market"
         options={{
           title: "Mercado",
-          tabBarIcon: () => <Icon as={Store} className="size-12" />,
+          tabBarIcon: () => <Store className="size-12" />,
         }}
       />
     </Tabs>
