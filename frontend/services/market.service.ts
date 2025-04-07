@@ -38,13 +38,24 @@ export const setMarketBid = async (userId: string, playerId: string, bid: number
   return response.data;
 };
 
-// /toMarket/:playerId/:userId
-export const addPlayerToMarket = async (playerId: string, userId: string) => {
+export const addPlayerToMarket = async (playerId: string) => {
   const response = await axios.post<
     ApiResponse<any>
-  >(`${API_URL}/players/toMarket/${playerId}/${userId}`, {
-    userId, playerId
+  >(`${API_URL}/players/market/${playerId}`, {
+    playerId
   }, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  return response.data;
+};
+
+export const removePlayerFromMarket = async (playerId: string) => {
+  const response = await axios.delete<
+    ApiResponse<any>
+  >(`${API_URL}/players/market/${playerId}`, {
     headers: {
       "Content-Type": "application/json"
     }

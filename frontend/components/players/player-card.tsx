@@ -1,10 +1,10 @@
 import { Player } from "@/types/player.type";
-import { CircleAlert, CircleCheck, CircleHelp, CircleX, Clock, User } from "lucide-react-native";
+import { CircleAlert, CircleCheck, CircleHelp, CirclePlus, CircleX, Clock, User } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import PlayerPositionBadge from "./position-badge";
 import AddBid from "../market/add-bid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addPlayerToMarket } from "@/services/market.service";
+import { addPlayerToMarket, removePlayerFromMarket } from "@/services/market.service";
 import { useUserStore } from "@/stores/user.store";
 
 interface Props {
@@ -25,7 +25,15 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
     isPending: playerToMarketPending,
     isSuccess: playerToMarketSuccess,
   } = useMutation({
-    mutationFn: async (data: { userId: string, playerId: string }) => addPlayerToMarket(data.playerId, data.userId),
+    mutationFn: async (data: { userId: string, playerId: string }) => addPlayerToMarket(data.playerId),
+  });
+  const {
+    mutateAsync: mutateRemovePlayerFromMarket,
+    isError: removePlayerFromMarketError,
+    isPending: removePlayerFromMarketPending,
+    isSuccess: removePlayerFromMarketSuccess,
+  } = useMutation({
+    mutationFn: async (data: { playerId: string }) => removePlayerFromMarket(data.playerId),
   });
 
   const getRemainingTime = () => {
@@ -55,7 +63,11 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
     queryClient.invalidateQueries({ queryKey: ['market', "user-team"] })
   }
 
-  if (player === undefined || playerToMarketPending) return;
+  if (removePlayerFromMarketSuccess) {
+    queryClient.invalidateQueries({ queryKey: ['market', "user-team"] })
+  }
+
+  if (player === undefined || playerToMarketPending || removePlayerFromMarketPending) return;
 
   return (
     <div className={`card card-side shadow ${player.market && player.market.id ? 'bg-base-300' : 'bg-base-100'}`} onClick={onClickFunc}>
@@ -125,9 +137,17 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                     </span>
                   </div>
                 )}
+                {player.playerStatus === "injured" && (
+                  <div className="flex items-center gap-1">
+                    <CirclePlus className="size-4 text-error" />
+                    <span className="text-error">
+                      Lesionado
+                    </span>
+                  </div>
+                )}
 
                 {cardType === "market" ? (
-                  <div className="flex items-center gap-1 text-warning">
+                  <div className="flex items-center gap-1 text-info">
                     <Clock className="size-4" />
                     {countdown}
                   </div>
@@ -187,9 +207,12 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
                       <ul tabIndex={0} className="dropdown-content menu bg-base-300 border-1 border-secondary rounded-box z-[1] w-52 p-2 shadow">
                         {cardType === "market" ? (
                           <>
-                            <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
+                            {player.userTeam?.user.id !== user.id && (
+                              <li onClick={() => setBidOpen(true)}><a>Pujar</a></li>
+                            )}
+
                             {player.userTeam?.user.id === user.id && (
-                              <li onClick={() => setBidOpen(true)}><a>Quitar del mercado</a></li>
+                              <li onClick={() => mutateRemovePlayerFromMarket({ playerId: player.id })}><a>Quitar del mercado</a></li>
                             )}
                           </>
                         ) : (

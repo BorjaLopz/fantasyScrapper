@@ -34,7 +34,7 @@ export const updatePlayersPositionService = async (
   }
 };
 
-export const addPlayerToMarketService = async (playerId: string, userId: string) => {
+export const addPlayerToMarketService = async (playerId: string) => {
   // TODO: Remove player from user team only when player is bought
   await prisma.player.update({
     data: {
@@ -51,6 +51,17 @@ export const addPlayerToMarketService = async (playerId: string, userId: string)
   await prisma.player.update({
     data: {
       marketId: market?.id
+    },
+    where: {
+      id: playerId
+    }
+  })
+}
+
+export const removePlayerFromMarketService = async (playerId: string) => {
+  await prisma.player.update({
+    data: {
+      marketId: null
     },
     where: {
       id: playerId

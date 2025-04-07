@@ -2,6 +2,7 @@ import {
   addPlayerToMarketService,
   getPlayerByIdService,
   getPlayersService,
+  removePlayerFromMarketService,
   updatePlayersPositionService,
 } from '@/services/player.service';
 import { TPlayerQueryFilters } from '@/types/player.type';
@@ -51,12 +52,31 @@ export const addPlayerToMarketController = async (
   next: NextFunction,
 ) => {
   try {
-    const { playerId, userId } = req.params;
+    const { playerId } = req.params;
 
     res.status(StatusCodes.OK).json({
       status: 'success',
       message: 'Player transfer to market successfully.',
-      data: await addPlayerToMarketService(playerId, userId),
+      data: await addPlayerToMarketService(playerId),
+    });
+  } catch (err) {
+    console.log('err', err);
+    return next(err);
+  }
+};
+
+export const removePlayerFromMarketController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { playerId } = req.params;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Player remove from market successfully.',
+      data: await removePlayerFromMarketService(playerId),
     });
   } catch (err) {
     console.log('err', err);

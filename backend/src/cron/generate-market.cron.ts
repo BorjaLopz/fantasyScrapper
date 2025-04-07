@@ -3,6 +3,7 @@ import prisma from '@/config/prisma';
 import { randomSelection } from '@/utils/array.utils';
 import { Player } from '@prisma/client';
 import { schedule } from 'node-cron';
+import { groupBy } from 'lodash';
 
 export const generateMarketData = () => {
   logger.info('Generating market');
@@ -45,6 +46,51 @@ const generateMarket = async () => {
         },
       },
     });
+
+    // sell players to biggest bid
+    const bids = await prisma.marketBids.findMany({
+      select: {
+        bid: true,
+        player: true,
+        user: {
+          include: {
+            bank: true
+          }
+        }
+      }
+    })
+
+    const grouped = groupBy(bids, employee => employee.player.nickname);
+    const groupedArray = Object.keys(grouped).map(key => ({ key, value: grouped[key] }))
+
+    groupedArray.forEach(async data => {
+      const max = data.value.reduce((prev, current) => (prev && prev.bid > current.bid) ? prev : current)
+      const userTeam = await prisma.userTeam.findFirst({
+        select: {
+          id: true
+        },
+        where: { userId: max.user.id }
+      })
+
+      await prisma.player.update({
+        data: {
+          userTeamId: userTeam?.id || '',
+          marketId: null
+        },
+        where: {
+          id: max.player.id
+        }
+      })
+
+      await prisma.userBank.update({
+        data: {
+          quantity: (max.user.bank!.quantity.toNumber() - max.bid.toNumber())
+        },
+        where: {
+          userId: max.user.id
+        }
+      })
+    })
   } catch (error) {
     await generateMarket()
   }
