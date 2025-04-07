@@ -69,7 +69,7 @@ const onListening = () => {
   log('Listening on ' + bind);
 };
 
-const log = debug('express-service:server');
+const log = debug('fantasy:backend');
 
 /**
  * Get port from environment and store in Express.
