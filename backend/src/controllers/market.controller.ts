@@ -43,7 +43,6 @@ export const setMarketBidController = async (
 ) => {
   try {
     const { userId, playerId, bid } = req.body
-    console.log("bid", bid)
 
     res.status(StatusCodes.OK).json({
       status: 'success',
