@@ -2,10 +2,53 @@ import prisma from '@/config/prisma';
 import { getMarketPlayersRepository } from '@/repositories/market.repository';
 import { findPlayerById } from '@/repositories/player.repository';
 import { findUserById } from '@/repositories/user.repository';
+import { groupBy } from 'lodash';
 
 export const getMarketPlayersService = async () => {
   return await getMarketPlayersRepository();
 };
+
+export const getOperationsService = async (userId: string) => {
+  const userTeam = await prisma.userTeam.findFirst({
+    where: { userId: userId }
+  })
+
+  // Bids from others
+  const playersInTeam = await prisma.player.findMany({
+    where: {
+      marketId: { not: null },
+      AND: {
+        userTeamId: userTeam?.id
+      }
+    }
+  })
+  const playersInMarket = await prisma.player.findMany({
+    where: {
+      marketId: { not: null },
+      AND: {
+        userTeamId: null
+      }
+    }
+  })
+
+  const bids = await prisma.marketBids.findMany({
+    select: {
+      bid: true,
+      player: true,
+      user: true
+    },
+    where: {
+      playerId: {
+        in: [...playersInMarket, ...playersInTeam].map(pl => pl.id)
+      },
+    }
+  })
+
+  const grouped = groupBy(bids, bid => bid.player.nickname);
+  const groupedArray = Object.keys(grouped).map(key => ({ key, value: grouped[key] }))
+
+  return groupedArray
+}
 
 export const setMarketBidService = async (userId: string, playerId: string, bid: number) => {
   const user = await findUserById(userId);

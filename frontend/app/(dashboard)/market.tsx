@@ -1,12 +1,12 @@
 import { PlayerCard } from "@/components/players/player-card";
-import { getMarketPlayers } from "@/services/market.service";
+import { getMarketPlayers, getOperations } from "@/services/market.service";
 import { useUserStore } from "@/stores/user.store";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function Market() {
   const [activeTab, setActiveTab] = useState<
-    "market" | "historic"
+    "market" | "operations" | "historic"
   >("market");
   const { user } = useUserStore()
 
@@ -19,8 +19,18 @@ export default function Market() {
     queryFn: async () => await getMarketPlayers(),
   });
 
-  if (marketLoading) return <span className="loading loading-spinner loading-md"></span>
-  if (marketError) return (
+  const {
+    data: operations,
+    isFetching: operationsLoading,
+    isError: operationsError,
+  } = useQuery({
+    queryKey: ["operations"],
+    queryFn: async () => await getOperations(user.id),
+    enabled: activeTab === "operations"
+  });
+
+  if (marketLoading || operationsLoading) return <span className="loading loading-spinner loading-md"></span>
+  if (marketError || operationsError) return (
     <div role="alert" className="alert alert-error">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -43,6 +53,7 @@ export default function Market() {
       <div className="bg-base-100">
         <div role="tablist" className="tabs tabs-bordered p-2">
           <a role="tab" className={`tab ${activeTab === 'market' && 'tab-active'}`} onClick={() => setActiveTab("market")}>Mercado</a>
+          <a role="tab" className={`tab ${activeTab === 'operations' && 'tab-active'}`} onClick={() => setActiveTab("operations")}>Op. en curso</a>
           <a role="tab" className="tab tab-disabled">Histórico</a>
         </div>
       </div>
@@ -69,6 +80,22 @@ export default function Market() {
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
             {market?.data.players.map((player, index) => {
               return <PlayerCard key={index} player={player} cardType="market" />;
+            })}
+          </div>
+        )}
+
+        {activeTab === "operations" && (
+          <div className="flex flex-col gap-2 w-full h-full overflow-auto">
+            {operations?.data.map((data, index) => (
+
+              <div className="collapse collapse-plus bg-base-200" key>
+              <input type="radio" name="my-accordion-3" defaultChecked />
+              <div className="collapse-title text-xl font-medium">Click to open this one and close others</div>
+              <div className="collapse-content">
+                <p>hello</p>
+              </div>
+            </div>
+            )
             })}
           </div>
         )}
