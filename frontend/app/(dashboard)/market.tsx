@@ -47,6 +47,7 @@ export default function Market() {
     </div>
   )
 
+  console.log('operations', operations)
   return (
     <div className="flex flex-col bg-base-300 w-full h-full">
       {/* TABS */}
@@ -87,19 +88,61 @@ export default function Market() {
         {activeTab === "operations" && (
           <div className="flex flex-col gap-2 w-full h-full overflow-auto">
             {operations?.data.map((data, index) => (
+              <div className="collapse collapse-plus bg-base-200" key={index}>
+                <input type="radio" name="my-accordion-3" />
+                <div className="collapse-title flex items-center gap-2 text-xl font-medium p-2">
+                  <div className="avatar">
+                    <div className="w-12 rounded-full">
+                      <img
+                        src={data.player.image}
+                        alt="Player image" />
+                    </div>
+                  </div>
 
-              <div className="collapse collapse-plus bg-base-200" key>
-              <input type="radio" name="my-accordion-3" defaultChecked />
-              <div className="collapse-title text-xl font-medium">Click to open this one and close others</div>
-              <div className="collapse-content">
-                <p>hello</p>
+                  {data.player.nickname}
+                </div>
+
+                <div className="collapse-content">
+                  {data.bids.map((bid, bidIndex) => (
+                    <div className="card bg-base-300 shadow" key={bidIndex}>
+                      <div className="card-body p-2">
+                        <h2 className="card-title">
+                          {bid.user.username === user.username ? (
+                            <span>Puja realizada por {new Intl.NumberFormat("es-ES", {
+                              style: "currency",
+                              currency: "EUR",
+                              maximumFractionDigits: 0,
+                              minimumFractionDigits: 0,
+                            }).format(Number(bid.bid) || 0)}</span>
+                          ) : (
+                            <span>
+                              Oferta de <span className="uppercase">{bid.user.username}</span> por {new Intl.NumberFormat("es-ES", {
+                                style: "currency",
+                                currency: "EUR",
+                                maximumFractionDigits: 0,
+                                minimumFractionDigits: 0,
+                              }).format(Number(bid.bid) || 0)}
+                            </span>
+                          )}
+                        </h2>
+
+                        <div>
+                          {bid.user.username.toUpperCase() === "LALIGA" ? '¿Aceptar la oferta de La Liga?' : `¿Aceptar la oferta de ${bid.user.username}?`}
+                        </div>
+
+                        <div className="card-actions justify-end">
+                          <button className="btn btn-sm btn-primary">Aceptar</button>
+                          <button className="btn btn-sm btn-error">Rechazar</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            )
-            })}
+            ))}
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }

@@ -12,8 +12,12 @@ export const generateMarketBids = () => {
 };
 
 const generateBids = async () => {
-  const result: Player[] = [];
   try {
+    const laLigaUser = await prisma.user.findFirst({
+      where: {
+        username: 'laliga'
+      }
+    })
     const playersWithUser = await prisma.player.findMany({
       select: {
         id: true,
@@ -40,7 +44,7 @@ const generateBids = async () => {
           data: {
             bid: ((35 / 100) * pl.marketValue.toNumber()).toFixed(2),
             playerId: pl.id,
-            userId: pl.userTeam?.userId || ""
+            userId: laLigaUser?.id || ""
           }
         })
       }

@@ -34,7 +34,11 @@ export const getOperationsService = async (userId: string) => {
   const bids = await prisma.marketBids.findMany({
     select: {
       bid: true,
-      player: true,
+      player: {
+        include: {
+          market: true
+        }
+      },
       user: true
     },
     where: {
@@ -45,7 +49,7 @@ export const getOperationsService = async (userId: string) => {
   })
 
   const grouped = groupBy(bids, bid => bid.player.nickname);
-  const groupedArray = Object.keys(grouped).map(key => ({ key, value: grouped[key] }))
+  const groupedArray = Object.keys(grouped).map(key => ({ player: grouped[key][0].player, bids: grouped[key] }))
 
   return groupedArray
 }

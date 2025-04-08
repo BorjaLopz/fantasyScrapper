@@ -1,6 +1,7 @@
 import { API_URL } from "@/constants/api";
 import { ApiResponse } from "@/types/api-response.type";
 import { Player } from "@/types/player.type";
+import { User } from "@/types/user.type";
 import axios from "axios";
 
 export const getMarketPlayers = async () => {
@@ -26,7 +27,7 @@ export const getMarketBid = async (userId: string, playerId: string) => {
 
 export const getOperations = async (userId: string) => {
   const response = await axios.get<
-    ApiResponse<{ key: string, value: Player[] }[]>
+    ApiResponse<{ player: Player, bids: { player: Player, user: User, bid: number }[] }[]>
   >(`${API_URL}/market/operations/${userId}`);
 
   return response.data;
