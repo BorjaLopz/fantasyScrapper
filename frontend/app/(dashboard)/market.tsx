@@ -3,11 +3,15 @@ import { getMarketPlayers, getOperations } from "@/services/market.service";
 import { useUserStore } from "@/stores/user.store";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import AddBid from "@/components/market/add-bid";
+import { Player } from "@/types/player.type";
 
 export default function Market() {
   const [activeTab, setActiveTab] = useState<
     "market" | "operations" | "historic"
   >("market");
+  const [bidOpen, setBidOpen] = useState(false)
+  const [player, setPlayer] = useState({} as Player)
   const { user } = useUserStore()
 
   const {
@@ -127,12 +131,20 @@ export default function Market() {
                         </h2>
 
                         <div>
-                          {bid.user.username.toUpperCase() === "LALIGA" ? '¿Aceptar la oferta de La Liga?' : `¿Aceptar la oferta de ${bid.user.username}?`}
+                          {bid.user.username === user.username ? `Has pujado por ${bid.player.name}` : `¿Aceptar la oferta de ${bid.user.username}?`}
                         </div>
 
                         <div className="card-actions justify-end">
-                          <button className="btn btn-sm btn-primary">Aceptar</button>
-                          <button className="btn btn-sm btn-error">Rechazar</button>
+                          {bid.user.username !== user.username ? (
+                            <>
+                              <button className="btn btn-sm btn-primary">Aceptar</button>
+                              <button className="btn btn-sm btn-error">Rechazar</button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="btn btn-sm btn-primary" onClick={() => { setBidOpen(true); setPlayer(bid.player) }}>Pujar</button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -143,6 +155,9 @@ export default function Market() {
           </div>
         )}
       </div>
-    </div >
+      {bidOpen && (
+        <AddBid player={player} setBidOpen={setBidOpen} />
+      )}
+    </div>
   );
 }

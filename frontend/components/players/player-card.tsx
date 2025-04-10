@@ -237,7 +237,7 @@ export function PlayerCard({ player, cardType = "players", onClickFunc }: Props)
         </div>
       </div>
       {bidOpen && (
-        <AddBid player={player} bidOpen={bidOpen} setBidOpen={setBidOpen} />
+        <AddBid player={player} setBidOpen={setBidOpen} />
       )}
     </div>
   );

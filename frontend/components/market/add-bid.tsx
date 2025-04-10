@@ -9,7 +9,6 @@ import { SubmitHandler, useForm } from "react-hook-form"
 
 type Props = {
   player: Player
-  bidOpen: boolean;
   setBidOpen: (state: boolean) => void
 }
 
@@ -17,14 +16,14 @@ type Inputs = {
   bid: number
 }
 
-export default function AddBid({ player, bidOpen, setBidOpen }: Props) {
+export default function AddBid({ player, setBidOpen }: Props) {
   const { user } = useUserStore()
   const queryClient = useQueryClient()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["player-bid"],
     queryFn: async () => await getMarketBid(user.id, player.id),
-    enabled: !!user.id && player.marketBids.length > 0,
+    enabled: !!user.id && player.marketBids?.length > 0,
   })
 
   const {

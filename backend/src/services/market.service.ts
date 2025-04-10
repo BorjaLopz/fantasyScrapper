@@ -36,7 +36,8 @@ export const getOperationsService = async (userId: string) => {
       bid: true,
       player: {
         include: {
-          market: true
+          market: true,
+          marketBids: true
         }
       },
       user: true
