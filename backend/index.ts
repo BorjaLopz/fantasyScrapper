@@ -19,6 +19,8 @@ import debug from 'debug';
 import { ENV } from '@/config/environment';
 import { getPlayersData } from '@/cron/get-players-data.cron';
 import { getMatchesData } from '@/cron/get-matches-data.cron';
+import { generateMarketData } from '@/cron/generate-market.cron';
+import { generateMarketBids } from '@/cron/generate-market-bids.cron';
 
 /**
  * Normalize a port into a number, string, or false.
@@ -67,7 +69,7 @@ const onListening = () => {
   log('Listening on ' + bind);
 };
 
-const log = debug('express-service:server');
+const log = debug('fantasy:backend');
 
 /**
  * Get port from environment and store in Express.
@@ -90,6 +92,8 @@ server.listen(port, () => {
   // Initialize cron jobs
   // getPlayersData();
   // getMatchesData();
+  // generateMarketData();
+  // generateMarketBids();
 
   // Print server port
   console.log(`listening on port ${port}`);

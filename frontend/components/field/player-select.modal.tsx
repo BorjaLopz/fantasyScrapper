@@ -1,18 +1,7 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Heading } from "@/components/ui/heading";
-import { CloseIcon, Icon } from "@/components/ui/icon";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@/components/ui/modal";
+import { PlayerCard } from "@/components/players/player-card";
 import { Player } from "@/types/player.type";
+import { ArrowDownUp } from "lucide-react-native";
 import { Fragment } from "react";
-import PlayerCard from "./player-card";
 import { isSelected } from "./utils";
 
 type Props = {
@@ -22,6 +11,7 @@ type Props = {
   availablePlayers: Player[];
   addPlayerToPitch: (player: Player) => void;
   selectedPlayers: Player[];
+  selectedPlayer: Player;
 };
 
 export default function PlayerSelectModal({
@@ -31,6 +21,7 @@ export default function PlayerSelectModal({
   availablePlayers,
   addPlayerToPitch,
   selectedPlayers,
+  selectedPlayer,
 }: Props) {
   // let suitablePlayers = availablePlayers.filter((player: any) => (player.positionType === currentPositionType ||
   //   player["alternativePositions"].split(/[,;\/\s]+/).includes(currentPositionType)) &&
@@ -38,20 +29,62 @@ export default function PlayerSelectModal({
   let suitablePlayers = availablePlayers.filter(
     (player: Player) =>
       player.position.toLowerCase() === currentPositionType &&
+      !player.market &&
       isSelected(selectedPlayers, player) === false
   );
 
   return (
     <>
-      <Modal
-        isOpen={playerSelectModalOpen}
-        onClose={() => {
-          setPlayerSelectModalOpen(false);
-        }}
-        size="full"
-        className="!h-full"
-      >
-        <ModalBackdrop />
+      {playerSelectModalOpen && (
+        <dialog id="player-select-modal" className="modal modal-open">
+          <div className="modal-box bg-base-300 w-full h-full">
+            <h3 className="font-bold text-lg">Cambiar jugador</h3>
+            <div className="py-4">
+              <div className="flex flex-col gap-2">
+                <PlayerCard player={selectedPlayer} cardType="line-up" />
+                <div className="flex items-center justify-center w-full">
+                  <ArrowDownUp />
+                </div>
+
+                <div className="space-y-6">
+                  {suitablePlayers.length > 0 ? (
+                    <div className="flex flex-col gap-2">
+                      {suitablePlayers.map((player: Player, id: number) => {
+                        return (
+                          <Fragment key={id}>
+                            <PlayerCard
+                              player={player}
+                              cardType="line-up"
+                              onClickFunc={() => {
+                                setPlayerSelectModalOpen(false);
+                                addPlayerToPitch(player);
+                              }}
+                            />
+                          </Fragment>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center text-2xl">
+                      <p>No hay jugadores seleccionables</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="modal-action">
+              <form method="dialog">
+                {/* if there is a button in form, it will close the modal */}
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => setPlayerSelectModalOpen(false)}>✕</button>
+                <button className="btn btn-primary" onClick={() => setPlayerSelectModalOpen(false)}>Cerrar</button>
+              </form>
+            </div>
+          </div>
+        </dialog >
+      )
+      }
+
+      {/* <Modal
         <ModalContent className="!h-full !p-2 !border-none bg-primary-600">
           <ModalHeader className="mt-2">
             <Heading size="md" className="text-typography-0">
@@ -66,29 +99,36 @@ export default function PlayerSelectModal({
             </ModalCloseButton>
           </ModalHeader>
           <ModalBody>
-            <div className="space-y-6">
-              {suitablePlayers.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  {suitablePlayers.map((player: any, id: number) => {
-                    return (
-                      <Fragment key={id}>
-                        <PlayerCard
-                          player={player}
-                          id={id}
-                          onClickFunc={() => {
-                            setPlayerSelectModalOpen(false);
-                            addPlayerToPitch(player);
-                          }}
-                        />
-                      </Fragment>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center text-2xl">
-                  <p>No hay más</p>
-                </div>
-              )}
+            <div className="flex flex-col gap-2">
+              <PlayerCard player={selectedPlayer} id={selectedPlayer.id} />
+              <div className="flex items-center justify-center w-full">
+                <Icon as={ArrowDownUp} className="text-typography-0" />
+              </div>
+
+              <div className="space-y-6">
+                {suitablePlayers.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {suitablePlayers.map((player: any, id: number) => {
+                      return (
+                        <Fragment key={id}>
+                          <PlayerCard
+                            player={player}
+                            id={id}
+                            onClickFunc={() => {
+                              setPlayerSelectModalOpen(false);
+                              addPlayerToPitch(player);
+                            }}
+                          />
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center text-2xl">
+                    <p>No hay más</p>
+                  </div>
+                )}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>
@@ -101,7 +141,7 @@ export default function PlayerSelectModal({
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

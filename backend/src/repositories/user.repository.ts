@@ -144,6 +144,7 @@ export const findUserById = async (id: string) => {
       id: true,
       username: true,
       password: true,
+      bank: true,
       profile: {
         select: {
           id: true,
@@ -181,6 +182,7 @@ export const findUserByUsername = async (username: string) => {
         },
       },
       role: { select: { id: true, name: true } },
+      bank: true
     },
   });
 };
@@ -192,6 +194,11 @@ export const insertUser = async (userData: TUserData) => {
       username: userData.username,
       password: await new Argon2id().hash(userData.password),
       roleId: userData.roleId,
+      bank: {
+        create: {
+          quantity: 35000000.00
+        }
+      }
     },
   });
 

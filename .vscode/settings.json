@@ -2,13 +2,10 @@
   "sqltools.connections": [
     {
       "previewLimit": 50,
-      "server": "localhost",
-      "port": 5432,
-      "driver": "PostgreSQL",
+      "driver": "SQLite",
       "name": "fantasy",
-      "database": "express-service",
-      "username": "postgres",
-      "password": "postgres"
+      "database": "${workspaceFolder:fantasyScrapper}/python_backend/fantasy/db.sqlite3"
     }
-  ]
+  ],
+  "sqltools.useNodeRuntime": true
 }

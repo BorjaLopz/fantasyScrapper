@@ -93,7 +93,7 @@ export const updateTeamFormationController = async (
     res.status(StatusCodes.OK).json({
       status: 'success',
       message: 'Team updated successfully.',
-      data: await updateTeamFormationService(Number(teamId), formation),
+      data: await updateTeamFormationService(teamId, formation),
     });
   } catch (err) {
     return next(err);

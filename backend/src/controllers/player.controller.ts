@@ -1,6 +1,8 @@
 import {
+  addPlayerToMarketService,
   getPlayerByIdService,
   getPlayersService,
+  removePlayerFromMarketService,
   updatePlayersPositionService,
 } from '@/services/player.service';
 import { TPlayerQueryFilters } from '@/types/player.type';
@@ -44,6 +46,44 @@ export const getPlayerController = async (
   }
 };
 
+export const addPlayerToMarketController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { playerId } = req.params;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Player transfer to market successfully.',
+      data: await addPlayerToMarketService(playerId),
+    });
+  } catch (err) {
+    console.log('err', err);
+    return next(err);
+  }
+};
+
+export const removePlayerFromMarketController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { playerId } = req.params;
+
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: 'Player remove from market successfully.',
+      data: await removePlayerFromMarketService(playerId),
+    });
+  } catch (err) {
+    console.log('err', err);
+    return next(err);
+  }
+};
+
 export const updatePlayerPositionNameController = async (
   req: Request,
   res: Response,
@@ -51,7 +91,6 @@ export const updatePlayerPositionNameController = async (
 ) => {
   try {
     const players = req.body;
-    console.log('players', req.body);
 
     res.status(StatusCodes.OK).json({
       status: 'success',

@@ -1,10 +1,8 @@
+import { useAuthSession } from "@/providers/AuthProvider";
 import { Redirect, Tabs } from "expo-router";
+import { Home, Store, Trophy, UsersRound } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
-
-import { useAuthSession } from "@/providers/AuthProvider";
-import { Icon } from "@/components/ui/icon";
-import { Home } from "lucide-react-native";
 
 export default function TabLayout() {
   const { token, isLoading } = useAuthSession();
@@ -37,19 +35,30 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Inicio",
-          tabBarActiveTintColor: "bg-primary-500",
-          tabBarIcon: () => (
-            <Icon as={Home} className="size-12" />
-          ),
+          tabBarActiveTintColor: "bg-primary",
+          tabBarIcon: () => <Home className="size-12" />,
+        }}
+      />
+      <Tabs.Screen
+        name="league"
+        options={{
+          title: "Liga",
+          tabBarActiveTintColor: "bg-primary",
+          tabBarIcon: () => <Trophy className="size-12" />,
         }}
       />
       <Tabs.Screen
         name="my-team"
         options={{
           title: "Mi equipo",
-          tabBarIcon: () => (
-            <Icon as={Home} className="size-12" />
-          ),
+          tabBarIcon: () => <UsersRound className="size-12" />,
+        }}
+      />
+      <Tabs.Screen
+        name="market"
+        options={{
+          title: "Mercado",
+          tabBarIcon: () => <Store className="size-12" />,
         }}
       />
     </Tabs>
