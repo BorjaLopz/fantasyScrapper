@@ -17,11 +17,11 @@ class Game(models.Model):
     home = models.OneToOneField(
         GameTeam,
         on_delete=models.CASCADE,
-        related_name='home'
+        related_name='game_home'
     )
     away = models.OneToOneField(
         GameTeam,
         on_delete=models.CASCADE,
-        related_name='away'
+        related_name='game_away'
     )
     event = models.ForeignKey(ActiveEvent, on_delete=models.CASCADE)
