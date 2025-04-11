@@ -63,32 +63,35 @@ model Team {
   id            Int     @id @default(autoincrement())
   fantasyTeamId String  @unique
   name          String
-  shortName     String
-  slug          String
-  dspId         Int
+  shortName     String?
+  slug          String?
+  dspId         Int?
   store         String?
   badgeColor    String
-  badgeGray     String
-  badgeWhite    String
+  badgeGray     String?
+  badgeWhite    String?
 
   players Player[]
 }
 
 model Player {
-  id               Int     @id @default(autoincrement())
-  fantasyPlayerId  String  @unique
-  name             String  @unique
-  nickname         String
-  image            String?
-  points           Decimal
-  weekPoints       Decimal
-  averagePoints    Decimal
-  lastSeasonPoints Decimal
-  slug             String
-  positionId       Int
-  position         String
-  marketValue      Decimal
-  playerStatus     String
+  id                Int     @id @default(autoincrement())
+  fantasyPlayerId   String  @unique
+  name              String  @unique
+  nickname          String
+  image             String?
+  points            Decimal
+  weekPoints        Decimal
+  averagePoints     Decimal
+  lastSeasonPoints  Decimal
+  slug              String
+  positionId        Int
+  position          String
+  marketValue       Decimal
+  playerStatus      String
+  clause            String  @default("")
+  positionName      String  @default("")
+  positionNameIndex Int     @default(0)
 
   stats      Stat[]    @relation(name: "stats")
   teamId     Int

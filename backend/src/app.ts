@@ -31,7 +31,8 @@ app.use(compression());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  // limit: 100,
+  limit: 10000,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   handler: (_req, res) =>
@@ -44,14 +45,14 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Logging middleware
-app.use(
-  PinoHttp({
-    logger,
-  }),
-);
+// app.use(
+//   PinoHttp({
+//     logger,
+//   }),
+// );
 
 // Body parsing middlewares
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '50kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -71,7 +72,7 @@ app.use(
 );
 
 // Error handling
-app.use(logError);
-app.use(handleError);
+// app.use(logError);
+// app.use(handleError);
 
 export default app;

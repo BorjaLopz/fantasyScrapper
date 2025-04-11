@@ -51,9 +51,9 @@ const fetchPlayers = () => {
                 fantasyPlayerId: player.id,
                 playerStatus: player.playerStatus,
                 points: player.points,
-                position: player.position,
+                position: parsePosition(player.positionId),
                 positionId: player.positionId,
-                slug: player.slug,
+                slug: player.slug || "",
                 weekPoints: player.weekPoints || 0,
                 image: player.images.transparent['256x256'],
                 team: {
@@ -83,7 +83,7 @@ const fetchPlayers = () => {
                 fantasyPlayerId: player.id,
                 playerStatus: player.playerStatus,
                 points: player.points,
-                position: player.position,
+                position: parsePosition(player.positionId),
                 positionId: player.positionId,
                 slug: player.slug,
                 weekPoints: player.weekPoints || 0,
@@ -117,7 +117,7 @@ const fetchPlayers = () => {
               totalPoints: number;
               isInIdealFormation: boolean;
             }[] = [];
-            for await (const stat of player.playerStats) {
+            for await (const stat of player.stats) {
               const statCreated = await prisma.stat.create({
                 data: {
                   totalPoints: stat.totalPoints,
@@ -140,3 +140,16 @@ const fetchPlayers = () => {
       console.log('Error: ', err.message);
     });
 };
+
+const parsePosition = (positionId: number) => {
+  switch (positionId) {
+    case 1:
+      return "portero"
+    case 2:
+      return "defensa"
+    case 3:
+      return "mediocentro"
+    default:
+      return "delantero";
+  }
+}
