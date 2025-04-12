@@ -65,8 +65,8 @@ export default function AuthProvider({
                   name: string;
                 };
                 bank: {
-                  quantity: number
-                }
+                  quantity: number;
+                };
               };
             }>
           >(`${API_URL}/auth/session`, {
@@ -80,7 +80,7 @@ export default function AuthProvider({
             username: result.data.data.user.username,
             role: result.data.data.user.role,
             profile: result.data.data.user.profile,
-            bank: result.data.data.user.bank
+            bank: result.data.data.user.bank,
           });
         } catch (error) {
           console.log("ERROR", error);
