@@ -15,6 +15,7 @@ class Player(models.Model):
     price = models.IntegerField(default=0)
     price_increment = models.IntegerField(default=0)
     status = models.CharField(max_length=50)
+    status_info = models.TextField(null=True)
     played_home = models.IntegerField(default=0)
     played_away = models.IntegerField(default=0)
     points = models.IntegerField(default=0)
