@@ -1,112 +1,110 @@
 import json
 from requests import get
 from django.db import transaction
-from api.models import Score, Season, SeasonRound, SeasonPrevious, ActiveEvent, Game, GameTeam
 
-url_all_players = "https://biwenger.as.com/api/v2/competitions/la-liga/data?lang=es&score=5"
+from api.models import Team, Player, WeekPoints, Stat
 
 def get_players_data():
     with transaction.atomic():
-        req = get(url_all_players).text
-        json_data = json.loads(req)['data']
+        req = get('https://api-fantasy.llt-services.com/api/v4/players?x-lang=es').text
         
-        # SCORES
-        for score in json_data['scores']:
-            data = {
-                'score_id': score['id'],
-                'name': score['name'],
-                'kind': score['kind']
-            }
-            if Score.objects.filter(name=data['name']).first() is None:
-                s = Score(**data)
-                s.save()
-        
-        # SEASON
-        season = json_data['season']
-        if Season.objects.filter(name=season['name']).first() is None:
-            previous = season['previous']
-            previous_data = {
-                'season_id': previous['id'],
-                'name': previous['name'],
-                'slug': previous['slug'],
-            }
-            sp = SeasonPrevious(**previous_data)
-            sp.save()
-
-            season_data = {
-                'season_id': season['id'],
-                'name': season['name'],
-                'slug': season['slug'],
-                'previous': sp
-            }
-            s = Season(**season_data)
-            s.save()
-
-            for round in season['rounds']:
+        for player in json.loads(req):
+            # TEAM
+            if (Team.objects.filter(name=player['team']['name'])).first() is None:
+                team = player['team']
                 data = {
-                    'round_id': round['id'],
-                    'name': round['name'],
-                    'short': round['short'],
-                    'status': round['status'],
-                    'season': s
-                }
-                r = SeasonRound(**data)
-                r.save()
-
-        # ACTIVE EVENT
-        for active_event in json_data['activeEvents']:
-            if ActiveEvent.objects.filter(name=active_event['name']).first() is None:
-                data = {
-                    'event_id': active_event['id'],
-                    'name': active_event['name'],
-                    'short': active_event['short'],
-                    'status': active_event['status'],
-                    'start': active_event['start'],
-                    'end': active_event['end'],
-                    'type': active_event['type'],
+                    'fantasy_id': int(team['id']),
+                    'name': team['name'],
+                    'slug': team['slug'],
+                    'badge': team['badgeColor']
                 }
 
-                ae = ActiveEvent(**data)
-                ae.save()
+                t = Team(**data)
+                t.save()
+            
+            # PLAYER
+            if (Player.objects.filter(fantasy_id=player['id'])).first() is None:
+                data = {
+                    'fantasy_id': int(player['id']),
+                    'name': player['nickname'],
+                    'nickname': player['nickname'],
+                    'image': player['images']['transparent']['256x256'],
+                    'points': player['points'],
+                    'average_points': player['averagePoints'],
+                    'last_season_points': player['lastSeasonPoints'],
+                    'slug': player['nickname'],
+                    'position_id': int(player['positionId']),
+                    'position': parse_position(int(player['positionId'])),
+                    'market_value': 0,
+                    'player_status': '',
+                }
 
-                for game in active_event['games']:
-                    gt_home = GameTeam.objects.filter(team_id=game['home']['id']).first()
-                    if gt_home is None:
-                        data = {
-                            'team_id': game['home']['id'],
-                            'name': game['home']['name'],
-                            'slug': game['home']['slug'],
-                            'score': game['home']['score']
-                        }
-                        gt_home = GameTeam(**data)
-                        gt_home.save()
-                    else:
-                        gt_home.update(score=game['home']['score'])
+                p = Player(**data)
+                p.save()
 
-                    gt_away = GameTeam.objects.filter(team_id=game['away']['id']).first()
-                    if gt_away is None:
-                        data = {
-                            'team_id': game['away']['id'],
-                            'name': game['away']['name'],
-                            'slug': game['away']['slug'],
-                            'score': game['away']['score']
-                        }
-                        gt_away = GameTeam(**data)
-                        gt_away.save()
-                    else:
-                        gt_away.update(score=game['away']['score'])
-                    
+                for week_point in player['weekPoints']:
                     data = {
-                        'game_id': game['id'],
-                        'date': game['date'],
-                        'status': game['status'],
-                        'home': gt_home,
-                        'away': gt_away,
-                        'event': ae
+                        'week_number': week_point['weekNumber'],
+                        'points': week_point['points'],
+                        'player': p
                     }
-                    
-                    g = Game(**data)
-                    g.save()
 
+                    wp = WeekPoints(**data)
+                    wp.save()
 
+def get_player_stats():
+    with transaction.atomic():
+        players = Player.objects.all()
+        for player in players:
+            req = get(f'https://api-fantasy.llt-services.com/api/v3/player/{player.fantasy_id}?x-lang=es').text
+            
+            player_json = json.loads(req)
+            for stat in player_json['playerStats']:
+                if (Stat.objects.filter(week_number=stat['weekNumber'])).first() is None:
+                    data = {
+                        'mins_played': stat['stats']['mins_played'],
+                        'goals': stat['stats']['goals'],
+                        'goal_assist': stat['stats']['goal_assist'],
+                        'offtarget_att_assist': stat['stats']['offtarget_att_assist'],
+                        'pen_area_entries': stat['stats']['pen_area_entries'],
+                        'penalty_won': stat['stats']['penalty_won'],
+                        'penalty_save': stat['stats']['penalty_save'],
+                        'saves': stat['stats']['saves'],
+                        'effective_clearance': stat['stats']['effective_clearance'],
+                        'penalty_failed': stat['stats']['penalty_failed'],
+                        'own_goals': stat['stats']['own_goals'],
+                        'goals_conceded': stat['stats']['goals_conceded'],
+                        'yellow_card': stat['stats']['yellow_card'],
+                        'second_yellow_card': stat['stats']['second_yellow_card'],
+                        'red_card': stat['stats']['red_card'],
+                        'total_scoring_att': stat['stats']['total_scoring_att'],
+                        'won_contest': stat['stats']['won_contest'],
+                        'ball_recovery': stat['stats']['ball_recovery'],
+                        'poss_lost_all': stat['stats']['poss_lost_all'],
+                        'penalty_conceded': stat['stats']['penalty_conceded'],
+                        'marca_points': stat['stats']['marca_points'],
+                        'week_number': stat['weekNumber'],
+                        'total_points': stat['totalPoints'],
+                        'is_in_ideal_formation': stat['isInIdealFormation'],
+                        'player': player
+                    }
 
+                    st = Stat(**data)
+                    st.save()
+
+            pl = Player.objects.filter(fantasy_id=player.fantasy_id)
+            pl.name = player_json['name']
+            pl.market_value = player_json['marketValue']
+            pl.player_status = player_json['playerStatus']
+            pl.update()
+        
+
+def parse_position(position):
+    if position == 1:
+        return 'portero'
+    elif position == 2:
+        return 'defensa'
+    elif position == 3:
+        return 'mediocentro'
+    else:
+        return 'delantero'
