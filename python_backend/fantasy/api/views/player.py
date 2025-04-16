@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from api.models import Player
-from api.serializers import PlayerSerializer
+from api.models import Player, Stat, MarketValueHistoric
+from api.serializers import PlayerSerializer, StatSerializer, MarketValueHistoricSerializer
 
 class PlayerListApiView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -41,4 +41,30 @@ class PlayerDetailsApiView(APIView):
         serializer = PlayerSerializer(player_instance)
         
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+class PlayerStatsDetailsApiView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    # 2. Get
+    def get(self, request, id, *args, **kargs):
+        '''
+        Get all stats based on player id
+        '''
+        stats = Stat.objects.filter(player_id=id)
+        serializer = StatSerializer(stats, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PlayerMarketDetailsApiView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    # 2. Get
+    def get(self, request, id, *args, **kargs):
+        '''
+        Get all market values based on player id
+        '''
+        market_values = MarketValueHistoric.objects.filter(player_id=id)
+        serializer = MarketValueHistoricSerializer(market_values, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
     

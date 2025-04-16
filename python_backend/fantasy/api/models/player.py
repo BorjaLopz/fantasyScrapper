@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
+from .team import Team
+
 class Player(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     fantasy_id = models.IntegerField(default=0)
@@ -16,6 +18,8 @@ class Player(models.Model):
     position = models.CharField(max_length=20, null=True)
     market_value = models.FloatField(default=0.0)
     player_status = models.CharField(max_length=35, null=True)
+
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
 class Stat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

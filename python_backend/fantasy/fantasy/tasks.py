@@ -37,6 +37,7 @@ def get_players_data():
                     'position': parse_position(int(player['positionId'])),
                     'market_value': 0,
                     'player_status': '',
+                    'team': Team.objects.filter(name=player['team']['name']).first()
                 }
 
                 p = Player(**data)
