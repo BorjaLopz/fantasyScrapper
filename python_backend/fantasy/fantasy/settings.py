@@ -82,11 +82,12 @@ WSGI_APPLICATION = "fantasy.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {
-                "service": "fantasy_database",
-                "passfile": ".pg_pass",
-            },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fantasy',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

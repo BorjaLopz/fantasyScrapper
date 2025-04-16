@@ -13,7 +13,7 @@ class Player(models.Model):
     last_season_points = models.FloatField(default=0.0, null=True)
     slug = models.CharField(max_length=100)
     position_id = models.IntegerField(default=1)
-    position = models.CharField(max_length=10, null=True)
+    position = models.CharField(max_length=20, null=True)
     market_value = models.FloatField(default=0.0)
     player_status = models.CharField(max_length=35, null=True)
 

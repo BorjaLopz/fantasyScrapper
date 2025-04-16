@@ -60,7 +60,7 @@ def get_player_stats():
             
             player_json = json.loads(req)
             for stat in player_json['playerStats']:
-                if (Stat.objects.filter(week_number=stat['weekNumber'])).first() is None:
+                if (Stat.objects.filter(week_number=stat['weekNumber'])).filter(player_id=player.id).first() is None:
                     data = {
                         'mins_played': stat['stats']['mins_played'],
                         'goals': stat['stats']['goals'],
@@ -92,11 +92,8 @@ def get_player_stats():
                     st = Stat(**data)
                     st.save()
 
-            pl = Player.objects.filter(fantasy_id=player.fantasy_id)
-            pl.name = player_json['name']
-            pl.market_value = player_json['marketValue']
-            pl.player_status = player_json['playerStatus']
-            pl.update()
+            Player.objects.filter(fantasy_id=player.fantasy_id).update(name=player_json['name'], market_value=player_json['marketValue'], player_status=player_json['playerStatus'])
+            print('player updated ', player.nickname)
         
 
 def parse_position(position):
