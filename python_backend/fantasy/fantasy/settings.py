@@ -45,6 +45,8 @@ INSTALLED_APPS = [
 CRONJOBS = [
     ('*/1 * * * *', 'fantasy.tasks.get_players_data'),
     ('*/1 * * * *', 'fantasy.tasks.get_player_stats'),
+    ('*/1 * * * *', 'fantasy.tasks.get_player_market'),
+    ('*/1 * * * *', 'fantasy.tasks.delete_players_out_of_league'),
 ]
 
 MIDDLEWARE = [

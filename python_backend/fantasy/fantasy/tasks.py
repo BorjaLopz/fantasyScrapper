@@ -2,7 +2,7 @@ import json
 from requests import get
 from django.db import transaction
 
-from api.models import Team, Player, WeekPoints, Stat
+from api.models import Team, Player, WeekPoints, Stat, MarketValueHistoric
 
 def get_players_data():
     with transaction.atomic():
@@ -93,9 +93,29 @@ def get_player_stats():
                     st.save()
 
             Player.objects.filter(fantasy_id=player.fantasy_id).update(name=player_json['name'], market_value=player_json['marketValue'], player_status=player_json['playerStatus'])
-            print('player updated ', player.nickname)
-        
 
+def get_player_market():
+    with transaction.atomic():
+        players = Player.objects.all()
+        for player in players:
+            req = get(f'https://api-fantasy.llt-services.com/api/v3/player/{player.fantasy_id}/market-value?x-lang=es').text
+            
+            for market in json.loads(req):
+                if (MarketValueHistoric.objects.filter(date=market['date'])).filter(player_id=player.id).first() is None:
+                    data = {
+                        'lfp_id': market['lfpId'],
+                        'market_value': market['marketValue'],
+                        'date': market['date'],
+                        'player': player
+                    }
+
+                    mvh = MarketValueHistoric(**data)
+                    mvh.save()
+        
+def delete_players_out_of_league():
+    with transaction.atomic():
+        Player.objects.filter(player_status="out_of_league").delete()
+        
 def parse_position(position):
     if position == 1:
         return 'portero'
