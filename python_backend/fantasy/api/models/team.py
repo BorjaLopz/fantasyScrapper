@@ -7,3 +7,4 @@ class Team(models.Model):
     name = models.CharField(max_length=250, unique=True)
     slug = models.CharField(max_length=150, unique=True)
     badge = models.TextField(null=True)
+    

@@ -2,7 +2,9 @@ import uuid
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
+from .user_team import UserTeam
 from .team import Team
+from .market import Market
 
 class Player(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -18,8 +20,12 @@ class Player(models.Model):
     position = models.CharField(max_length=20, null=True)
     market_value = models.FloatField(default=0.0)
     player_status = models.CharField(max_length=35, null=True)
+    line_up_name = models.CharField(max_length=5, null=True)
+    line_up_index = models.IntegerField(default=0)
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    market = models.ForeignKey(Market, on_delete=models.CASCADE, null=True)
+    user_team = models.ForeignKey(UserTeam, on_delete=models.CASCADE, null=True)
 
 class Stat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

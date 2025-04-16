@@ -2,13 +2,17 @@ from rest_framework import serializers
 
 from api.models import Player, Stat, MarketValueHistoric
 from .team import TeamSerializer
+from .market import MarketSerializer
+from .user_team import UserTeamSerializer
 
 class PlayerSerializer(serializers.ModelSerializer):
     team = TeamSerializer(many=False)
+    market = MarketSerializer(many=False)
+    user_team = UserTeamSerializer(many=False)
 
     class Meta:
         model = Player
-        fields = ['id', 'fantasy_id', 'name', 'nickname', 'image', 'points', 'average_points', 'last_season_points', 'slug', 'position_id', 'position', 'market_value', 'player_status', 'team']
+        fields = ['id', 'fantasy_id', 'name', 'nickname', 'image', 'points', 'average_points', 'last_season_points', 'slug', 'position_id', 'position', 'market_value', 'player_status', 'line_up_name', 'line_up_index', 'team', 'market', 'user_team']
 
 class StatSerializer(serializers.ModelSerializer):
     player = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
