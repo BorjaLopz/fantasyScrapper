@@ -1,3 +1,2 @@
-from .score import *
-from .season import *
-from .active_event import *
+from .team import *
+from .player import *

@@ -38,12 +38,22 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_crontab",
     "api"
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
+
 CRONJOBS = [
     ('*/1 * * * *', 'fantasy.tasks.get_players_data'),
+    ('*/1 * * * *', 'fantasy.tasks.get_player_stats'),
+    ('*/1 * * * *', 'fantasy.tasks.get_player_market'),
+    ('*/1 * * * *', 'fantasy.tasks.delete_players_out_of_league'),
 ]
 
 MIDDLEWARE = [
@@ -81,8 +91,12 @@ WSGI_APPLICATION = "fantasy.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fantasy',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

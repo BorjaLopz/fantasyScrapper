@@ -1,13 +1,12 @@
 from django.urls import path
 
-from .views import ScoreListApiView, SeasonListApiView, SeasonDetailsApiView, SeasonRoundListApiView, ActiveEventDetailsApiView, ActiveEventGamesListApiView, ActiveEventListApiView
+from .views import TeamListApiView, TeamDetailsApiView, PlayerListApiView, PlayerDetailsApiView, PlayerStatsDetailsApiView, PlayerMarketDetailsApiView
 
 urlpatterns = [
-    path('api/score', ScoreListApiView.as_view()),
-    path('api/season', SeasonListApiView.as_view()),
-    path('api/season/<uuid:id>', SeasonDetailsApiView.as_view()),
-    path('api/season/<uuid:season_id>/rounds', SeasonRoundListApiView.as_view()),
-    path('api/active-event', ActiveEventListApiView.as_view()),
-    path('api/active-event/<uuid:id>', ActiveEventDetailsApiView.as_view()),
-    path('api/active-event/<uuid:event_id>/games', ActiveEventGamesListApiView.as_view()),
+    path('api/teams', TeamListApiView.as_view()),
+    path('api/teams/<uuid:id>', TeamDetailsApiView.as_view()),
+    path('api/players', PlayerListApiView.as_view()),
+    path('api/players/<uuid:id>', PlayerDetailsApiView.as_view()),
+    path('api/players/<uuid:id>/stats', PlayerStatsDetailsApiView.as_view()),
+    path('api/players/<uuid:id>/market', PlayerMarketDetailsApiView.as_view()),
 ]
