@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Player" ADD COLUMN     "bottom" TEXT NOT NULL DEFAULT '',
-ADD COLUMN     "clause" TEXT NOT NULL DEFAULT '',
-ADD COLUMN     "right" TEXT NOT NULL DEFAULT '';
