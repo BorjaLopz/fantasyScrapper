@@ -39,7 +39,7 @@ def get_db_conn():
 
 def get_existing_fbref_game_ids(conn):
     cur = conn.cursor()
-    cur.execute("SELECT fbref_id FROM matches;")
+    cur.execute("SELECT fbref_game_id FROM matches;")
     rows = cur.fetchall()
     cur.close()
     return {r[0] for r in rows if r[0]}
@@ -104,7 +104,7 @@ def upsert_match(conn, match_row):
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO matches (external_id, season, competition, date, home_team_id, away_team_id, home_goals, away_goals, fbref_id, last_updated)
+        INSERT INTO matches (external_id, season, competition, date, home_team_id, away_team_id, home_goals, away_goals, fbref_game_id, last_updated)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         ON CONFLICT (external_id)
         DO UPDATE SET last_updated = EXCLUDED.last_updated,
@@ -120,7 +120,7 @@ def upsert_match(conn, match_row):
             match_row.get("away_team_id"),
             match_row.get("home_goals"),
             match_row.get("away_goals"),
-            match_row.get("fbref_id"),
+            match_row.get("fbref_game_id"),
             datetime.datetime.now(datetime.UTC),
         ),
     )
@@ -153,7 +153,8 @@ def upsert_player(conn, player_row):
     cur.close()
 
 
-def insert_stat_and_points(conn, match_id, player_id, stat_row, points):
+# def insert_stat_and_points(conn, match_id, player_id, stat_row, points):
+def insert_stat(conn, match_id, player_id, stat_row):
     cur = conn.cursor()
     cur.execute(
         """
@@ -179,13 +180,13 @@ def insert_stat_and_points(conn, match_id, player_id, stat_row, points):
             datetime.datetime.now(datetime.UTC),
         ),
     )
-    cur.execute(
-        """
-        INSERT INTO points_history (player_id, match_id, points, calculated_at)
-        VALUES (%s,%s,%s,%s)
-    """,
-        (player_id, match_id, points, datetime.datetime.now(datetime.UTC)),
-    )
+    # cur.execute(
+    #     """
+    #     INSERT INTO points_history (player_id, match_id, points, calculated_at)
+    #     VALUES (%s,%s,%s,%s)
+    # """,
+    #     (player_id, match_id, points, datetime.datetime.now(datetime.UTC)),
+    # )
     conn.commit()
     cur.close()
 
@@ -221,47 +222,46 @@ POSITION_FACTORS = {
     },
 }
 
+# def calc_points_from_row(row):
+#     pos = row.get("position", "MID")
+#     f = POSITION_FACTORS.get(pos, POSITION_FACTORS["MID"])
+#     points = 0
+#     points += row.get("goals", 0) * f.get("goal", 0)
+#     points += row.get("assists", 0) * f.get("assist", 0)
+#     points += row.get("xg", 0) * f.get("xg", 0)
+#     points += row.get("xa", 0) * f.get("xa", 0)
+#     points -= row.get("yellow", 0) * 1  # menos agresivo
+#     points -= row.get("red", 0) * 3
+#     if pos == "FWD" and row.get("goals", 0) >= 3:
+#         points += 3
+#     if pos == "MID" and row.get("assists", 0) >= 2:
+#         points += 2
+#     # Penalización por pérdidas más realista
+#     points -= row.get("losses", 0) * 0.05
+#     points += row.get("dribbles_completed", 0) * 0.2
+#     points += row.get("crosses_into_box", 0) * (0.3 if pos in ["DEF", "MID"] else 0.1)
+#     points += row.get("recoveries", 0) * 0.1
+#     points += row.get("clearances", 0) * (0.2 if pos in ["DEF", "GK"] else 0.05)
+#     minutes = row.get("minutes", 90)
+#     points *= min(1, minutes / 90)
+#     return round(max(points, 0), 2)  # no dejar puntos negativos
 
-def calc_points_from_row(row):
-    pos = row.get("position", "MID")
-    f = POSITION_FACTORS.get(pos, POSITION_FACTORS["MID"])
-    points = 0
-    points += row.get("goals", 0) * f.get("goal", 0)
-    points += row.get("assists", 0) * f.get("assist", 0)
-    points += row.get("xg", 0) * f.get("xg", 0)
-    points += row.get("xa", 0) * f.get("xa", 0)
-    points -= row.get("yellow", 0) * 1  # menos agresivo
-    points -= row.get("red", 0) * 3
-    if pos == "FWD" and row.get("goals", 0) >= 3:
-        points += 3
-    if pos == "MID" and row.get("assists", 0) >= 2:
-        points += 2
-    # Penalización por pérdidas más realista
-    points -= row.get("losses", 0) * 0.05
-    points += row.get("dribbles_completed", 0) * 0.2
-    points += row.get("crosses_into_box", 0) * (0.3 if pos in ["DEF", "MID"] else 0.1)
-    points += row.get("recoveries", 0) * 0.1
-    points += row.get("clearances", 0) * (0.2 if pos in ["DEF", "GK"] else 0.05)
-    minutes = row.get("minutes", 90)
-    points *= min(1, minutes / 90)
-    return round(max(points, 0), 2)  # no dejar puntos negativos
 
+# def calc_market_value(player_hist_points: list, minutes_avg: float, age_years: float):
+#     last5 = player_hist_points[-5:] if player_hist_points else []
+#     last5_avg = sum(last5) / len(last5) if last5 else 0
+#     import math
 
-def calc_market_value(player_hist_points: list, minutes_avg: float, age_years: float):
-    last5 = player_hist_points[-5:] if player_hist_points else []
-    last5_avg = sum(last5) / len(last5) if last5 else 0
-    import math
-
-    std = (
-        (sum((p - last5_avg) ** 2 for p in last5) / len(last5)) ** 0.5
-        if len(last5) > 1
-        else 0
-    )
-    consistency = 1 / (std + 1)
-    age_factor = 1.2 if age_years <= 25 else (1.0 if age_years <= 30 else 0.9)
-    base = 500_000
-    val = base * (1 + 0.5 * (last5_avg / 10)) * (1 + 0.2 * consistency) * age_factor
-    return int(round(val / 1000) * 1000)
+#     std = (
+#         (sum((p - last5_avg) ** 2 for p in last5) / len(last5)) ** 0.5
+#         if len(last5) > 1
+#         else 0
+#     )
+#     consistency = 1 / (std + 1)
+#     age_factor = 1.2 if age_years <= 25 else (1.0 if age_years <= 30 else 0.9)
+#     base = 500_000
+#     val = base * (1 + 0.5 * (last5_avg / 10)) * (1 + 0.2 * consistency) * age_factor
+#     return int(round(val / 1000) * 1000)
 
 
 # -------------------------
@@ -293,8 +293,9 @@ def main():
     new_games = schedule_df[schedule_df["is_new"]]
     logger.info(f"Total partidos: {len(schedule_df)}, nuevos: {len(new_games)}")
 
-    # Procesar solo partidos no en BD
-    for _, g in new_games.iterrows():
+    played_matches = new_games[new_games["match_report"].notna()]
+    # Procesar solo partidos que no estan en BD y que se han jugado
+    for _, g in played_matches.iterrows():
         game_id = g["game_id"]
         logger.info(f"[NEW] Procesando partido {game_id}")
 
@@ -330,7 +331,7 @@ def main():
             "away_team_id": get_team_id(conn, g.get("away_team", "unknown")),
             "home_goals": goals[0],
             "away_goals": goals[1],
-            "fbref_id": game_id,
+            "fbref_game_id": game_id,
         }
         upsert_match(conn, match_row)
 
@@ -341,6 +342,7 @@ def main():
             player_row = {
                 "external_id": prow["player_name"],
                 "name": prow["player_name"],
+                "age": age_years,
                 "position": prow.get("pos", "MID"),
                 "team_id": team_id,
                 "market_value": 0,
@@ -386,19 +388,20 @@ def main():
                 "position": prow.get("pos", "MID"),
             }
 
-            points = calc_points_from_row(stat_row)
-            insert_stat_and_points(conn, match_id, player_id, stat_row, points)
-            insert_market_history(
-                conn,
-                player_id,
-                calc_market_value([points], stat_row["minutes"], age_years),
-            )
+            # points = calc_points_from_row(stat_row)
+            # insert_stat_and_points(conn, match_id, player_id, stat_row, points)
+            insert_stat(conn, match_id, player_id, stat_row)
+            # insert_market_history(
+            #     conn,
+            #     player_id,
+            #     # calc_market_value([points], stat_row["minutes"], age_years),
+            # )
 
         time.sleep(PER_REQUEST_DELAY)
 
-    cur = conn.cursor()
-    cur.execute("REFRESH MATERIALIZED VIEW mv_player_points;")
-    cur.execute("REFRESH MATERIALIZED VIEW mv_market_values;")
+    # cur = conn.cursor()
+    # cur.execute("REFRESH MATERIALIZED VIEW mv_player_points;")
+    # cur.execute("REFRESH MATERIALIZED VIEW mv_market_values;")
     conn.commit()
     cur.close()
     conn.close()
