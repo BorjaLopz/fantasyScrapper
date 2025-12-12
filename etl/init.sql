@@ -98,3 +98,53 @@ JOIN players p ON mh.player_id = p.id
 WHERE mh.calculated_at = (
     SELECT MAX(calculated_at) FROM market_history mh2 WHERE mh2.player_id = p.id
 );
+
+CREATE TABLE IF NOT EXISTS app_user (
+  id SERIAL PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  display_name TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- teams
+CREATE TABLE IF NOT EXISTS user_team (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES app_user(id) UNIQUE, -- cada usuario tiene 1 equipo
+  name TEXT NOT NULL,
+  formation TEXT, -- e.g. "4-3-3"
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- team_players: jugadores asignados a equipos
+CREATE TABLE IF NOT EXISTS team_player (
+  id SERIAL PRIMARY KEY,
+  team_id INT REFERENCES user_team(id),
+  player_id INT REFERENCES players(id), -- players provisto por ETL
+  role TEXT,         -- p.e. "starter", "sub"
+  position_label TEXT, -- p.e. "GK", "CB", "RM"
+  added_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(team_id, player_id)
+);
+
+-- market listings
+CREATE TABLE IF NOT EXISTS market_listing (
+  id SERIAL PRIMARY KEY,
+  player_id INT REFERENCES players(id) UNIQUE, -- un jugador solo puede haber 1 listing activo
+  seller_team_id INT REFERENCES user_team(id),
+  reserve_price BIGINT,
+  status TEXT DEFAULT 'OPEN', -- OPEN, CLOSED, CANCELLED
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- bids
+CREATE TABLE IF NOT EXISTS bid (
+  id SERIAL PRIMARY KEY,
+  listing_id INT REFERENCES market_listing(id),
+  bidder_team_id INT REFERENCES user_team(id),
+  amount BIGINT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_player_player ON team_player(player_id);
+CREATE INDEX IF NOT EXISTS idx_listing_player ON market_listing(player_id);
+CREATE INDEX IF NOT EXISTS idx_bids_listing ON bid(listing_id);
