@@ -19,35 +19,64 @@ CREATE TABLE IF NOT EXISTS players (
 CREATE TABLE IF NOT EXISTS matches (
     id SERIAL PRIMARY KEY,
     external_id TEXT UNIQUE,
-    season INT,
+    season TEXT,
     competition TEXT,
     date TIMESTAMP,
     home_team_id INT REFERENCES teams(id),
     away_team_id INT REFERENCES teams(id),
     home_goals INT,
     away_goals INT,
-    fbref_game_id TEXT,
+    fbref_id TEXT,
     last_updated TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS stats (
+CREATE TABLE stats (
     id SERIAL PRIMARY KEY,
     match_id INT REFERENCES matches(id),
     player_id INT REFERENCES players(id),
+
     minutes INT,
-    goals INT,
-    assists INT,
+
+    -- Performance
+    gls INT,
+    ast INT,
+    pk INT,
+    pkatt INT,
+    sh INT,
+    sot INT,
+    crdy INT,
+    crdr INT,
+    touches INT,
+    tkl INT,
+    interceptions INT,
+    blocks INT,
+
+    -- Expected
     xg NUMERIC,
-    xa NUMERIC,
-    yellow INT,
-    red INT,
-    dribbles_completed INT,
-    crosses_into_box INT,
-    recoveries INT,
-    clearances INT,
-    losses INT,
+    npxg NUMERIC,
+    xag NUMERIC,
+
+    -- SCA
+    sca INT,
+    gca INT,
+
+    -- Passing
+    passes_cmp INT,
+    passes_att INT,
+    passes_cmp_pct NUMERIC,
+    prgp INT,
+
+    -- Carrying
+    carries INT,
+    prgc INT,
+
+    -- Take-ons
+    takeons_att INT,
+    takeons_succ INT,
+
     updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(match_id, player_id)
+
+    UNIQUE(player_id, match_id)
 );
 
 CREATE TABLE IF NOT EXISTS points_history (
@@ -68,8 +97,8 @@ CREATE TABLE IF NOT EXISTS market_history (
 
 -- Índices para acelerar consultas
 CREATE INDEX IF NOT EXISTS idx_matches_season ON matches(season);
-CREATE INDEX IF NOT EXISTS idx_stats_player_id ON stats(player_id);
-CREATE INDEX IF NOT EXISTS idx_stats_match_id ON stats(match_id);
+CREATE INDEX IF NOT EXISTS idx_stats_match ON stats(match_id);
+CREATE INDEX IF NOT EXISTS idx_stats_player ON stats(player_id);
 CREATE INDEX IF NOT EXISTS idx_points_player_id ON points_history(player_id);
 CREATE INDEX IF NOT EXISTS idx_points_match_id ON points_history(match_id);
 CREATE INDEX IF NOT EXISTS idx_market_player_id ON market_history(player_id);
