@@ -1,3 +1,5 @@
+import logging
+import warnings
 import psycopg2
 from soccerdata import FBref
 import pandas as pd
@@ -17,6 +19,21 @@ LEAGUE = "LaLiga"
 COMPETITION = "LaLiga"
 SEASON = "2025-2026"
 
+# 1️⃣ Silenciar warnings de Python (UserWarning, FutureWarning, etc.)
+warnings.filterwarnings("ignore")
+
+# 2️⃣ Silenciar completamente logs de soccerdata
+logging.getLogger("soccerdata").setLevel(logging.CRITICAL)
+
+# 3️⃣ Silenciar logs de requests/urllib3 (muy común en soccerdata)
+logging.getLogger("urllib3").setLevel(logging.CRITICAL)
+logging.getLogger("requests").setLevel(logging.CRITICAL)
+
+# 4️⃣ Configurar solo TUS logs
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
 
 # =========================
 # DB
@@ -28,17 +45,30 @@ def get_conn():
 # =========================
 # HELPERS
 # =========================
-def parse_age(age):
-    if isinstance(age, pd.Series):
-        if len(age) > 0:
-            age = age.iloc[0]
-        else:
-            age = None
-    if age is not None and not pd.isna(age):
-        age = str(age).strip()
+def scalar(val):
+    """
+    Convierte valores de pandas (Series / NaN) a tipos Python puros.
+    """
+    if isinstance(val, pd.Series):
+        if len(val) == 0:
+            return None
+        val = val.iloc[0]
 
-    return age
+    if val is None or pd.isna(val):
+        return None
 
+    return str(val).strip()
+
+
+def get_stat(s, col, default=0):
+    return scalar(s[col]) if col in s else default
+
+def flatten_columns(df):
+    df.columns = [
+        f"{a}_{b}".strip("_")
+        for a, b in df.columns
+    ]
+    return df
 
 def get_or_create_team(cur, name):
     cur.execute("SELECT id FROM teams WHERE name=%s", (name,))
@@ -151,17 +181,30 @@ def etl_laliga():
         # =========================
         # STATS
         # =========================
-        df = fb.read_player_match_stats(match_id=fbref_match_id, stat_type="summary")
-        print(f"   ▶ Stats jugadores: {len(df)} registros")
+        # df = fb.read_player_match_stats(match_id=fbref_match_id, stat_type="summary")
+        # print(f"   ▶ Stats jugadores: {len(df)} registros")
 
-        if df.empty:
-            print(f"⚠ Sin stats partido {fbref_match_id}")
+        # if df.empty:
+        #     print(f"⚠ Sin stats partido {fbref_match_id}")
+        #     continue
+
+        # df = pd.concat(dfs, axis=1)
+        # df = df.loc[:, ~df.columns.duplicated()]
+        # df = df.reset_index()
+
+        dfs = []
+
+        d = fb.read_player_match_stats(match_id=fbref_match_id, stat_type="summary")
+        dfs.append(flatten_columns(d))
+
+        if not dfs:
             continue
 
+        df = pd.concat(dfs, axis=1)
+        df = df.loc[:, ~df.columns.duplicated()]
         df = df.reset_index()
 
         for _, s in df.iterrows():
-            # team_name = str(s["team"]).strip()
             if isinstance(s["team"], pd.Series):
                 team_name = s["team"].iloc[0]
             else:
@@ -178,14 +221,15 @@ def etl_laliga():
                 continue
 
             external_id = f"{s['player']}_{team_name}".replace(" ", "_").lower()
-            age = parse_age(s.get("age"))
-            print(f"    - Procesando jugador: {s['player']} (Edad: {age})")
+            age = scalar(s.get("age"))
+            player = scalar(s["player"])
+            print(f"    - Procesando jugador: {player} (Edad: {age})")
             player_id = get_or_create_player(
                 cur,
                 external_id,  # external_id
-                s["player"],  # nombre real
-                s["pos"],  # posición
-                age,
+                player,  # nombre real
+                scalar(s["pos"]),  # posición
+                age.split("-")[0],
                 team_id,
             )
 
@@ -214,32 +258,40 @@ def etl_laliga():
                 (
                     match_id,
                     player_id,
-                    s["min"],
-                    s["Performance_Gls"],
-                    s["Performance_Ast"],
-                    s["Performance_PK"],
-                    s["Performance_PKatt"],
-                    s["Performance_Sh"],
-                    s["Performance_SoT"],
-                    s["Performance_CrdY"],
-                    s["Performance_CrdR"],
-                    s["Performance_Touches"],
-                    s["Performance_Tkl"],
-                    s["Performance_Int"],
-                    s["Performance_Blocks"],
-                    s["Expected_xG"],
-                    s["Expected_npxG"],
-                    s["Expected_xAG"],
-                    s["SCA_SCA"],
-                    s["SCA_GCA"],
-                    s["Passes_Cmp"],
-                    s["Passes_Att"],
-                    s["Passes_Cmp%"],
-                    s["Passes_PrgP"],
-                    s["Carries_Carries"],
-                    s["Carries_PrgC"],
-                    s["Take-Ons_Att"],
-                    s["Take-Ons_Succ"],
+                    get_stat(s, "min"),
+                    # SUMMARY
+                    get_stat(s, "Performance_Gls"),
+                    get_stat(s, "Performance_Ast"),
+                    get_stat(s, "Performance_PK"),
+                    get_stat(s, "Performance_PKatt"),
+                    get_stat(s, "Performance_Sh"),
+                    get_stat(s, "Performance_SoT"),
+                    # MISC
+                    get_stat(s, "Performance_CrdY"),
+                    get_stat(s, "Performance_CrdR"),
+                    # POSSESSION / DEFENSE
+                    get_stat(s, "Performance_Touches"),
+                    get_stat(s, "Performance_Tkl"),
+                    get_stat(s, "Performance_Int"),
+                    get_stat(s, "Performance_Blocks"),
+                    # EXPECTED
+                    get_stat(s, "Expected_xG"),
+                    get_stat(s, "Expected_npxG"),
+                    get_stat(s, "Expected_xAG"),
+                    # SCA
+                    get_stat(s, "SCA_SCA"),
+                    get_stat(s, "SCA_GCA"),
+                    # PASSING
+                    get_stat(s, "Passes_Cmp"),
+                    get_stat(s, "Passes_Att"),
+                    get_stat(s, "Passes_Cmp%"),
+                    get_stat(s, "Passes_PrgP"),
+                    # CARRYING
+                    get_stat(s, "Carries_Carries"),
+                    get_stat(s, "Carries_PrgC"),
+                    # TAKE-ONS
+                    get_stat(s, "Take-Ons_Att"),
+                    get_stat(s, "Take-Ons_Succ"),
                 ),
             )
 
