@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: fantasy-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vira_dply
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver  # Spring Boot can infer this from the URL
+
+jpa:
+  open-in-view: false
+  hibernate:
+    ddl-auto: validate
+  properties:
+    hibernate:
+      format_sql: true
+
+server:
+  port: 8080
+
+security:
+  jwt:
+    secret: "super-ultra-long-secret-key-at-least-32-chars"
