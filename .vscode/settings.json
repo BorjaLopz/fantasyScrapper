@@ -11,5 +11,6 @@
       "password": "postgres"
     }
   ],
-  "sqltools.useNodeRuntime": true
+  "sqltools.useNodeRuntime": true,
+  "java.compile.nullAnalysis.mode": "automatic"
 }

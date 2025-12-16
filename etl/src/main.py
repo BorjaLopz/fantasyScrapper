@@ -1,3 +1,4 @@
+import difflib
 import logging
 import warnings
 import psycopg2
@@ -70,22 +71,52 @@ def flatten_columns(df):
     ]
     return df
 
-def get_or_create_team(cur, name):
-    cur.execute("SELECT id FROM teams WHERE name=%s", (name,))
-    r = cur.fetchone()
-    if r:
-        return r[0]
+def normalize_team_name(name: str) -> str:
+    """
+    Normaliza nombres para comparaciones: quita prefijos y sufijos, 
+    pero no se guarda en la DB.
+    """
+    if not name:
+        return ""
+    name = name.strip()
+    for prefix in ["Real ", "Club ", "Atlético "]:
+        if name.startswith(prefix):
+            name = name[len(prefix):]
+    for suffix in [" CF", " FC", " SC"]:
+        if name.endswith(suffix):
+            name = name[:-len(suffix)]
+    return name.strip()
 
+def get_or_create_team(cur, fbref_name: str) -> int:
+    """
+    Devuelve el team_id de la DB. Si no existe, intenta match aproximado y si no, lo crea.
+    El nombre guardado en la DB será el nombre completo oficial de FBref.
+    """
+    normalized_name = normalize_team_name(fbref_name)
+
+    # 1️⃣ Buscar match exacto en DB
+    cur.execute("SELECT id, name FROM teams")
+    teams = cur.fetchall()
+    
+    for team_id, db_name in teams:
+        if normalized_name.lower() == normalize_team_name(db_name).lower():
+            return team_id
+
+    # 2️⃣ Match aproximado (fuzzy)
+    db_names = [db_name for _, db_name in teams]
+    match = difflib.get_close_matches(normalized_name, db_names, n=1, cutoff=0.8)
+    if match:
+        matched_name = match[0]
+        for team_id, db_name in teams:
+            if db_name == matched_name:
+                return team_id
+
+    # 3️⃣ Si no existe, crear nuevo con el nombre completo oficial
     cur.execute(
-        """
-        INSERT INTO teams (name, league)
-        VALUES (%s,%s)
-        RETURNING id
-        """,
-        (name, LEAGUE),
+        "INSERT INTO teams (name, league) VALUES (%s, %s) RETURNING id",
+        (fbref_name, "LaLiga")
     )
     return cur.fetchone()[0]
-
 
 def get_or_create_player(cur, external_id, name, position, age, team_id):
     cur.execute("SELECT id FROM players WHERE external_id=%s", (external_id,))
@@ -141,8 +172,8 @@ def etl_laliga():
         if r:
             continue
 
-        home_team = str(m["home_team"]).strip()
-        away_team = str(m["away_team"]).strip()
+        home_team = str(m["home_team"])
+        away_team = str(m["away_team"])
 
         home_id = get_or_create_team(cur, home_team)
         away_id = get_or_create_team(cur, away_team)
@@ -212,9 +243,13 @@ def etl_laliga():
 
             team_name = str(team_name).strip()
 
-            if team_name == home_team:
+            team_name_lower = team_name.lower()
+            home_team_lower = home_team.lower()
+            away_team_lower = away_team.lower()
+
+            if team_name_lower in home_team_lower or home_team_lower in team_name_lower:
                 team_id = home_id
-            elif team_name == away_team:
+            elif team_name_lower in away_team_lower or away_team_lower in team_name_lower:
                 team_id = away_id
             else:
                 print(f"⚠ Equipo no coincide: {team_name} → skip")
@@ -223,7 +258,7 @@ def etl_laliga():
             external_id = f"{s['player']}_{team_name}".replace(" ", "_").lower()
             age = scalar(s.get("age"))
             player = scalar(s["player"])
-            print(f"    - Procesando jugador: {player} (Edad: {age})")
+            # print(f"    - Procesando jugador: {player} (Edad: {age})")
             player_id = get_or_create_player(
                 cur,
                 external_id,  # external_id
