@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vira.fantasy.service.IdealXiService;
+import com.vira.fantasy.service.MvpMatchdayService;
 import com.vira.fantasy.service.PointsCalculatorService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,12 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 public class PointsAdminController {
 
     private final PointsCalculatorService recalculationService;
+    private final MvpMatchdayService mvpMatchdayService;
+    private final IdealXiService idealXiService;
 
     @PostMapping("/recalculate/matchday")
     public ResponseEntity<Void> recalculateMatchday(
             @RequestParam String season,
             @RequestParam int matchday) {
         recalculationService.calculatePointsForMatchday(matchday, season);
+        mvpMatchdayService.calculateForMatchday(matchday, season);
+        idealXiService.calculateForMatchday(matchday, season);
+
         return ResponseEntity.ok().build();
     }
 

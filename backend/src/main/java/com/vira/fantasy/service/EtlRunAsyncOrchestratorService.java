@@ -24,11 +24,14 @@ public class EtlRunAsyncOrchestratorService {
     private final PointsCalculatorService pointsService;
     private final EtlRunRepository etlRunRepo;
     private final EtlProgressTracker progressTracker;
-    private final MatchRepository matchRepo;
+    private final MatchRepository matchRepository;
+    private final MvpMatchdayService mvpMatchdayService;
+    private final IdealXiService idealXiService;
 
     /**
      * Ejecuta todo el pipeline ETL + cálculo de puntos de forma asíncrona
-     * @param season temporada
+     * 
+     * @param season       temporada
      * @param calculateAll si es true calcula todas las jornadas (cálculo inicial)
      */
     @Async
@@ -72,17 +75,21 @@ public class EtlRunAsyncOrchestratorService {
                 if (calculateAll) {
                     progressTracker.setProgress(runId, "ETL completado, calculando puntos de todas las jornadas...");
                     log.info("Calculando puntos de todas las jornadas para runId={}", runId);
-                    List<Integer> allMatchdays = matchRepo.findAllMatchdaysBySeason(season);
+                    List<Integer> allMatchdays = matchRepository.findAllMatchdaysBySeason(season);
                     for (Integer md : allMatchdays) {
                         // pointsService.calculatePointsForMatchday(md, season);
                         pointsService.recalculateAll();
+                        mvpMatchdayService.calculateForMatchday(md, season);
+                        idealXiService.calculateForMatchday(md, season);
                         progressTracker.setProgress(runId, "Puntos calculados para jornada " + md);
                     }
                 } else {
                     progressTracker.setProgress(runId, "ETL completado, calculando puntos de la última jornada...");
                     log.info("Calculando puntos de la última jornada para runId={}", runId);
-                    int lastMatchday = matchRepo.findMaxMatchdayBySeason(season).orElse(0);
+                    int lastMatchday = matchRepository.findMaxMatchdayBySeason(season).orElse(0);
                     pointsService.calculatePointsForMatchday(lastMatchday, season);
+                    mvpMatchdayService.calculateForMatchday(lastMatchday, season);
+                    idealXiService.calculateForMatchday(lastMatchday, season);
                     progressTracker.setProgress(runId, "Puntos calculados para última jornada " + lastMatchday);
                 }
 

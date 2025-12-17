@@ -76,13 +76,6 @@ CREATE TABLE points_history (
     UNIQUE(player_id, match_id)
 );
 
-CREATE TABLE market_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    player_id UUID REFERENCES players(id),
-    market_value NUMERIC,
-    calculated_at TIMESTAMP DEFAULT NOW()
-);
-
 CREATE TABLE app_user (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username TEXT UNIQUE NOT NULL,
@@ -92,45 +85,32 @@ CREATE TABLE app_user (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE user_team (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES app_user(id) UNIQUE,
-    name TEXT NOT NULL,
-    formation TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE team_player (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    team_id UUID REFERENCES user_team(id),
-    player_id UUID REFERENCES players(id),
-    role TEXT,
-    position_label TEXT,
-    added_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(team_id, player_id)
-);
-
-CREATE TABLE market_listing (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    player_id UUID REFERENCES players(id) UNIQUE,
-    seller_team_id UUID REFERENCES user_team(id),
-    reserve_price BIGINT,
-    status TEXT DEFAULT 'OPEN',
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE bid (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    listing_id UUID REFERENCES market_listing(id),
-    bidder_team_id UUID REFERENCES user_team(id),
-    amount BIGINT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
 CREATE TABLE etl_run (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     started_at TIMESTAMP NOT NULL DEFAULT NOW(),
     finished_at TIMESTAMP,
     status TEXT NOT NULL,
     message TEXT
+);
+
+CREATE TABLE mvp_matchday (
+    id UUID PRIMARY KEY,
+    season TEXT NOT NULL,
+    matchday INT NOT NULL,
+    player_id UUID REFERENCES players(id),
+    position TEXT,
+    points INT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(season, matchday, player_id)
+);
+
+CREATE TABLE ideal_xi (
+    id UUID PRIMARY KEY,
+    season TEXT NOT NULL,
+    matchday INT NOT NULL,
+    player_id UUID REFERENCES players(id),
+    position TEXT,
+    points INT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(season, matchday, player_id)
 );

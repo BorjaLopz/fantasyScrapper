@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+         http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- 1️⃣ Crear extensión pgcrypto -->
+    <changeSet id="1-create-extension-pgcrypto" author="auto">
+        <comment>Enable pgcrypto for gen_random_uuid()</comment>
+        <sql>CREATE EXTENSION IF NOT EXISTS "pgcrypto";</sql>
+    </changeSet>
+
+    <!-- 2️⃣ Tabla teams -->
+    <changeSet id="2-create-teams" author="auto">
+        <createTable tableName="teams">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="league" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 3️⃣ Tabla players -->
+    <changeSet id="3-create-players" author="auto">
+        <createTable tableName="players">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="external_id" type="TEXT">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="TEXT"/>
+            <column name="position" type="TEXT"/>
+            <column name="age" type="TEXT"/>
+            <column name="team_id" type="UUID"/>
+            <column name="market_value" type="NUMERIC" defaultValueNumeric="0"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="players"
+                baseColumnNames="team_id"
+                referencedTableName="teams"
+                referencedColumnNames="id"
+                constraintName="fk_players_team"/>
+    </changeSet>
+
+    <!-- 4️⃣ Tabla matches -->
+    <changeSet id="4-create-matches" author="auto">
+        <createTable tableName="matches">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="external_id" type="TEXT">
+                <constraints unique="true"/>
+            </column>
+            <column name="season" type="TEXT"/>
+            <column name="competition" type="TEXT"/>
+            <column name="date" type="TIMESTAMP"/>
+            <column name="home_team_id" type="UUID"/>
+            <column name="away_team_id" type="UUID"/>
+            <column name="home_goals" type="INT"/>
+            <column name="away_goals" type="INT"/>
+            <column name="fbref_id" type="TEXT"/>
+            <column name="last_updated" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+            <column name="matchday" type="INT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="matches"
+                baseColumnNames="home_team_id"
+                referencedTableName="teams"
+                referencedColumnNames="id"
+                constraintName="fk_matches_home_team"/>
+
+        <addForeignKeyConstraint
+                baseTableName="matches"
+                baseColumnNames="away_team_id"
+                referencedTableName="teams"
+                referencedColumnNames="id"
+                constraintName="fk_matches_away_team"/>
+    </changeSet>
+
+    <!-- 5️⃣ Tabla stats -->
+    <changeSet id="5-create-stats" author="auto">
+        <createTable tableName="stats">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="match_id" type="UUID"/>
+            <column name="player_id" type="UUID"/>
+            <column name="minutes" type="INT"/>
+            <column name="gls" type="INT"/>
+            <column name="ast" type="INT"/>
+            <column name="pk" type="INT"/>
+            <column name="pkatt" type="INT"/>
+            <column name="sh" type="INT"/>
+            <column name="sot" type="INT"/>
+            <column name="crdy" type="INT"/>
+            <column name="crdr" type="INT"/>
+            <column name="touches" type="INT"/>
+            <column name="tkl" type="INT"/>
+            <column name="interceptions" type="INT"/>
+            <column name="blocks" type="INT"/>
+            <column name="xg" type="NUMERIC"/>
+            <column name="npxg" type="NUMERIC"/>
+            <column name="xag" type="NUMERIC"/>
+            <column name="sca" type="INT"/>
+            <column name="gca" type="INT"/>
+            <column name="passes_cmp" type="INT"/>
+            <column name="passes_att" type="INT"/>
+            <column name="passes_cmp_pct" type="NUMERIC"/>
+            <column name="prgp" type="INT"/>
+            <column name="carries" type="INT"/>
+            <column name="prgc" type="INT"/>
+            <column name="takeons_att" type="INT"/>
+            <column name="takeons_succ" type="INT"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="stats"
+                             columnNames="player_id, match_id"
+                             constraintName="uk_stats_player_match"/>
+        <addForeignKeyConstraint baseTableName="stats" baseColumnNames="match_id"
+                                 referencedTableName="matches" referencedColumnNames="id"
+                                 constraintName="fk_stats_match"/>
+        <addForeignKeyConstraint baseTableName="stats" baseColumnNames="player_id"
+                                 referencedTableName="players" referencedColumnNames="id"
+                                 constraintName="fk_stats_player"/>
+    </changeSet>
+
+    <!-- 6️⃣ Tabla points_history -->
+    <changeSet id="6-create-points-history" author="auto">
+        <createTable tableName="points_history">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="player_id" type="UUID"/>
+            <column name="match_id" type="UUID"/>
+            <column name="points" type="NUMERIC"/>
+            <column name="calculated_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="points_history"
+                             columnNames="player_id, match_id"
+                             constraintName="uk_points_player_match"/>
+        <addForeignKeyConstraint baseTableName="points_history" baseColumnNames="player_id"
+                                 referencedTableName="players" referencedColumnNames="id"
+                                 constraintName="fk_points_player"/>
+        <addForeignKeyConstraint baseTableName="points_history" baseColumnNames="match_id"
+                                 referencedTableName="matches" referencedColumnNames="id"
+                                 constraintName="fk_points_match"/>
+    </changeSet>
+
+    <!-- 7️⃣ Tabla app_user -->
+    <changeSet id="7-create-app-user" author="auto">
+        <createTable tableName="app_user">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="TEXT">
+                <constraints unique="true" nullable="false" />
+            </column>
+            <column name="password" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="display_name" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 8️⃣ Tabla etl_run -->
+    <changeSet id="8-create-etl-run" author="auto">
+        <createTable tableName="etl_run">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="started_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false" />
+            </column>
+            <column name="finished_at" type="TIMESTAMP"/>
+            <column name="status" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="message" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 9️⃣ Tabla mvp_matchday -->
+    <changeSet id="9-create-mvp-matchday" author="auto">
+        <createTable tableName="mvp_matchday">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="season" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="matchday" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="player_id" type="UUID"/>
+            <column name="position" type="TEXT"/>
+            <column name="points" type="INT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="mvp_matchday"
+                             columnNames="season, matchday, player_id"
+                             constraintName="uk_mvp_matchday"/>
+        <addForeignKeyConstraint baseTableName="mvp_matchday" baseColumnNames="player_id"
+                                 referencedTableName="players" referencedColumnNames="id"
+                                 constraintName="fk_mvp_player"/>
+    </changeSet>
+
+    <!-- 10️⃣ Tabla ideal_xi -->
+    <changeSet id="10-create-ideal-xi" author="auto">
+        <createTable tableName="ideal_xi">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="season" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="matchday" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="player_id" type="UUID"/>
+            <column name="position" type="TEXT"/>
+            <column name="points" type="INT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="ideal_xi"
+                             columnNames="season, matchday, player_id"
+                             constraintName="uk_ideal_xi"/>
+        <addForeignKeyConstraint baseTableName="ideal_xi" baseColumnNames="player_id"
+                                 referencedTableName="players" referencedColumnNames="id"
+                                 constraintName="fk_ideal_player"/>
+    </changeSet>
+
+</databaseChangeLog>
