@@ -14,18 +14,20 @@ import com.vira.fantasy.repository.StatRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointsCalculatorService {
 
-    private final StatRepository statRepo;
-    private final PointHistoryRepository pointsRepo;
+    private final StatRepository statRepository;
+    private final PointHistoryRepository pointsRepository;
 
     @Transactional
     public void calculatePointsForMatchday(int matchday, String season) {
         // 1️⃣ Obtener todas las stats de la jornada
-        List<StatEntity> stats = statRepo.findAllBySeasonAndMatchday(season, matchday);
+        List<StatEntity> stats = statRepository.findAllBySeasonAndMatchday(season, matchday);
         List<PointHistoryEntity> batch = new ArrayList<>();
 
         for (StatEntity s : stats) {
@@ -34,45 +36,122 @@ public class PointsCalculatorService {
         }
 
         // 2️⃣ Guardar batch
-        pointsRepo.saveAll(batch);
+        pointsRepository.saveAll(batch);
+    }
+
+    @Transactional
+    public void recalculateMatchday(int matchday, String season) {
+        log.info("Recalculando puntos - Temporada {}, Jornada {}", season, matchday);
+
+        List<StatEntity> stats = statRepository.findAllBySeasonAndMatchday(season, matchday);
+
+        if (stats.isEmpty()) {
+            log.warn("No hay stats para temporada {} jornada {}", season, matchday);
+            return;
+        }
+
+        // 1️⃣ Borrar puntos existentes de esa jornada
+        pointsRepository.deleteBySeasonAndMatchday(season, matchday);
+
+        // 2️⃣ Recalcular
+        List<PointHistoryEntity> batch = new ArrayList<>(stats.size());
+
+        for (StatEntity stat : stats) {
+            double points = calculatePointsForStat(stat);
+
+            batch.add(
+                    PointHistoryEntity.of(
+                            stat.getPlayer().getId(),
+                            stat.getMatch().getId(),
+                            new BigDecimal(points)));
+        }
+
+        // 3️⃣ Guardado batch
+        pointsRepository.saveAll(batch);
+
+        log.info("Recalculo completado - {} registros", batch.size());
+    }
+
+    @Transactional
+    public void recalculateSeason(String season) {
+        List<Integer> matchdays = statRepository.findDistinctMatchdaysBySeason(season);
+
+        for (Integer md : matchdays) {
+            recalculateMatchday(md, season);
+        }
+    }
+
+    @Transactional
+    public void recalculateAll() {
+        List<String> seasons = statRepository.findDistinctSeasons();
+
+        for (String season : seasons) {
+            recalculateSeason(season);
+        }
     }
 
     private double calculatePointsForStat(StatEntity s) {
         String pos = s.getPlayer().getPosition();
         double points = 0;
 
-        // Gol
-        points += s.getGls() * getGoalWeight(pos);
-
-        // Asistencia
-        points += s.getAst() * 3;
-
-        // Penalti
-        points += s.getPk() * 5;
-        points -= (s.getPkatt() - s.getPk()) * 2; // fallos
-
-        // Disciplina
-        points -= s.getCrdy() * 1;
-        points -= s.getCrdr() * 3;
-
-        // Minutos
-        points += (s.getMinutes() >= 90 ? 1 : 0.5);
-
-        // Defensa / Clean sheet
-        if ("GK".equals(pos) || "DEF".equals(pos)) {
-            points += s.getTkl() * 0.2 + s.getInterceptions() * 0.2 + s.getBlocks() * 0.2;
-            points += hasCleanSheet(s) ? 4 : 0;
+        // ⏱️ MINUTOS (clave)
+        if (s.getMinutes() > 0 && s.getMinutes() < 30) {
+            points -= 3;
+        } else if (s.getMinutes() < 60) {
+            points -= 1;
+        } else {
+            points += 2; // ya no hay punto gratis
         }
 
-        // Regate / Pases / Creación de ocasiones
+        if (s.getMinutes() == 90) {
+            points += 1;
+        }
+
+        // ⚽ GOLES
+        points += s.getGls() * getGoalWeight(pos);
+
+        // 🎯 ASISTENCIAS
+        points += s.getAst() * 3;
+
+        // 🥅 PENALES
+        points += s.getPk() * 5;
+        points -= (s.getPkatt() - s.getPk()) * 4; // más castigo
+
+        // 🟨 DISCIPLINA
+        points -= s.getCrdy();
+        points -= s.getCrdr() * 4;
+
+        // 🛡️ DEFENSA (más impacto)
+        if ("GK".equals(pos) || "DEF".equals(pos)) {
+            points += s.getTkl() * 0.6;
+            points += s.getInterceptions() * 0.6;
+            points += s.getBlocks() * 1.0;
+            if (hasCleanSheet(s)) {
+                points += 4;
+            }
+        }
+
+        // 🎯 CREACIÓN / JUEGO (más granular)
         points += s.getTakeonsSucc() * getTakeonWeight(pos);
+        points -= (s.getTakeonsAtt() - s.getTakeonsSucc()) * 0.75;
+
         points += s.getPrgp() * getProgressPassWeight(pos);
         points += s.getSca() * getSCAWeight(pos);
         points += s.getGca() * getGCAWeight(pos);
 
-        // Redondear a 1 decimal
-        points = Math.round(points * 10.0) / 10.0;
-        return points;
+        // ❌ CASTIGO POR PARTIDO INVISIBLE
+        boolean noImpact = s.getGls() == 0 &&
+                s.getAst() == 0 &&
+                s.getSot() == 0 &&
+                s.getSca() < 2 &&
+                s.getPrgp() < 3;
+
+        if (noImpact && s.getMinutes() >= 60) {
+            points -= 1.5;
+        }
+
+        // 🔢 REDONDEO FINAL (ANTI 0/1)
+        return (int) Math.floor(points + 0.1);
     }
 
     private int getGoalWeight(String pos) {
@@ -134,4 +213,3 @@ public class PointsCalculatorService {
         return false;
     }
 }
-

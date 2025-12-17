@@ -57,4 +57,19 @@ public interface StatRepository extends JpaRepository<StatEntity, UUID> {
   List<StatEntity> findAllBySeasonAndMatchday(
       @Param("season") String season,
       @Param("matchday") Integer matchday);
+
+  @Query("""
+          SELECT DISTINCT s.match.matchday
+          FROM StatEntity s
+          WHERE s.match.season = :season
+          ORDER BY s.match.matchday
+      """)
+  List<Integer> findDistinctMatchdaysBySeason(
+      @Param("season") String season);
+
+  @Query("""
+          SELECT DISTINCT s.match.season
+          FROM StatEntity s
+      """)
+  List<String> findDistinctSeasons();
 }

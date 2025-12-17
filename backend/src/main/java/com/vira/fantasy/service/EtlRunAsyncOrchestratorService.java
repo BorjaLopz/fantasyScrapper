@@ -74,7 +74,8 @@ public class EtlRunAsyncOrchestratorService {
                     log.info("Calculando puntos de todas las jornadas para runId={}", runId);
                     List<Integer> allMatchdays = matchRepo.findAllMatchdaysBySeason(season);
                     for (Integer md : allMatchdays) {
-                        pointsService.calculatePointsForMatchday(md, season);
+                        // pointsService.calculatePointsForMatchday(md, season);
+                        pointsService.recalculateAll();
                         progressTracker.setProgress(runId, "Puntos calculados para jornada " + md);
                     }
                 } else {
