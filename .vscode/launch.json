@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FantasyApplication<fantasy>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.vira.fantasy.FantasyApplication",
+            "projectName": "fantasy",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

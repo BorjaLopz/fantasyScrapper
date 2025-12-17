@@ -23,7 +23,7 @@ public class AuthService {
 
         UserEntity user = new UserEntity();
         user.setUsername(username);
-        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
 
         return jwtService.generateToken(user.getId(), user.getUsername());
@@ -33,7 +33,7 @@ public class AuthService {
         UserEntity user = userRepository.findByUsername(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Invalid credentials");
         }
 

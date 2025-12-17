@@ -1,5 +1,6 @@
 import difflib
 import logging
+import re
 import warnings
 import psycopg2
 from soccerdata import FBref
@@ -148,6 +149,15 @@ def get_or_create_player(cur, external_id, name, position, age, team_id):
     return cur.fetchone()[0]
 
 
+def parse_matchday(round_value):
+    """
+    Extrae el número de jornada desde 'Matchweek 12'
+    """
+    if not round_value or pd.isna(round_value):
+        return None
+    match = re.search(r"\d+", str(round_value))
+    return int(match.group()) if match else None
+
 # =========================
 # ETL
 # =========================
@@ -178,6 +188,13 @@ def etl_laliga():
         home_id = get_or_create_team(cur, home_team)
         away_id = get_or_create_team(cur, away_team)
 
+        round_value = None
+        for col in ["round", "matchweek", "week"]:
+            if col in m and not pd.isna(m[col]):
+                round_value = m[col]
+                break
+        matchday = parse_matchday(round_value)
+
         try:
             home_goals, away_goals = map(int, m["score"].split("–"))
         except Exception:
@@ -187,10 +204,10 @@ def etl_laliga():
         cur.execute(
             """
             INSERT INTO matches (
-                external_id, fbref_id, season, competition, date,
+                external_id, fbref_id, season, competition, date, matchday,
                 home_team_id, away_team_id, home_goals, away_goals
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             RETURNING id
             """,
             (
@@ -199,6 +216,7 @@ def etl_laliga():
                 SEASON,
                 COMPETITION,
                 m["date"],
+                matchday,
                 home_id,
                 away_id,
                 home_goals,
