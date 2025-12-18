@@ -16,7 +16,7 @@ import com.vira.fantasy.service.EtlRunAsyncOrchestratorService;
 import com.vira.fantasy.service.EtlRunService;
 
 @RestController
-@RequestMapping("/admin/etl")
+@RequestMapping("/api/management/etl")
 @RequiredArgsConstructor
 public class EtlRunController {
 
@@ -76,7 +76,8 @@ public class EtlRunController {
                         emitter.send(SseEmitter.event().name("progress").data(status));
                         Thread.sleep(2000); // cada 2 segundos
                         lastRun = etlRunService.findById(runId);
-                        if (lastRun == null) break;
+                        if (lastRun == null)
+                            break;
                     }
 
                     // último mensaje
@@ -93,4 +94,3 @@ public class EtlRunController {
         return emitter;
     }
 }
-

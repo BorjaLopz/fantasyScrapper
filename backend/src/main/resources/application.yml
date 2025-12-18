@@ -32,6 +32,6 @@ security:
 
 fantasy:
   etl:
-    auto-start: true
+    auto-start: false
     auto-start-season: "2025-2026"
     calculate-all: true
