@@ -27,6 +27,7 @@ public class EtlRunAsyncOrchestratorService {
     private final MatchRepository matchRepository;
     private final MvpMatchdayService mvpMatchdayService;
     private final IdealXiService idealXiService;
+    private final MarketValueService marketValueService;
 
     /**
      * Ejecuta todo el pipeline ETL + cálculo de puntos de forma asíncrona
@@ -81,6 +82,7 @@ public class EtlRunAsyncOrchestratorService {
                         pointsService.recalculateAll();
                         mvpMatchdayService.calculateForMatchday(md, season);
                         idealXiService.calculateForMatchday(md, season);
+                        marketValueService.calculateMarketValues();
                         progressTracker.setProgress(runId, "Puntos calculados para jornada " + md);
                     }
                 } else {
@@ -90,6 +92,7 @@ public class EtlRunAsyncOrchestratorService {
                     pointsService.calculatePointsForMatchday(lastMatchday, season);
                     mvpMatchdayService.calculateForMatchday(lastMatchday, season);
                     idealXiService.calculateForMatchday(lastMatchday, season);
+                    marketValueService.calculateMarketValues(5); // últimas 5 jornadas
                     progressTracker.setProgress(runId, "Puntos calculados para última jornada " + lastMatchday);
                 }
 

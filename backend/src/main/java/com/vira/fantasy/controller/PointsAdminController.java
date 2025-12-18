@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vira.fantasy.service.IdealXiService;
+import com.vira.fantasy.service.MarketValueService;
 import com.vira.fantasy.service.MvpMatchdayService;
 import com.vira.fantasy.service.PointsCalculatorService;
 
@@ -22,6 +23,7 @@ public class PointsAdminController {
     private final PointsCalculatorService recalculationService;
     private final MvpMatchdayService mvpMatchdayService;
     private final IdealXiService idealXiService;
+    private final MarketValueService marketValueService;
 
     @PostMapping("/recalculate/matchday")
     public ResponseEntity<Void> recalculateMatchday(
@@ -30,6 +32,7 @@ public class PointsAdminController {
         recalculationService.calculatePointsForMatchday(matchday, season);
         mvpMatchdayService.calculateForMatchday(matchday, season);
         idealXiService.calculateForMatchday(matchday, season);
+        marketValueService.calculateMarketValues();
 
         return ResponseEntity.ok().build();
     }

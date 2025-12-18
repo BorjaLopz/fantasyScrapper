@@ -14,62 +14,80 @@ import com.vira.fantasy.entity.StatEntity;
 @Repository
 public interface StatRepository extends JpaRepository<StatEntity, UUID> {
 
-  @Query("""
-        SELECT
-          s.player.id as playerId,
-          s.match.id as matchId,
-          m.season as season,
-          m.matchday as matchday,
-          p.position as position,
-          s.minutes as minutes,
-          s.gls as gls,
-          s.ast as ast,
-          s.sh as sh,
-          s.sot as sot,
-          s.crdy as crdy,
-          s.crdr as crdr,
-          s.tkl as tkl,
-          s.interceptions as interceptions,
-          s.blocks as blocks,
-          s.passesCmp as passesCmp,
-          s.passesCmpPct as passesCmpPct,
-          s.prgp as prgp,
-          s.prgc as prgc,
-          s.takeonsSucc as takeonsSucc,
-          s.xg as xg,
-          s.npxg as npxg,
-          s.xag as xag,
-          s.sca as sca,
-          s.gca as gca
-        FROM StatEntity s
-        JOIN s.player p
-        JOIN s.match m
-        WHERE m.season = :season
-          AND m.matchday = :matchday
-      """)
-  List<PlayerStatsView> findAllForMatchday(
-      String season, int matchday);
+    @Query("""
+              SELECT
+                s.player.id as playerId,
+                s.match.id as matchId,
+                m.season as season,
+                m.matchday as matchday,
+                p.position as position,
+                s.minutes as minutes,
+                s.gls as gls,
+                s.ast as ast,
+                s.sh as sh,
+                s.sot as sot,
+                s.crdy as crdy,
+                s.crdr as crdr,
+                s.tkl as tkl,
+                s.interceptions as interceptions,
+                s.blocks as blocks,
+                s.passesCmp as passesCmp,
+                s.passesCmpPct as passesCmpPct,
+                s.prgp as prgp,
+                s.prgc as prgc,
+                s.takeonsSucc as takeonsSucc,
+                s.xg as xg,
+                s.npxg as npxg,
+                s.xag as xag,
+                s.sca as sca,
+                s.gca as gca
+              FROM StatEntity s
+              JOIN s.player p
+              JOIN s.match m
+              WHERE m.season = :season
+                AND m.matchday = :matchday
+            """)
+    List<PlayerStatsView> findAllForMatchday(
+            String season, int matchday);
 
-  /**
-   * Devuelve todas las stats de jugadores para una temporada y jornada concreta
-   */
-  @Query("SELECT s FROM StatEntity s WHERE s.match.season = :season AND s.match.matchday = :matchday")
-  List<StatEntity> findAllBySeasonAndMatchday(
-      @Param("season") String season,
-      @Param("matchday") Integer matchday);
+    /**
+     * Devuelve todas las stats de jugadores para una temporada y jornada concreta
+     */
+    @Query("SELECT s FROM StatEntity s WHERE s.match.season = :season AND s.match.matchday = :matchday")
+    List<StatEntity> findAllBySeasonAndMatchday(
+            @Param("season") String season,
+            @Param("matchday") Integer matchday);
 
-  @Query("""
-          SELECT DISTINCT s.match.matchday
-          FROM StatEntity s
-          WHERE s.match.season = :season
-          ORDER BY s.match.matchday
-      """)
-  List<Integer> findDistinctMatchdaysBySeason(
-      @Param("season") String season);
+    @Query("""
+                SELECT DISTINCT s.match.matchday
+                FROM StatEntity s
+                WHERE s.match.season = :season
+                ORDER BY s.match.matchday
+            """)
+    List<Integer> findDistinctMatchdaysBySeason(
+            @Param("season") String season);
 
-  @Query("""
-          SELECT DISTINCT s.match.season
-          FROM StatEntity s
-      """)
-  List<String> findDistinctSeasons();
+    @Query("""
+                SELECT DISTINCT s.match.season
+                FROM StatEntity s
+            """)
+    List<String> findDistinctSeasons();
+
+    @Query("""
+                SELECT COALESCE(SUM(s.gls), 0)
+                FROM StatEntity s
+                JOIN s.match m
+                WHERE s.player.id = :playerId
+                  AND m.matchday > (SELECT MAX(m2.matchday) - :n FROM MatchEntity m2 WHERE m2.season = m.season)
+            """)
+    int sumGoalsLastNMatchdays(@Param("playerId") UUID playerId, @Param("n") int n);
+
+    @Query("""
+                SELECT COALESCE(SUM(s.ast), 0)
+                FROM StatEntity s
+                JOIN s.match m
+                WHERE s.player.id = :playerId
+                  AND m.matchday > (SELECT MAX(m2.matchday) - :n FROM MatchEntity m2 WHERE m2.season = m.season)
+            """)
+    int sumAssistsLastNMatchdays(@Param("playerId") UUID playerId, @Param("n") int n);
 }
