@@ -7,12 +7,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(
-    name = "mvp_matchday",
-    uniqueConstraints = @UniqueConstraint(columnNames = {
+@Table(name = "mvp_matchday", uniqueConstraints = @UniqueConstraint(columnNames = {
         "season", "matchday", "player_id"
-    })
-)
+}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,13 +48,13 @@ public class MvpMatchdayEntity {
             String season,
             int matchday,
             PlayerEntity player,
-            int points
-    ) {
+            String position,
+            int points) {
         return MvpMatchdayEntity.builder()
                 .season(season)
                 .matchday(matchday)
                 .player(player)
-                .position(player.getPosition())
+                .position(position)
                 .points(points)
                 .build();
     }

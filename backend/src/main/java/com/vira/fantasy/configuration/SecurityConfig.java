@@ -42,7 +42,7 @@ public class SecurityConfig {
                         new JwtAuthenticationFilter(jwtService),
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**", "/api/management/**").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();

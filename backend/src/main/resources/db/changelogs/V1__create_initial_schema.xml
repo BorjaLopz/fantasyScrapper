@@ -7,13 +7,13 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- 1️⃣ Crear extensión pgcrypto -->
-    <changeSet id="1-create-extension-pgcrypto" author="auto">
+    <changeSet id="1-create-extension-pgcrypto" author="Victor">
         <comment>Enable pgcrypto for gen_random_uuid()</comment>
         <sql>CREATE EXTENSION IF NOT EXISTS "pgcrypto";</sql>
     </changeSet>
 
     <!-- 2️⃣ Tabla teams -->
-    <changeSet id="2-create-teams" author="auto">
+    <changeSet id="2-create-teams" author="Victor">
         <createTable tableName="teams">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -27,7 +27,7 @@
     </changeSet>
 
     <!-- 3️⃣ Tabla players -->
-    <changeSet id="3-create-players" author="auto">
+    <changeSet id="3-create-players" author="Victor">
         <createTable tableName="players">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -52,7 +52,7 @@
     </changeSet>
 
     <!-- 4️⃣ Tabla matches -->
-    <changeSet id="4-create-matches" author="auto">
+    <changeSet id="4-create-matches" author="Victor">
         <createTable tableName="matches">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -88,7 +88,7 @@
     </changeSet>
 
     <!-- 5️⃣ Tabla stats -->
-    <changeSet id="5-create-stats" author="auto">
+    <changeSet id="5-create-stats" author="Victor">
         <createTable tableName="stats">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -136,7 +136,7 @@
     </changeSet>
 
     <!-- 6️⃣ Tabla points_history -->
-    <changeSet id="6-create-points-history" author="auto">
+    <changeSet id="6-create-points-history" author="Victor">
         <createTable tableName="points_history">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -159,7 +159,7 @@
     </changeSet>
 
     <!-- 7️⃣ Tabla app_user -->
-    <changeSet id="7-create-app-user" author="auto">
+    <changeSet id="7-create-app-user" author="Victor">
         <createTable tableName="app_user">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -177,7 +177,7 @@
     </changeSet>
 
     <!-- 8️⃣ Tabla etl_run -->
-    <changeSet id="8-create-etl-run" author="auto">
+    <changeSet id="8-create-etl-run" author="Victor">
         <createTable tableName="etl_run">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
@@ -194,7 +194,7 @@
     </changeSet>
 
     <!-- 9️⃣ Tabla mvp_matchday -->
-    <changeSet id="9-create-mvp-matchday" author="auto">
+    <changeSet id="9-create-mvp-matchday" author="Victor">
         <createTable tableName="mvp_matchday">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
@@ -220,7 +220,7 @@
     </changeSet>
 
     <!-- 10️⃣ Tabla ideal_xi -->
-    <changeSet id="10-create-ideal-xi" author="auto">
+    <changeSet id="10-create-ideal-xi" author="Victor">
         <createTable tableName="ideal_xi">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>

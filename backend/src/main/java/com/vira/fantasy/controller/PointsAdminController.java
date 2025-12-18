@@ -41,12 +41,17 @@ public class PointsAdminController {
     public ResponseEntity<Void> recalculateSeason(
             @RequestParam String season) {
         recalculationService.recalculateSeason(season);
+        mvpMatchdayService.calculateForSeason(season);
+        idealXiService.calculateForSeason(season);
+        marketValueService.calculateMarketValues();
+
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/recalculate/all")
     public ResponseEntity<Void> recalculateAll() {
         recalculationService.recalculateAll();
+
         return ResponseEntity.ok().build();
     }
 }

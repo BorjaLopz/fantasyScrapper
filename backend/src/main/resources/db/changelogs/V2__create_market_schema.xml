@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="1-create-market-history" author="Victor">
+        <!-- Crear tabla market_history -->
+        <createTable tableName="market_history">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+
+            <column name="player_id" type="UUID">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="market_value" type="NUMERIC">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="calculated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign key a players -->
+        <addForeignKeyConstraint
+                baseTableName="market_history"
+                baseColumnNames="player_id"
+                referencedTableName="players"
+                referencedColumnNames="id"
+                constraintName="fk_market_history_player"/>
+        
+        <!-- Índice sobre player_id para acelerar consultas -->
+        <createIndex indexName="idx_market_player_id"
+                     tableName="market_history">
+            <column name="player_id"/>
+        </createIndex>
+
+        <!-- Índice sobre calculated_at para historial -->
+        <createIndex indexName="idx_market_calculated_at"
+                     tableName="market_history">
+            <column name="calculated_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

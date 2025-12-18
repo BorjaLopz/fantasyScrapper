@@ -7,12 +7,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(
-    name = "ideal_xi",
-    uniqueConstraints = @UniqueConstraint(columnNames = {
+@Table(name = "ideal_xi", uniqueConstraints = @UniqueConstraint(columnNames = {
         "season", "matchday", "player_id"
-    })
-)
+}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,8 +48,7 @@ public class IdealXiEntity {
             String season,
             int matchday,
             PlayerEntity player,
-            int points
-    ) {
+            int points) {
         return IdealXiEntity.builder()
                 .season(season)
                 .matchday(matchday)
